@@ -1,9 +1,6 @@
 {
-  "buildCommand": "pnpm build",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "pnpm install",
-  "env": {
-    "NEXT_PUBLIC_API_BASE": "@wisdomos_api_base"
-  }
+  "installCommand": "npm install"
 }

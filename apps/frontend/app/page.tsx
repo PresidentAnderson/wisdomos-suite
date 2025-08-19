@@ -228,8 +228,8 @@ export default function Dashboard() {
             key={i}
             className="absolute w-1 h-1 bg-phoenix-orange rounded-full"
             initial={{ 
-              x: Math.random() * window.innerWidth,
-              y: window.innerHeight + 100,
+              x: Math.random() * 1920,
+              y: 1180,
               opacity: 0 
             }}
             animate={{

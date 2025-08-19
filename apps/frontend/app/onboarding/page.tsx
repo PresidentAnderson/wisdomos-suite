@@ -344,7 +344,7 @@ export default function Onboarding() {
             key={i}
             className="absolute w-1 h-1 bg-phoenix-ember rounded-full opacity-50"
             animate={{
-              y: [-100, -window.innerHeight - 100],
+              y: [-100, -1180],
               x: [0, (Math.random() - 0.5) * 200],
               opacity: [0, 0.5, 0.5, 0],
             }}

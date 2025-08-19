@@ -4,11 +4,15 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-interface PhoenixButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface PhoenixButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   phoenixEffect?: boolean
   children: React.ReactNode
+  className?: string
+  onClick?: () => void
+  disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export default function PhoenixButton({
@@ -17,7 +21,9 @@ export default function PhoenixButton({
   phoenixEffect = true,
   className,
   children,
-  ...props
+  onClick,
+  disabled,
+  type = 'button'
 }: PhoenixButtonProps) {
   const baseStyles = 'relative font-semibold rounded-xl transition-all duration-300 overflow-hidden'
   
@@ -39,7 +45,9 @@ export default function PhoenixButton({
       className={cn(baseStyles, variants[variant], sizes[size], className)}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      {...props}
+      onClick={onClick}
+      disabled={disabled}
+      type={type}
     >
       {phoenixEffect && variant === 'primary' && (
         <motion.div

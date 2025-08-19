@@ -19,10 +19,10 @@ export default function PhoenixCycle({
   onStageClick 
 }: PhoenixCycleProps) {
   const stages = [
-    { key: 'ashes', icon: Moon, ...phoenixTheme.cycles.ashes },
-    { key: 'fire', icon: Flame, ...phoenixTheme.cycles.fire },
-    { key: 'rebirth', icon: Star, ...phoenixTheme.cycles.rebirth },
-    { key: 'flight', icon: Wind, ...phoenixTheme.cycles.flight }
+    { ...phoenixTheme.cycles.ashes, key: 'ashes', icon: Moon },
+    { ...phoenixTheme.cycles.fire, key: 'fire', icon: Flame },
+    { ...phoenixTheme.cycles.rebirth, key: 'rebirth', icon: Star },
+    { ...phoenixTheme.cycles.flight, key: 'flight', icon: Wind }
   ]
 
   const currentIndex = stages.findIndex(s => s.key === currentStage)
@@ -109,7 +109,7 @@ export default function PhoenixCycle({
                   {stage.name.split(' ')[0]}
                 </h4>
                 <p className="text-xs text-gray-500 mt-1">
-                  {stage.icon}
+                  {stage.description}
                 </p>
               </div>
 
