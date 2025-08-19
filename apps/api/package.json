@@ -1,5 +1,5 @@
 {
-  "name": "@wisdomos/backend",
+  "name": "@wisdomos/api",
   "version": "0.1.0",
   "private": true,
   "scripts": {

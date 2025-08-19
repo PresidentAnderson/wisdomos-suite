@@ -21,6 +21,7 @@ model User {
   resets        Reset[]
   vault         Vault[]
   badges        Badge[]
+  audits        Audit[]
   
   @@map("users")
 }
@@ -41,6 +42,7 @@ model LifeArea {
   resets        Reset[]
   relationships Relationship[]
   events        Event[]
+  audits        Audit[]
   
   @@unique([userId, name])
   @@index([userId])
@@ -206,4 +208,25 @@ enum AccessLevel {
   PRIVATE
   SHARED
   PUBLIC
+}
+
+model Audit {
+  id            String         @id @default(uuid())
+  userId        String
+  lifeAreaId    String
+  month         DateTime       // First day of the month
+  drift         Float          @default(0) // -1 to 1 drift metric
+  action        String?        @db.Text
+  colorSymbol   String         // Hex color for calendar display
+  notes         String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, lifeAreaId, month])
+  @@index([userId, month])
+  @@index([lifeAreaId, month])
+  @@map("audits")
 }

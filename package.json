@@ -11,6 +11,12 @@
     "db:studio": "pnpm --filter @wisdomos/db prisma studio",
     "db:generate": "pnpm --filter @wisdomos/db prisma generate",
     "db:migrate": "pnpm --filter @wisdomos/db prisma migrate dev",
+    "db:seed": "pnpm --filter @wisdomos/db prisma db seed",
+    "mobile:dev": "pnpm --filter @wisdomos/mobile expo start",
+    "mobile:ios": "pnpm --filter @wisdomos/mobile expo run:ios",
+    "mobile:android": "pnpm --filter @wisdomos/mobile expo run:android",
+    "web:dev": "pnpm --filter @wisdomos/web dev",
+    "api:dev": "pnpm --filter @wisdomos/api dev",
     "prepare": "husky install"
   },
   "devDependencies": {
