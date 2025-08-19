@@ -1,0 +1,20 @@
+{
+  "name": "@wisdomos/db",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "prisma": "prisma",
+    "generate": "prisma generate",
+    "db:push": "prisma db push",
+    "studio": "prisma studio",
+    "migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0",
+    "typescript": "^5.4.0"
+  }
+}

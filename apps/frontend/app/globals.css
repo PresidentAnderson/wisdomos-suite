@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --phoenix-gold: #FFD700;
+    --phoenix-red: #E63946;
+    --phoenix-orange: #FF914D;
+    --phoenix-indigo: #1D3557;
+    --phoenix-ash: #2C3E50;
+    --phoenix-ember: #F77F00;
+    --phoenix-flame: #FCBF49;
+    --phoenix-smoke: #1A1F2E;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  /* Phoenix Glow Effect */
+  .phoenix-glow {
+    background: radial-gradient(ellipse at top, rgba(255, 145, 77, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(230, 57, 70, 0.1) 0%, transparent 50%),
+                var(--phoenix-smoke);
+  }
+
+  /* Phoenix Rise Animation */
+  .phoenix-rise {
+    animation: phoenixRise 3s ease-in-out infinite;
+  }
+
+  /* Ember Particle Effect */
+  .ember-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--phoenix-ember);
+    border-radius: 50%;
+    animation: float-up 4s ease-in-out infinite;
+  }
+
+  @keyframes float-up {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* Phoenix Button */
+  .btn-phoenix {
+    @apply relative overflow-hidden px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    background: linear-gradient(135deg, var(--phoenix-red), var(--phoenix-orange));
+    box-shadow: 0 4px 15px rgba(255, 145, 77, 0.3);
+  }
+
+  .btn-phoenix:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 145, 77, 0.5);
+  }
+
+  .btn-phoenix::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-phoenix:hover::before {
+    left: 100%;
+  }
+
+  /* Life Area Card States */
+  .life-area-green {
+    @apply bg-gradient-to-br from-green-900/20 to-green-800/10 border-green-500/30;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+  }
+
+  .life-area-yellow {
+    @apply bg-gradient-to-br from-yellow-900/20 to-yellow-800/10 border-yellow-500/30;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+  }
+
+  .life-area-red {
+    @apply bg-gradient-to-br from-red-900/20 to-red-800/10 border-red-500/30;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+  }
+
+  /* Flame Text Effect */
+  .flame-text {
+    background: linear-gradient(45deg, var(--phoenix-red), var(--phoenix-orange), var(--phoenix-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: flameFlicker 2s ease-in-out infinite;
+  }
+
+  /* Phoenix Logo Animation */
+  .phoenix-logo {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+    animation: phoenixPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes phoenixPulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+    }
+    50% {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+    }
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Glass Morphism Card */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+
+  /* Phoenix Cycle Indicator */
+  .cycle-indicator {
+    @apply relative w-full h-2 bg-phoenix-ash/30 rounded-full overflow-hidden;
+  }
+
+  .cycle-progress {
+    @apply absolute top-0 left-0 h-full transition-all duration-1000;
+    background: linear-gradient(90deg, var(--phoenix-ash), var(--phoenix-red), var(--phoenix-orange), var(--phoenix-gold));
+  }
+
+  /* Wisdom Score Badge */
+  .wisdom-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium;
+    background: linear-gradient(135deg, var(--phoenix-indigo), var(--phoenix-ash));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+  }
+
+  /* Reset Ritual Card */
+  .reset-card {
+    @apply glass-card p-6 relative overflow-hidden;
+  }
+
+  .reset-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 145, 77, 0.1) 0%, transparent 70%);
+    animation: rotate 10s linear infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+@layer utilities {
+  /* Text Shadows */
+  .text-shadow-phoenix {
+    text-shadow: 0 0 20px rgba(255, 145, 77, 0.5);
+  }
+
+  .text-shadow-gold {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  /* Hover Glow */
+  .hover-glow {
+    transition: all 0.3s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 30px rgba(255, 145, 77, 0.4);
+  }
+
+  /* Phoenix Gradients */
+  .bg-phoenix-gradient {
+    background: linear-gradient(135deg, #E63946 0%, #FF914D 25%, #FFD700 50%, #FCBF49 75%, #F77F00 100%);
+  }
+
+  .bg-ash-gradient {
+    background: linear-gradient(180deg, #1A1F2E 0%, #2C3E50 50%, #1D3557 100%);
+  }
+
+  /* Animations */
+  .animate-phoenix-rise {
+    animation: phoenixRise 3s ease-in-out infinite;
+  }
+
+  .animate-ember-glow {
+    animation: emberGlow 2s ease-in-out infinite;
+  }
+
+  .animate-flame-flicker {
+    animation: flameFlicker 1.5s ease-in-out infinite;
+  }
+
+  .animate-ash-scatter {
+    animation: ashScatter 4s ease-in-out infinite;
+  }
+}
