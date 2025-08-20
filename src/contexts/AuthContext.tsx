@@ -1,8 +1,16 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
-import { supabase, getCurrentUser } from '@/lib/supabase'
+import { 
+  getCurrentUser, 
+  signOut as localSignOut, 
+  onAuthStateChange,
+  getProfile,
+  createProfile,
+  updateProfile,
+  LocalUser,
+  LocalSession
+} from '@/lib/auth-local'
 import { useAuthStore } from '@/store/auth'
 import { Database } from '@/types/database.types'
 import { trackEvent, identifyUser } from '@/lib/analytics'
@@ -10,7 +18,7 @@ import { trackEvent, identifyUser } from '@/lib/analytics'
 type Profile = Database['public']['Tables']['profiles']['Row']
 
 interface AuthContextType {
-  user: User | null
+  user: LocalUser | null
   profile: Profile | null
   isLoading: boolean
   signOut: () => Promise<void>
@@ -23,14 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, profile, isLoading, setUser, setProfile, setLoading, signOut: storeSignOut } = useAuthStore()
   const [initialized, setInitialized] = useState(false)
 
-  // Fetch user profile from database
+  // Fetch user profile from local storage
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
+      const { data, error } = await getProfile(userId)
 
       if (error) {
         console.error('Error fetching profile:', error)
@@ -45,31 +49,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Create profile for new users
-  const createProfile = async (user: User): Promise<Profile | null> => {
+  const createUserProfile = async (user: LocalUser): Promise<Profile | null> => {
     try {
-      const newProfile: Database['public']['Tables']['profiles']['Insert'] = {
-        id: user.id,
-        email: user.email || '',
-        full_name: user.user_metadata?.full_name || user.user_metadata?.name || '',
-        avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
-        username: user.user_metadata?.preferred_username || user.user_metadata?.user_name || null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_admin: false,
-        is_active: true,
-        stats: {
-          tools_used: 0,
-          documents_created: 0,
-          sessions_completed: 0,
-          last_active: new Date().toISOString()
-        }
-      }
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert([newProfile])
-        .select()
-        .single()
+      const { data, error } = await createProfile(user)
 
       if (error) {
         console.error('Error creating profile:', error)
@@ -100,23 +82,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Create profile if it doesn't exist
       if (!userProfile) {
-        userProfile = await createProfile(user)
+        userProfile = await createUserProfile(user)
       }
 
       if (userProfile) {
         setProfile(userProfile)
         
         // Update last active timestamp
-        await supabase
-          .from('profiles')
-          .update({ 
-            stats: {
-              ...userProfile.stats,
-              last_active: new Date().toISOString()
-            },
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', user.id)
+        await updateProfile(user.id, { 
+          stats: {
+            ...userProfile.stats,
+            last_active: new Date().toISOString()
+          },
+          updated_at: new Date().toISOString()
+        })
       }
     } catch (error) {
       console.error('Error refreshing profile:', error)
@@ -135,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         trackEvent('user_signed_out', { user_id: user.id }, user.id)
       }
 
-      await supabase.auth.signOut()
+      await localSignOut()
       storeSignOut()
     } catch (error) {
       console.error('Sign out error:', error)
@@ -163,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             let userProfile = await fetchProfile(currentUser.id)
             
             if (!userProfile) {
-              userProfile = await createProfile(currentUser)
+              userProfile = await createUserProfile(currentUser)
             }
 
             if (userProfile && mounted) {
@@ -203,8 +182,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeAuth()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+    const { data: { subscription } } = onAuthStateChange(
+      async (event, session: LocalSession | null) => {
         if (!mounted) return
 
         setLoading(true)
@@ -216,7 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           let userProfile = await fetchProfile(session.user.id)
           
           if (!userProfile) {
-            userProfile = await createProfile(session.user)
+            userProfile = await createUserProfile(session.user)
           }
 
           if (userProfile) {

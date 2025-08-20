@@ -1,5 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database.types'
+import { 
+  getCurrentUser as localGetCurrentUser, 
+  signOut as localSignOut,
+  signInWithGoogle as localSignInWithGoogle,
+  signInWithGithub as localSignInWithGithub,
+  signInWithEmail as localSignInWithEmail,
+  signUpWithEmail as localSignUpWithEmail
+} from './auth-local'
 
 // Only initialize during runtime, not build time
 let supabaseInstance: ReturnType<typeof createClient<Database>> | null = null
@@ -74,65 +82,48 @@ export const getSupabaseAdmin = () => {
   )
 }
 
-// Auth helper functions
+// Auth helper functions - now delegating to local auth
+
 export const getCurrentUser = async () => {
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const { data: user, error } = await localGetCurrentUser()
   return { user, error }
 }
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut()
+  const { error } = await localSignOut()
   return { error }
 }
 
 export const signInWithGoogle = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
-    }
-  })
+  const { data, error } = await localSignInWithGoogle()
   return { data, error }
 }
 
 export const signInWithGithub = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
-    }
-  })
+  const { data, error } = await localSignInWithGithub()
   return { data, error }
 }
 
 export const signInWithEmail = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  })
+  const { data, error } = await localSignInWithEmail(email, password)
   return { data, error }
 }
 
 export const signUpWithEmail = async (email: string, password: string, metadata: any = {}) => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: metadata,
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
-    }
-  })
+  const { data, error } = await localSignUpWithEmail(email, password, metadata)
   return { data, error }
 }
 
 export const resetPassword = async (email: string) => {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`
-  })
-  return { data, error }
+  return {
+    data: null,
+    error: new Error('Password reset not available in local mode')
+  }
 }
 
 export const updatePassword = async (password: string) => {
-  const { data, error } = await supabase.auth.updateUser({ password })
-  return { data, error }
+  return {
+    data: null,
+    error: new Error('Password update not available in local mode')
+  }
 }

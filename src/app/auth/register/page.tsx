@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { EyeIcon, EyeSlashIcon, CheckIcon, XMarkIcon } from '@/components/icons/placeholder'
 // Toast temporarily disabled
 const toast = { error: (msg: string) => console.error(msg), success: (msg: string) => console.log(msg) }
-import { signUpWithEmail, signInWithGoogle, signInWithGithub } from '@/lib/supabase'
+import { signUpWithEmail, signInWithGoogle, signInWithGithub } from '@/lib/auth-local'
 import { useAuth } from '@/contexts/AuthContext'
 import { validateEmail, validatePassword } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
@@ -98,18 +98,18 @@ export default function RegisterPage() {
       })
       
       if (error) {
-        if (error instanceof Error ? error.message : 'Unknown error'.includes('User already registered')) {
+        if (error.message.includes('User already exists')) {
           toast.error('An account with this email already exists')
-        } else if (error instanceof Error ? error.message : 'Unknown error'.includes('Password should be at least')) {
-          toast.error('Password must be at least 6 characters long')
+        } else if (error.message.includes('Password should be at least')) {
+          toast.error('Password must be at least 8 characters long')
         } else {
-          toast.error(error instanceof Error ? error.message : 'Unknown error')
+          toast.error(error.message)
         }
-        trackEvent('registration_failed', { method: 'email', error: error instanceof Error ? error.message : 'Unknown error' })
+        trackEvent('registration_failed', { method: 'email', error: error.message })
       } else {
-        toast.success('Please check your email for a verification link')
+        toast.success('Account created successfully! You are now logged in.')
         trackEvent('registration_success', { method: 'email' })
-        router.push('/auth/verify-email')
+        router.push('/dashboard')
       }
     } catch (error: unknown) {
       toast.error('An unexpected error occurred')
@@ -127,8 +127,8 @@ export default function RegisterPage() {
       const { error } = await signInWithGoogle()
       
       if (error) {
-        toast.error(error instanceof Error ? error.message : 'Unknown error')
-        trackEvent('registration_failed', { method: 'google', error: error instanceof Error ? error.message : 'Unknown error' })
+        toast.error(error.message)
+        trackEvent('registration_failed', { method: 'google', error: error.message })
       }
     } catch (error: unknown) {
       toast.error('Google sign-up failed')
@@ -146,8 +146,8 @@ export default function RegisterPage() {
       const { error } = await signInWithGithub()
       
       if (error) {
-        toast.error(error instanceof Error ? error.message : 'Unknown error')
-        trackEvent('registration_failed', { method: 'github', error: error instanceof Error ? error.message : 'Unknown error' })
+        toast.error(error.message)
+        trackEvent('registration_failed', { method: 'github', error: error.message })
       }
     } catch (error: unknown) {
       toast.error('GitHub sign-up failed')
@@ -159,12 +159,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
-      >
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-2">
             Join WisdomOS
@@ -175,12 +170,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      <div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-      >
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
           {/* Social Register Buttons */}
           <div className="space-y-3">

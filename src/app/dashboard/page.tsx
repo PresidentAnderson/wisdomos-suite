@@ -17,7 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/contexts/AuthContext'
 import { useAppStore } from '@/store/app'
-import { supabase } from '@/lib/supabase'
+import { localDB } from '@/lib/auth-local'
 import { formatRelativeTime } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
 
@@ -69,9 +69,8 @@ export default function DashboardPage() {
     try {
       setIsLoading(true)
 
-      // Load user documents
-      const { data: userDocuments, error: docsError } = await supabase
-        .from('documents')
+      // Load user documents (using mock data for now)
+      const { data: userDocuments, error: docsError } = await localDB.documents
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
@@ -80,9 +79,8 @@ export default function DashboardPage() {
         console.error('Error loading documents:', docsError)
       }
 
-      // Load user activities
-      const { data: userActivities, error: activitiesError } = await supabase
-        .from('activities')
+      // Load user activities (using mock data for now)
+      const { data: userActivities, error: activitiesError } = await localDB.activities
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })

@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { EyeIcon, EyeSlashIcon } from '@/components/icons/placeholder'
 // Toast temporarily disabled
 const toast = { error: (msg: string) => console.error(msg), success: (msg: string) => console.log(msg) }
-import { signInWithEmail, signInWithGoogle, signInWithGithub } from '@/lib/supabase'
+import { signInWithEmail, signInWithGoogle, signInWithGithub } from '@/lib/auth-local'
 import { useAuth } from '@/contexts/AuthContext'
 import { validateEmail } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
@@ -121,12 +121,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
-      >
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome Back
@@ -137,12 +132,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-      >
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
           {/* Social Login Buttons */}
           <div className="space-y-3">
