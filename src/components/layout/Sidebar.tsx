@@ -126,10 +126,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex h-16 shrink-0 items-center px-4 border-b border-gray-200">
         <Link href="/dashboard" className="flex items-center">
-          <div
-            whileHover={{ scale: 1.05 }}
-            className="text-xl font-bold text-blue-600"
-          >
+          <div className="text-xl font-bold text-blue-600">
             WisdomOS
           </div>
         </Link>
@@ -150,8 +147,6 @@ export function Sidebar() {
                     ? 'bg-blue-100 text-blue-900'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
               >
                 <Icon
                   className={cn(
@@ -208,17 +203,10 @@ export function Sidebar() {
           {sidebarOpen && (
             <>
               <div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
                 className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75"
                 onClick={() => setSidebarOpen(false)}
               />
               <div
-                initial={{ x: -300 }}
-                animate={{ x: 0 }}
-                exit={{ x: -300 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl"
               >
                 <div className="absolute top-0 right-0 -mr-12 pt-2">

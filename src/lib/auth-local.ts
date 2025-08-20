@@ -305,17 +305,111 @@ export async function signOut(): Promise<AuthResponse<void>> {
 }
 
 // OAuth providers (mock implementation for demo)
-export async function signInWithGoogle(): Promise<AuthResponse<{ url?: string }>> {
+export async function signInWithGoogle(): Promise<AuthResponse<{ user: LocalUser; session: LocalSession }>> {
+  // Show a more user-friendly message and create demo account
+  const shouldCreateDemo = window.confirm(
+    'OAuth providers are not available in demo mode. Would you like to create a demo Google account instead?'
+  )
+  
+  if (shouldCreateDemo) {
+    // Create a demo Google user
+    const demoEmail = 'demo.google@wisdomos.com'
+    const users = getStoredUsers()
+    
+    // Check if demo user already exists
+    let existingUser = users.find(u => u.email === demoEmail)
+    
+    if (!existingUser) {
+      // Create new demo user
+      const newUser: LocalUser = {
+        id: uuidv4(),
+        email: demoEmail,
+        password_hash: simpleHash('demo123'),
+        user_metadata: {
+          full_name: 'Demo Google User',
+          name: 'Demo Google User',
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=google',
+          preferred_username: 'demo_google'
+        },
+        app_metadata: {
+          provider: 'google'
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        email_confirmed_at: new Date().toISOString()
+      }
+      
+      users.push(newUser)
+      storeUsers(users)
+      existingUser = newUser
+    }
+    
+    // Create session for demo user
+    const session = createSession(existingUser)
+    
+    return {
+      data: { user: existingUser, session },
+      error: null
+    }
+  }
+  
   return {
     data: null,
-    error: new Error('OAuth providers not available in local mode. Please use email/password registration.')
+    error: new Error('Google Sign-In cancelled. Please use email/password registration or try the demo account.')
   }
 }
 
-export async function signInWithGithub(): Promise<AuthResponse<{ url?: string }>> {
+export async function signInWithGithub(): Promise<AuthResponse<{ user: LocalUser; session: LocalSession }>> {
+  // Show a more user-friendly message and create demo account
+  const shouldCreateDemo = window.confirm(
+    'OAuth providers are not available in demo mode. Would you like to create a demo GitHub account instead?'
+  )
+  
+  if (shouldCreateDemo) {
+    // Create a demo GitHub user
+    const demoEmail = 'demo.github@wisdomos.com'
+    const users = getStoredUsers()
+    
+    // Check if demo user already exists
+    let existingUser = users.find(u => u.email === demoEmail)
+    
+    if (!existingUser) {
+      // Create new demo user
+      const newUser: LocalUser = {
+        id: uuidv4(),
+        email: demoEmail,
+        password_hash: simpleHash('demo123'),
+        user_metadata: {
+          full_name: 'Demo GitHub User',
+          name: 'Demo GitHub User',
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=github',
+          preferred_username: 'demo_github'
+        },
+        app_metadata: {
+          provider: 'github'
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        email_confirmed_at: new Date().toISOString()
+      }
+      
+      users.push(newUser)
+      storeUsers(users)
+      existingUser = newUser
+    }
+    
+    // Create session for demo user
+    const session = createSession(existingUser)
+    
+    return {
+      data: { user: existingUser, session },
+      error: null
+    }
+  }
+  
   return {
     data: null,
-    error: new Error('OAuth providers not available in local mode. Please use email/password registration.')
+    error: new Error('GitHub Sign-In cancelled. Please use email/password registration or try the demo account.')
   }
 }
 

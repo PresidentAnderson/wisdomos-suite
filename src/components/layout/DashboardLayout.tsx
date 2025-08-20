@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Sidebar } from './Sidebar'
-import { motion } from '// animations disabled'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -49,11 +48,7 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
       <main className="flex-1 lg:pl-64">
         <div className="px-4 py-8 sm:px-6 lg:px-8">
           {(title || description) && (
-            <div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
+            <div className="mb-8">
               {title && (
                 <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
                   {title}
@@ -67,11 +62,7 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
             </div>
           )}
           
-          <div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
+          <div>
             {children}
           </div>
         </div>
