@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   experimental: {
   },
 
+  // Build optimization
+  trailingSlash: false,
+
   // PWA configuration
   async headers() {
     return [
