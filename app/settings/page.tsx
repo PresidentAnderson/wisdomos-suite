@@ -33,7 +33,7 @@ export default function SettingsPage() {
   useEffect(() => {
     checkAuth()
     fetchSettings()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkAuth = () => {
     const token = localStorage.getItem('token')

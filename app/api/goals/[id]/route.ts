@@ -64,7 +64,7 @@ export async function PUT(
     
     // Remove undefined values
     const updateData = Object.fromEntries(
-      Object.entries(data).filter(([_, value]) => value !== undefined)
+      Object.entries(data).filter(([, value]) => value !== undefined)
     )
     
     const goal = await prisma.goal.updateMany({

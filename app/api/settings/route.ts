@@ -73,7 +73,7 @@ export async function PUT(req: NextRequest) {
     
     // Remove undefined values
     const updateData = Object.fromEntries(
-      Object.entries(data).filter(([_, value]) => value !== undefined)
+      Object.entries(data).filter(([, value]) => value !== undefined)
     )
     
     const settings = await prisma.userSettings.upsert({
@@ -87,7 +87,7 @@ export async function PUT(req: NextRequest) {
         enableContributions: typeof updateData.enableContributions === 'boolean' ? updateData.enableContributions : true,
         enableAutobiography: typeof updateData.enableAutobiography === 'boolean' ? updateData.enableAutobiography : true,
         enableAssessments: typeof updateData.enableAssessments === 'boolean' ? updateData.enableAssessments : true,
-        defaultEntryVisibility: (typeof updateData.defaultEntryVisibility === 'string' ? updateData.defaultEntryVisibility : 'private') as any,
+        defaultEntryVisibility: (typeof updateData.defaultEntryVisibility === 'string' ? updateData.defaultEntryVisibility : 'private') as 'private' | 'cohort' | 'coach' | 'public' | 'anonymous',
         allowDataExport: typeof updateData.allowDataExport === 'boolean' ? updateData.allowDataExport : true,
         allowAnonymousData: typeof updateData.allowAnonymousData === 'boolean' ? updateData.allowAnonymousData : false,
         theme: typeof updateData.theme === 'string' ? updateData.theme : 'dark',

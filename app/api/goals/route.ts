@@ -13,8 +13,6 @@ const CreateGoalSchema = z.object({
   tags: z.array(z.string()).optional().default([])
 })
 
-const UpdateGoalSchema = CreateGoalSchema.partial()
-
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser(req)
@@ -26,7 +24,7 @@ export async function GET(req: NextRequest) {
     const sprintOnly = searchParams.get('sprint') === 'true'
     const completed = searchParams.get('completed')
     
-    const where: any = { userId: user.sub }
+    const where: { userId: string; isSprint?: boolean; isCompleted?: boolean } = { userId: user.sub }
     
     if (sprintOnly) {
       where.isSprint = true

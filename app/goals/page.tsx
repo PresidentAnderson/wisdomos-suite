@@ -20,7 +20,7 @@ interface Goal {
 export default function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([])
   const [isAdding, setIsAdding] = useState(false)
-  const [editingGoal, setEditingGoal] = useState<Goal | null>(null)
+  // const [editingGoal, setEditingGoal] = useState<Goal | null>(null)
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'sprint' | 'active' | 'completed'>('all')
   const [newGoal, setNewGoal] = useState({
@@ -36,7 +36,7 @@ export default function GoalsPage() {
   useEffect(() => {
     checkAuth()
     fetchGoals()
-  }, [filter])
+  }, [filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkAuth = () => {
     const token = localStorage.getItem('token')
@@ -128,7 +128,7 @@ export default function GoalsPage() {
       
       if (response.ok) {
         fetchGoals()
-        setEditingGoal(null)
+        // setEditingGoal(null)
       }
     } catch (error) {
       console.error('Error updating goal:', error)
@@ -217,7 +217,7 @@ export default function GoalsPage() {
           ].map(tab => (
             <button
               key={tab.key}
-              onClick={() => setFilter(tab.key as any)}
+              onClick={() => setFilter(tab.key as 'all' | 'sprint' | 'active' | 'completed')}
               className={`px-4 py-2 rounded-lg transition-all ${
                 filter === tab.key
                   ? 'bg-cyan-500 text-white'
