@@ -4,7 +4,7 @@ import { getUser } from '@/lib/auth'
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getUser(req)
@@ -12,9 +12,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
+    const { id } = await params
     const deleted = await prisma.entry.deleteMany({
       where: { 
-        id: params.id,
+        id,
         userId: user.sub,
         type: 'autobiography'
       }
