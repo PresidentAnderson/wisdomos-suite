@@ -218,6 +218,24 @@ export default function AssessmentsPage() {
           </div>
         </div>
 
+        {/* Selected Area Details */}
+        {selectedArea && (
+          <div className="bg-black/20 backdrop-blur-lg rounded-xl p-6 border border-white/10 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-white">Selected: {selectedArea}</h3>
+              <button
+                onClick={() => setSelectedArea(null)}
+                className="text-white/60 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-gray-300">
+              Click on the life area cards below to update their status.
+            </p>
+          </div>
+        )}
+
         {/* Life Areas Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {lifeAreas.map(area => {
@@ -267,7 +285,7 @@ export default function AssessmentsPage() {
           <ul className="space-y-2 text-gray-300">
             <li>• Click on any life area card to cycle through status (Healthy → Warning → Toxic)</li>
             <li>• Use the radar chart to see patterns across all areas at once</li>
-            <li>• Click "Reset All Boundaries" to mark all areas as healthy after a reset ritual</li>
+            <li>• Click &quot;Reset All Boundaries&quot; to mark all areas as healthy after a reset ritual</li>
             <li>• Pair with your Monthly Boundary Audit Log</li>
             <li>• When you see toxic patterns: pause, acknowledge, forgive, recommit</li>
           </ul>

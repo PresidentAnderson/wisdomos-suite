@@ -190,7 +190,7 @@ export default function AutobiographyPage() {
             <div>
               <h3 className="text-2xl font-semibold text-white mb-2">Growth Progress</h3>
               <p className="text-gray-300">
-                You've documented {entries.length} years of your {years.length}-year journey
+                You&apos;ve documented {entries.length} years of your {years.length}-year journey
               </p>
             </div>
             <div className="text-center">

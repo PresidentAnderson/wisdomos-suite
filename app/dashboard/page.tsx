@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ name?: string; sub?: string } | null>(null)
   const [stats, setStats] = useState({
     contributions: 0,
     autobiographyYears: 0,
@@ -17,7 +17,7 @@ export default function DashboardPage() {
   useEffect(() => {
     checkAuth()
     fetchStats()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkAuth = async () => {
     try {
@@ -71,7 +71,7 @@ export default function DashboardPage() {
       const boundaries = localStorage.getItem('boundaries')
       if (boundaries) {
         const parsed = JSON.parse(boundaries)
-        stats.boundariesHealthy = parsed.filter((b: any) => b.status === 'healthy').length
+        stats.boundariesHealthy = parsed.filter((b: { status: string }) => b.status === 'healthy').length
       }
 
       setStats({ ...stats })
