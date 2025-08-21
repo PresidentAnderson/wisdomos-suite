@@ -132,9 +132,11 @@ export default function ContributionsPage() {
             </Link>
             <nav className="flex space-x-6">
               <Link href="/dashboard" className="text-white/70 hover:text-white">Dashboard</Link>
+              <Link href="/goals" className="text-white/70 hover:text-white">Goals</Link>
               <Link href="/contributions" className="text-cyan-400">Contributions</Link>
               <Link href="/autobiography" className="text-white/70 hover:text-white">Autobiography</Link>
               <Link href="/assessments" className="text-white/70 hover:text-white">Assessments</Link>
+              <Link href="/settings" className="text-white/70 hover:text-white">Settings</Link>
             </nav>
           </div>
         </div>

@@ -131,9 +131,11 @@ export default function AutobiographyPage() {
             </Link>
             <nav className="flex space-x-6">
               <Link href="/dashboard" className="text-white/70 hover:text-white">Dashboard</Link>
+              <Link href="/goals" className="text-white/70 hover:text-white">Goals</Link>
               <Link href="/contributions" className="text-white/70 hover:text-white">Contributions</Link>
               <Link href="/autobiography" className="text-cyan-400">Autobiography</Link>
               <Link href="/assessments" className="text-white/70 hover:text-white">Assessments</Link>
+              <Link href="/settings" className="text-white/70 hover:text-white">Settings</Link>
             </nav>
           </div>
         </div>

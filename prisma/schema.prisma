@@ -22,6 +22,8 @@ model User {
   assessments         RelationshipAssessment[]
   boundaryAudits      BoundaryAudit[]
   contactLinks        ContactLifeAreaLink[]
+  goals               Goal[]
+  settings            UserSettings?
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -332,4 +334,53 @@ enum ExportScope {
   anonymized
   exclude
   include
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  importance  String?   // "Why is this important to you" field
+  isSprint    Boolean   @default(false) // Sprint goals checkbox
+  isCompleted Boolean   @default(false)
+  dueDate     DateTime?
+  tags        String[]
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([userId, isSprint])
+  @@index([userId, isCompleted])
+}
+
+model UserSettings {
+  id                    String  @id @default(cuid())
+  userId                String  @unique
+  
+  // Feature toggles
+  showJournalEntries    Boolean @default(true)
+  enableGoals           Boolean @default(true)
+  enableContributions   Boolean @default(true)
+  enableAutobiography   Boolean @default(true)
+  enableAssessments     Boolean @default(true)
+  
+  // Privacy settings
+  defaultEntryVisibility Visibility @default(private)
+  allowDataExport       Boolean @default(true)
+  allowAnonymousData    Boolean @default(false)
+  
+  // Display preferences
+  theme                 String  @default("dark")
+  timeZone              String  @default("UTC")
+  
+  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([userId])
 }

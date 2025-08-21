@@ -96,9 +96,11 @@ export default function DashboardPage() {
             </Link>
             <nav className="flex items-center space-x-6">
               <Link href="/dashboard" className="text-cyan-400">Dashboard</Link>
+              <Link href="/goals" className="text-white/70 hover:text-white">Goals</Link>
               <Link href="/contributions" className="text-white/70 hover:text-white">Contributions</Link>
               <Link href="/autobiography" className="text-white/70 hover:text-white">Autobiography</Link>
               <Link href="/assessments" className="text-white/70 hover:text-white">Assessments</Link>
+              <Link href="/settings" className="text-white/70 hover:text-white">Settings</Link>
               <button
                 onClick={handleLogout}
                 className="text-white/70 hover:text-white"
@@ -151,7 +153,15 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
           <h2 className="text-2xl font-semibold text-white mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link
+              href="/goals"
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all text-center"
+            >
+              <div className="text-2xl mb-2">🎯</div>
+              <div>Manage Goals</div>
+            </Link>
+
             <Link
               href="/contributions"
               className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-4 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-center"
@@ -172,7 +182,7 @@ export default function DashboardPage() {
               href="/assessments"
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all text-center"
             >
-              <div className="text-2xl mb-2">🎯</div>
+              <div className="text-2xl mb-2">🛡️</div>
               <div>Check Boundaries</div>
             </Link>
           </div>
