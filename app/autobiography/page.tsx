@@ -144,7 +144,7 @@ export default function AutobiographyPage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">Your Life Timeline</h1>
           <p className="text-gray-300 text-lg">
-            Document your journey year by year. Green indicates growth - years where you've reflected and recorded your story.
+            Document your journey year by year. Green indicates growth - years where you&apos;ve reflected and recorded your story.
           </p>
         </div>
 
