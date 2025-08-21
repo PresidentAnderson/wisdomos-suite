@@ -1,23 +1,43 @@
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
+  const timestamp = new Date().toISOString()
+  const checks = {
+    database: false,
+    api: true
+  }
+  
   try {
-    // Basic health check - can be extended to check database connectivity
+    // Test database connectivity
+    await prisma.$queryRaw`SELECT 1`
+    checks.database = true
+    
+    const allHealthy = Object.values(checks).every(check => check)
+    
     return NextResponse.json(
       { 
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        service: 'wisdomos-web'
+        status: allHealthy ? 'healthy' : 'degraded',
+        timestamp,
+        service: 'wisdomos-web',
+        version: process.env.npm_package_version || '0.1.0',
+        checks,
+        uptime: process.uptime()
       },
-      { status: 200 }
+      { status: allHealthy ? 200 : 503 }
     )
-  } catch {
+  } catch (error) {
+    console.error('Health check failed:', error)
+    
     return NextResponse.json(
       { 
         status: 'unhealthy',
-        timestamp: new Date().toISOString(),
+        timestamp,
         service: 'wisdomos-web',
-        error: 'Health check failed'
+        version: process.env.npm_package_version || '0.1.0',
+        checks,
+        error: 'Health check failed',
+        uptime: process.uptime()
       },
       { status: 503 }
     )
