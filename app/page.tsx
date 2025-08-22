@@ -57,12 +57,20 @@ export default function Home() {
           
           {/* Login Status */}
           {!isLoggedIn ? (
-            <button
-              onClick={handleDemoLogin}
-              className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:from-cyan-600 hover:to-purple-600 mb-8"
-            >
-              Demo Login
-            </button>
+            <div className="space-y-4 mb-8">
+              <button
+                onClick={handleDemoLogin}
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:from-cyan-600 hover:to-purple-600"
+              >
+                Demo Login
+              </button>
+              <p className="text-gray-300">
+                New to WisdomOS?{' '}
+                <Link href="/signup" className="text-cyan-400 hover:text-cyan-300">
+                  Create an Account
+                </Link>
+              </p>
+            </div>
           ) : (
             <p className="text-cyan-300 mb-8">✓ Logged in as Demo User</p>
           )}

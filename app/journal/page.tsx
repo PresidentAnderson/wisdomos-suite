@@ -32,31 +32,28 @@ export default function JournalPage() {
   const audioChunksRef = useRef<Blob[]>([])
 
   useEffect(() => {
-    // Load sample entries
-    setTimeout(() => {
-      setEntries([
-        {
-          id: '1',
-          title: 'Morning Reflection',
-          body: 'Today I woke up feeling grateful for the opportunities ahead. The clarity I have about my goals is energizing.',
-          type: 'journal',
-          mood: 'grateful',
-          tags: ['morning', 'gratitude', 'goals'],
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: '2',
-          title: 'Breakthrough Moment',
-          body: 'Had an amazing insight during meditation - resistance is just fear dressed up as logic. When I lean into discomfort, growth happens.',
-          type: 'reflection',
-          mood: 'inspired',
-          tags: ['insight', 'growth', 'meditation'],
-          createdAt: new Date(Date.now() - 86400000).toISOString()
+    fetchEntries()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchEntries = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('/api/journal', {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      ])
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setEntries(data)
+      }
+    } catch (error) {
+      console.error('Error fetching journal entries:', error)
+    } finally {
       setLoading(false)
-    }, 500)
-  }, [])
+    }
+  }
 
   const startRecording = async () => {
     try {
@@ -124,27 +121,43 @@ export default function JournalPage() {
     }
   }
 
-  const saveEntry = () => {
-    const newEntry: JournalEntry = {
-      id: Date.now().toString(),
-      title: title || 'Untitled Entry',
-      body,
-      type: entryType === 'voice' ? 'voice' : 'journal',
-      mood,
-      tags: tags.split(',').map(t => t.trim()).filter(t => t),
-      createdAt: new Date().toISOString()
+  const saveEntry = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('/api/journal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: title || 'Untitled Entry',
+          body,
+          type: entryType === 'voice' ? 'voice' : 'journal',
+          mood,
+          tags: tags.split(',').map(t => t.trim()).filter(t => t)
+        })
+      })
+      
+      if (response.ok) {
+        const newEntry = await response.json()
+        setEntries([newEntry, ...entries])
+        
+        // Reset form
+        setTitle('')
+        setBody('')
+        setMood('')
+        setTags('')
+        setAudioBlob(null)
+        setShowNewEntry(false)
+        setEntryType('text')
+      } else {
+        alert('Failed to save journal entry')
+      }
+    } catch (error) {
+      console.error('Error saving journal entry:', error)
+      alert('Failed to save journal entry')
     }
-
-    setEntries([newEntry, ...entries])
-    
-    // Reset form
-    setTitle('')
-    setBody('')
-    setMood('')
-    setTags('')
-    setAudioBlob(null)
-    setShowNewEntry(false)
-    setEntryType('text')
   }
 
   const getMoodEmoji = (mood: string) => {
