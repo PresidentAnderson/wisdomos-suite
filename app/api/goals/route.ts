@@ -66,7 +66,11 @@ export async function POST(req: NextRequest) {
     const data = CreateGoalSchema.parse(body)
     
     const goal = await prisma.goal.create({
-      data: { ...data, userId: user.sub }
+      data: { 
+        ...data, 
+        tags: JSON.stringify(data.tags || []),
+        userId: user.sub 
+      }
     })
     
     return NextResponse.json(goal, { status: 201 })

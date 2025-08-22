@@ -45,7 +45,11 @@ export async function POST(req: NextRequest) {
     const data = CreateContributionSchema.parse(body)
     
     const contribution = await prisma.contribution.create({
-      data: { ...data, userId: user.sub }
+      data: { 
+        ...data, 
+        tags: data.tags ? JSON.stringify(data.tags) : '[]',
+        userId: user.sub 
+      }
     })
     
     return NextResponse.json(contribution, { status: 201 })
