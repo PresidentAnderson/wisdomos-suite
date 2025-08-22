@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type') || 'all'
     
     // Fetch user data based on type
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     interface ExportData {
       journalEntries?: any[]
       contacts?: any[]
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest) {
       contributions?: any[]
       autobiography?: any[]
     }
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     const data: ExportData = {}
     
     if (type === 'all' || type === 'journal') {
