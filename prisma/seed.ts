@@ -43,10 +43,10 @@ async function main() {
 
   // Create sample contacts
   const contacts = [
-    { firstName: "Djamel", lastName: "Partner", notes: "Life partner", tags: ["partner", "core"] },
-    { firstName: "Michael", lastName: "Friend", notes: "Operations support", tags: ["friend", "ops"] },
-    { firstName: "Sarah", lastName: "Therapist", notes: "Weekly therapy", tags: ["professional", "therapy"] },
-    { firstName: "Alex", lastName: "Mentor", notes: "Business mentor", tags: ["professional", "mentor"] }
+    { firstName: "Djamel", lastName: "Partner", notes: "Life partner", tags: JSON.stringify(["partner", "core"]) },
+    { firstName: "Michael", lastName: "Friend", notes: "Operations support", tags: JSON.stringify(["friend", "ops"]) },
+    { firstName: "Sarah", lastName: "Therapist", notes: "Weekly therapy", tags: JSON.stringify(["professional", "therapy"]) },
+    { firstName: "Alex", lastName: "Mentor", notes: "Business mentor", tags: JSON.stringify(["professional", "mentor"]) }
   ];
 
   const createdContacts = [];
@@ -79,20 +79,20 @@ async function main() {
       type: "strength" as const,
       title: "Catalyst for Clarity",
       content: "Turns chaos into clear, actionable systems",
-      tags: ["systems", "clarity"]
+      tags: JSON.stringify(["systems", "clarity"])
     },
     {
       type: "acknowledgment" as const,
       title: "Pattern Recognition",
       content: "You see connections others miss",
       source: "Team feedback",
-      tags: ["insight", "vision"]
+      tags: JSON.stringify(["insight", "vision"])
     },
     {
       type: "natural" as const,
       title: "Deep Listening",
       content: "Creating space for others to discover themselves",
-      tags: ["empathy", "presence"]
+      tags: JSON.stringify(["empathy", "presence"])
     }
   ];
 
@@ -114,8 +114,8 @@ async function main() {
       earliest: "Always been drawn to systems and patterns",
       insight: "Systems create freedom, not constraint",
       commitment: "Build tools that empower self-discovery",
-      lifeAreas: [1, 7, 9], // Work, Creativity, Learning
-      tags: ["systems", "creation", "growth"]
+      lifeAreas: JSON.stringify([1, 7, 9]), // Work, Creativity, Learning
+      tags: JSON.stringify(["systems", "creation", "growth"])
     }
   });
   console.log("✅ Created autobiography entry");
