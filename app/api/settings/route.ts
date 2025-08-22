@@ -5,20 +5,20 @@ import { z } from 'zod'
 
 const UpdateSettingsSchema = z.object({
   // Feature toggles
-  showJournalEntries: z.boolean().optional(),
-  enableGoals: z.boolean().optional(),
-  enableContributions: z.boolean().optional(),
-  enableAutobiography: z.boolean().optional(),
-  enableAssessments: z.boolean().optional(),
+  journalEnabled: z.boolean().optional(),
+  goalsEnabled: z.boolean().optional(),
+  contributionsEnabled: z.boolean().optional(),
+  autobiographyEnabled: z.boolean().optional(),
+  assessmentsEnabled: z.boolean().optional(),
   
   // Privacy settings
-  defaultEntryVisibility: z.enum(['private', 'cohort', 'coach', 'public', 'anonymous']).optional(),
+  defaultVisibility: z.string().optional(),
   allowDataExport: z.boolean().optional(),
-  allowAnonymousData: z.boolean().optional(),
+  allowAnonymousAnalytics: z.boolean().optional(),
   
   // Display preferences
   theme: z.string().optional(),
-  timeZone: z.string().optional()
+  timezone: z.string().optional()
 })
 
 export async function GET(req: NextRequest) {
@@ -37,16 +37,16 @@ export async function GET(req: NextRequest) {
       settings = await prisma.userSettings.create({
         data: {
           userId: user.sub,
-          showJournalEntries: true,
-          enableGoals: true,
-          enableContributions: true,
-          enableAutobiography: true,
-          enableAssessments: true,
-          defaultEntryVisibility: 'private',
+          journalEnabled: true,
+          goalsEnabled: true,
+          contributionsEnabled: true,
+          autobiographyEnabled: true,
+          assessmentsEnabled: true,
+          defaultVisibility: 'private',
           allowDataExport: true,
-          allowAnonymousData: false,
+          allowAnonymousAnalytics: false,
           theme: 'dark',
-          timeZone: 'UTC'
+          timezone: 'UTC'
         }
       })
     }

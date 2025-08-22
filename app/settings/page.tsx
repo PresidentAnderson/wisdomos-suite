@@ -8,18 +8,18 @@ interface UserSettings {
   id: string
   userId: string
   // Feature toggles
-  showJournalEntries: boolean
-  enableGoals: boolean
-  enableContributions: boolean
-  enableAutobiography: boolean
-  enableAssessments: boolean
+  journalEnabled: boolean
+  goalsEnabled: boolean
+  contributionsEnabled: boolean
+  autobiographyEnabled: boolean
+  assessmentsEnabled: boolean
   // Privacy settings
-  defaultEntryVisibility: 'private' | 'cohort' | 'coach' | 'public' | 'anonymous'
+  defaultVisibility: string
   allowDataExport: boolean
-  allowAnonymousData: boolean
+  allowAnonymousAnalytics: boolean
   // Display preferences
   theme: string
-  timeZone: string
+  timezone: string
   createdAt: string
   updatedAt: string
 }
@@ -59,16 +59,16 @@ export default function SettingsPage() {
         setSettings({
           id: 'default',
           userId: 'default',
-          showJournalEntries: true,
-          enableGoals: true,
-          enableContributions: true,
-          enableAutobiography: true,
-          enableAssessments: true,
-          defaultEntryVisibility: 'private',
+          journalEnabled: true,
+          goalsEnabled: true,
+          contributionsEnabled: true,
+          autobiographyEnabled: true,
+          assessmentsEnabled: true,
+          defaultVisibility: 'private',
           allowDataExport: true,
-          allowAnonymousData: false,
+          allowAnonymousAnalytics: false,
           theme: 'dark',
-          timeZone: 'UTC',
+          timezone: 'UTC',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         })
@@ -79,16 +79,16 @@ export default function SettingsPage() {
       setSettings({
         id: 'default',
         userId: 'default',
-        showJournalEntries: true,
-        enableGoals: true,
-        enableContributions: true,
-        enableAutobiography: true,
-        enableAssessments: true,
-        defaultEntryVisibility: 'private',
+        journalEnabled: true,
+        goalsEnabled: true,
+        contributionsEnabled: true,
+        autobiographyEnabled: true,
+        assessmentsEnabled: true,
+        defaultVisibility: 'private',
         allowDataExport: true,
-        allowAnonymousData: false,
+        allowAnonymousAnalytics: false,
         theme: 'dark',
-        timeZone: 'UTC',
+        timezone: 'UTC',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       })
@@ -195,8 +195,8 @@ export default function SettingsPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.enableGoals}
-                    onChange={(e) => handleToggle('enableGoals', e.target.checked)}
+                    checked={settings.goalsEnabled}
+                    onChange={(e) => handleToggle('goalsEnabled', e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -211,8 +211,8 @@ export default function SettingsPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.enableContributions}
-                    onChange={(e) => handleToggle('enableContributions', e.target.checked)}
+                    checked={settings.contributionsEnabled}
+                    onChange={(e) => handleToggle('contributionsEnabled', e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -227,8 +227,8 @@ export default function SettingsPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.enableAutobiography}
-                    onChange={(e) => handleToggle('enableAutobiography', e.target.checked)}
+                    checked={settings.autobiographyEnabled}
+                    onChange={(e) => handleToggle('autobiographyEnabled', e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -243,8 +243,8 @@ export default function SettingsPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.enableAssessments}
-                    onChange={(e) => handleToggle('enableAssessments', e.target.checked)}
+                    checked={settings.assessmentsEnabled}
+                    onChange={(e) => handleToggle('assessmentsEnabled', e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -259,8 +259,8 @@ export default function SettingsPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.showJournalEntries}
-                    onChange={(e) => handleToggle('showJournalEntries', e.target.checked)}
+                    checked={settings.journalEnabled}
+                    onChange={(e) => handleToggle('journalEnabled', e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -276,8 +276,8 @@ export default function SettingsPage() {
               <div>
                 <label className="block text-white font-medium mb-2">Default Entry Visibility</label>
                 <select
-                  value={settings.defaultEntryVisibility}
-                  onChange={(e) => handleSelect('defaultEntryVisibility', e.target.value)}
+                  value={settings.defaultVisibility}
+                  onChange={(e) => handleSelect('defaultVisibility', e.target.value)}
                   className="w-full p-3 bg-black/30 border border-white/20 rounded-lg text-white"
                 >
                   <option value="private">Private (Only you)</option>
@@ -315,8 +315,8 @@ export default function SettingsPage() {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={settings.allowAnonymousData}
-                    onChange={(e) => handleToggle('allowAnonymousData', e.target.checked)}
+                    checked={settings.allowAnonymousAnalytics}
+                    onChange={(e) => handleToggle('allowAnonymousAnalytics', e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -345,8 +345,8 @@ export default function SettingsPage() {
               <div>
                 <label className="block text-white font-medium mb-2">Time Zone</label>
                 <select
-                  value={settings.timeZone}
-                  onChange={(e) => handleSelect('timeZone', e.target.value)}
+                  value={settings.timezone}
+                  onChange={(e) => handleSelect('timezone', e.target.value)}
                   className="w-full p-3 bg-black/30 border border-white/20 rounded-lg text-white"
                 >
                   <option value="UTC">UTC (Coordinated Universal Time)</option>
