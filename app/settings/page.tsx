@@ -54,9 +54,44 @@ export default function SettingsPage() {
       if (response.ok) {
         const data = await response.json()
         setSettings(data)
+      } else {
+        // Use default settings if none exist
+        setSettings({
+          id: 'default',
+          userId: 'default',
+          showJournalEntries: true,
+          enableGoals: true,
+          enableContributions: true,
+          enableAutobiography: true,
+          enableAssessments: true,
+          defaultEntryVisibility: 'private',
+          allowDataExport: true,
+          allowAnonymousData: false,
+          theme: 'dark',
+          timeZone: 'UTC',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        })
       }
     } catch (error) {
       console.error('Error fetching settings:', error)
+      // Use default settings on error
+      setSettings({
+        id: 'default',
+        userId: 'default',
+        showJournalEntries: true,
+        enableGoals: true,
+        enableContributions: true,
+        enableAutobiography: true,
+        enableAssessments: true,
+        defaultEntryVisibility: 'private',
+        allowDataExport: true,
+        allowAnonymousData: false,
+        theme: 'dark',
+        timeZone: 'UTC',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      })
     } finally {
       setLoading(false)
     }
