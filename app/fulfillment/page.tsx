@@ -31,7 +31,6 @@ export default function FulfillmentPage() {
   const router = useRouter()
   const [areas, setAreas] = useState<LifeArea[]>(lifeAreas)
   const [selectedArea, setSelectedArea] = useState<LifeArea | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,8 +40,8 @@ export default function FulfillmentPage() {
   const checkAuth = async () => {
     try {
       const res = await fetch('/api/auth/me')
-      if (res.ok) {
-        setIsAuthenticated(true)
+      if (!res.ok) {
+        console.log('Not authenticated')
       }
     } catch (error) {
       console.error('Auth check failed:', error)

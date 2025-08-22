@@ -112,7 +112,7 @@ export default function WisdomCenterPage() {
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-white text-center">
           <h2 className="text-2xl font-bold mb-4 text-cyan-300">Daily Wisdom</h2>
           <blockquote className="text-lg italic mb-4">
-            "The unexamined life is not worth living."
+            &ldquo;The unexamined life is not worth living.&rdquo;
           </blockquote>
           <p className="text-gray-300">— Socrates</p>
         </div>
