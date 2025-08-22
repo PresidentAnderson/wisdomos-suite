@@ -30,20 +30,25 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10)
     
-    // Create user
+    // Generate verification token
+    const verifyToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+    
+    // Create user with auth
     const user = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
-        // Note: In production, you'd store the hashed password in a separate auth table
-        // For now, we'll use JWT without storing passwords
-      }
-    })
-    
-    // Create default user settings
-    await prisma.userSettings.create({
-      data: {
-        userId: user.id
+        auth: {
+          create: {
+            hashedPassword,
+            verifyToken,
+            verifyTokenExpiry
+          }
+        },
+        settings: {
+          create: {}
+        }
       }
     })
     

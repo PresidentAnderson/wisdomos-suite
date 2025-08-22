@@ -1,40 +1,96 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { signToken } from '@/lib/auth'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 import { z } from 'zod'
 
 const LoginSchema = z.object({
   email: z.string().email(),
-  name: z.string().optional()
+  password: z.string().optional()
 })
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { email, name } = LoginSchema.parse(body)
+    const { email, password } = LoginSchema.parse(body)
     
-    // Upsert user
-    const user = await prisma.user.upsert({
+    // Handle demo login (no password required)
+    if (email === 'demo@wisdomos.app' && !password) {
+      // Create or get demo user
+      const demoUser = await prisma.user.upsert({
+        where: { email: 'demo@wisdomos.app' },
+        update: {},
+        create: { 
+          email: 'demo@wisdomos.app', 
+          name: 'Demo User',
+          emailVerified: new Date()
+        }
+      })
+      
+      const token = jwt.sign(
+        { sub: demoUser.id, email: demoUser.email, name: demoUser.name },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn: '7d' }
+      )
+      
+      return NextResponse.json({ 
+        token,
+        user: {
+          id: demoUser.id,
+          email: demoUser.email,
+          name: demoUser.name
+        }
+      })
+    }
+    
+    // Regular login with password
+    if (!password) {
+      return NextResponse.json(
+        { error: 'Password is required' },
+        { status: 400 }
+      )
+    }
+    
+    // Find user with auth
+    const user = await prisma.user.findUnique({
       where: { email },
-      update: { name: name || undefined },
-      create: { email, name }
+      include: { auth: true }
     })
     
-    // Generate token
-    const token = signToken({
-      sub: user.id,
-      email: user.email,
-      name: user.name || undefined
-    })
+    if (!user || !user.auth) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      )
+    }
     
-    return NextResponse.json({ 
+    // Verify password
+    const validPassword = await bcrypt.compare(password, user.auth.hashedPassword)
+    
+    if (!validPassword) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      )
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { sub: user.id, email: user.email, name: user.name },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    )
+    
+    return NextResponse.json({
       token,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
+        name: user.name,
+        emailVerified: user.emailVerified
       }
     })
+    
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -42,6 +98,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
+    
     console.error('Login error:', error)
     return NextResponse.json(
       { error: 'Failed to login' },

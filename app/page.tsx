@@ -64,12 +64,20 @@ export default function Home() {
               >
                 Demo Login
               </button>
-              <p className="text-gray-300">
-                New to WisdomOS?{' '}
-                <Link href="/signup" className="text-cyan-400 hover:text-cyan-300">
-                  Create an Account
-                </Link>
-              </p>
+              <div className="space-y-2">
+                <p className="text-gray-300">
+                  New to WisdomOS?{' '}
+                  <Link href="/signup" className="text-cyan-400 hover:text-cyan-300">
+                    Create an Account
+                  </Link>
+                </p>
+                <p className="text-gray-300">
+                  Already have an account?{' '}
+                  <Link href="/login" className="text-cyan-400 hover:text-cyan-300">
+                    Sign In
+                  </Link>
+                </p>
+              </div>
             </div>
           ) : (
             <p className="text-cyan-300 mb-8">✓ Logged in as Demo User</p>

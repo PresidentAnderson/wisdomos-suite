@@ -1,0 +1,109 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { getUser } from '@/lib/auth'
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getUser(req)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
+    const { searchParams } = new URL(req.url)
+    const format = searchParams.get('format') || 'json'
+    const type = searchParams.get('type') || 'all'
+    
+    // Fetch user data based on type
+    let data: any = {}
+    
+    if (type === 'all' || type === 'journal') {
+      data.journalEntries = await prisma.journalEntry.findMany({
+        where: { userId: user.sub },
+        orderBy: { createdAt: 'desc' }
+      })
+    }
+    
+    if (type === 'all' || type === 'contacts') {
+      data.contacts = await prisma.contact.findMany({
+        where: { userId: user.sub },
+        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }]
+      })
+    }
+    
+    if (type === 'all' || type === 'goals') {
+      data.goals = await prisma.goal.findMany({
+        where: { userId: user.sub },
+        orderBy: { createdAt: 'desc' }
+      })
+    }
+    
+    if (type === 'all' || type === 'contributions') {
+      data.contributions = await prisma.contribution.findMany({
+        where: { userId: user.sub },
+        orderBy: { createdAt: 'desc' }
+      })
+    }
+    
+    if (type === 'all' || type === 'autobiography') {
+      data.autobiography = await prisma.autobiographyEntry.findMany({
+        where: { userId: user.sub },
+        orderBy: { year: 'asc' }
+      })
+    }
+    
+    // Format response based on format parameter
+    if (format === 'csv') {
+      // Convert to CSV format
+      let csv = ''
+      
+      // Export each data type as CSV
+      if (data.journalEntries) {
+        csv += 'Journal Entries\n'
+        csv += 'Date,Title,Type,Mood,Body,Tags\n'
+        data.journalEntries.forEach((entry: any) => {
+          csv += `"${entry.createdAt}","${entry.title || ''}","${entry.type}","${entry.mood || ''}","${entry.body.replace(/"/g, '""')}","${entry.tags.join(', ')}"\n`
+        })
+        csv += '\n'
+      }
+      
+      if (data.contacts) {
+        csv += 'Contacts\n'
+        csv += 'First Name,Last Name,Email,Phone,Notes,Tags\n'
+        data.contacts.forEach((contact: any) => {
+          csv += `"${contact.firstName}","${contact.lastName}","${contact.email || ''}","${contact.phoneE164 || ''}","${(contact.notes || '').replace(/"/g, '""')}","${contact.tags.join(', ')}"\n`
+        })
+        csv += '\n'
+      }
+      
+      if (data.goals) {
+        csv += 'Goals\n'
+        csv += 'Title,Description,Sprint,Completed,Due Date,Tags\n'
+        data.goals.forEach((goal: any) => {
+          csv += `"${goal.title}","${(goal.description || '').replace(/"/g, '""')}","${goal.isSprint}","${goal.isCompleted}","${goal.dueDate || ''}","${goal.tags.join(', ')}"\n`
+        })
+        csv += '\n'
+      }
+      
+      return new NextResponse(csv, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="wisdomos-export-${new Date().toISOString().split('T')[0]}.csv"`
+        }
+      })
+    }
+    
+    // Default to JSON
+    return NextResponse.json(data, {
+      headers: {
+        'Content-Disposition': `attachment; filename="wisdomos-export-${new Date().toISOString().split('T')[0]}.json"`
+      }
+    })
+    
+  } catch (error) {
+    console.error('Export error:', error)
+    return NextResponse.json(
+      { error: 'Failed to export data' },
+      { status: 500 }
+    )
+  }
+}

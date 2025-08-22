@@ -11,7 +11,9 @@ model User {
   id           String  @id @default(cuid())
   email        String  @unique
   name         String?
+  emailVerified DateTime?
   
+  auth                Auth?
   contacts            Contact[]
   contributions       Contribution[]
   autobiographyEntries AutobiographyEntry[]
@@ -28,6 +30,21 @@ model User {
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Auth {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  hashedPassword    String
+  resetToken        String?  @unique
+  resetTokenExpiry  DateTime?
+  verifyToken       String?  @unique
+  verifyTokenExpiry DateTime?
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model Contact {

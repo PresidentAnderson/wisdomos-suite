@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import SearchBar from '@/components/SearchBar'
 
 export default function DashboardV2Page() {
   const [user, setUser] = useState<{ name?: string; sub?: string } | null>(null)
@@ -199,6 +200,7 @@ export default function DashboardV2Page() {
               <Link href="/journal" className="text-white/70 hover:text-white">Journal</Link>
               <Link href="/contacts" className="text-white/70 hover:text-white">Contacts</Link>
               <Link href="/fulfillment" className="text-white/70 hover:text-white">Life Areas</Link>
+              <Link href="/analytics" className="text-white/70 hover:text-white">Analytics</Link>
               <Link href="/settings" className="text-white/70 hover:text-white">Settings</Link>
               <button
                 onClick={handleLogout}
@@ -215,12 +217,19 @@ export default function DashboardV2Page() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Welcome back, {user?.name || 'User'}
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Your personal growth operating system - now with voice journaling 🎙️
-          </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-4">
+                Welcome back, {user?.name || 'User'}
+              </h1>
+              <p className="text-gray-300 text-lg">
+                Your personal growth operating system - now with voice journaling 🎙️
+              </p>
+            </div>
+            <div className="md:w-96">
+              <SearchBar />
+            </div>
+          </div>
         </div>
 
         {/* Quick Stats */}
