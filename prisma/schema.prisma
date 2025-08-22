@@ -39,7 +39,7 @@ model Contact {
   hubspotId     String?
   salesforceId  String?
   notes         String?
-  tags          String[]
+  tags          String @default("[]") // JSON array for SQLite
   
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   lifeAreaLinks ContactLifeAreaLink[]
@@ -98,7 +98,7 @@ model Contribution {
   title     String
   content   String?
   source    String?
-  tags      String[]
+  tags      String @default("[]") // JSON array for SQLite
   color     String?
   
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -125,8 +125,8 @@ model AutobiographyEntry {
   earliest   String?  // earliest similar occurrence
   insight    String?  // what I made it mean
   commitment String?  // new way of being
-  lifeAreas  Int[]    // array of life area ids
-  tags       String[]
+  lifeAreas  String @default("[]") // JSON array for SQLite
+  tags       String @default("[]") // JSON array for SQLite
   
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   
@@ -193,9 +193,9 @@ model Interaction {
   uri            String?
   sentiment      Sentiment?
   sentimentScore Float?
-  topics         String[]
-  entities       Json?
-  meta           Json @default("{}")
+  topics         String @default("[]") // JSON array for SQLite
+  entities       String @default("{}")
+  meta           String @default("{}")
   
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
@@ -345,7 +345,7 @@ model Goal {
   isSprint    Boolean   @default(false) // Sprint goals checkbox
   isCompleted Boolean   @default(false)
   dueDate     DateTime?
-  tags        String[]
+  tags        String @default("[]") // JSON array for SQLite
   
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
