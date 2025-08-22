@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -142,7 +142,7 @@ model FulfillmentArea {
   userId     String
   lifeAreaId Int
   status     FulfillmentStatus @default(thriving)
-  attention  Int?
+  attention  Int?    @db.SmallInt
   notes      String?
   
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -240,7 +240,7 @@ model RelationshipAssessment {
   userId        String
   contactId     String
   lifeAreaId    Int
-  assessedOn    DateTime @default(now())
+  assessedOn    DateTime @default(now()) @db.Date
   trustScore    Float?
   communication Float?
   reliability   Float?
@@ -337,50 +337,48 @@ enum ExportScope {
 }
 
 model Goal {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
   title       String
   description String?
-  importance  String?   // "Why is this important to you" field
-  isSprint    Boolean   @default(false) // Sprint goals checkbox
-  isCompleted Boolean   @default(false)
+  importance  String?  // Why is this goal important to you?
+  isSprint    Boolean  @default(false) // Sprint goals for priority
+  isCompleted Boolean  @default(false)
   dueDate     DateTime?
   tags        String[]
   
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
   @@index([userId])
-  @@index([userId, isSprint])
-  @@index([userId, isCompleted])
+  @@index([isSprint])
+  @@index([isCompleted])
 }
 
 model UserSettings {
-  id                    String  @id @default(cuid())
-  userId                String  @unique
+  id                String   @id @default(cuid())
+  userId            String   @unique
   
   // Feature toggles
-  showJournalEntries    Boolean @default(true)
-  enableGoals           Boolean @default(true)
-  enableContributions   Boolean @default(true)
-  enableAutobiography   Boolean @default(true)
-  enableAssessments     Boolean @default(true)
+  goalsEnabled            Boolean @default(true)
+  contributionsEnabled    Boolean @default(true)
+  autobiographyEnabled    Boolean @default(true)
+  assessmentsEnabled      Boolean @default(true)
+  journalEnabled          Boolean @default(true)
   
   // Privacy settings
-  defaultEntryVisibility Visibility @default(private)
-  allowDataExport       Boolean @default(true)
-  allowAnonymousData    Boolean @default(false)
+  defaultVisibility       String  @default("private")
+  allowDataExport         Boolean @default(true)
+  allowAnonymousAnalytics Boolean @default(false)
   
   // Display preferences
-  theme                 String  @default("dark")
-  timeZone              String  @default("UTC")
+  theme                   String  @default("dark")
+  timezone               String  @default("UTC")
   
-  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  
-  @@index([userId])
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
