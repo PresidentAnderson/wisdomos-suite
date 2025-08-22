@@ -1,9 +1,26 @@
 # Docker Setup for WisdomOS
 
 ## Overview
-This guide covers running WisdomOS using Docker for both development and production environments.
+This guide covers running WisdomOS using Docker for both development and production environments. The Docker setup includes production-optimized multi-stage builds, security best practices, and comprehensive monitoring.
+
+## Recent Improvements (Latest Update)
+- **Enhanced Security**: Non-root user, read-only filesystem, security options
+- **Production Optimization**: Multi-stage builds with Node.js 20, proper signal handling
+- **Better Health Checks**: Improved health check timings and reliability
+- **Environment Variables**: Comprehensive .env support with defaults
+- **Network Isolation**: Dedicated Docker network for service communication
+- **Latest Images**: Updated to PostgreSQL 16 and Redis 7
 
 ## Quick Start
+
+### Prerequisites
+1. **Environment Setup**: Copy `.env.example` to `.env` and update values
+   ```bash
+   cp .env.example .env
+   # Edit .env with your secure passwords and configuration
+   ```
+
+2. **Security Note**: Always change default passwords in production!
 
 ### 1. Development with Docker Compose
 ```bash
@@ -11,7 +28,7 @@ This guide covers running WisdomOS using Docker for both development and product
 docker-compose up -d
 
 # Or start only the database for local development
-docker-compose up -d postgres
+docker-compose up -d postgres redis
 
 # View logs
 docker-compose logs -f app
@@ -33,48 +50,73 @@ npm run dev
 ### 3. Production Build
 ```bash
 # Build and run production containers
-docker-compose -f docker-compose.yml up -d
+docker-compose up -d
 
 # Or build the image manually
-docker build -t wisdomos-web .
-docker run -p 3000:3000 wisdomos-web
+docker build -t wisdomos-web:latest .
+docker run -p 3000:3000 --env-file .env wisdomos-web:latest
+
+# Test the production build
+curl http://localhost:3000/api/health
 ```
 
 ## Service Details
 
 ### PostgreSQL Database
 - **Container**: `wisdomos_db`
-- **Port**: `5432`
+- **Image**: `postgres:16-alpine`
+- **Port**: `5432` (configurable via `POSTGRES_PORT`)
 - **Database**: `wisdomos`
 - **User**: `postgres`
-- **Password**: `postgres`
+- **Password**: Configurable via `POSTGRES_PASSWORD`
 - **Data Volume**: `postgres_data`
+- **Security**: SCRAM-SHA-256 authentication, no-new-privileges
 
 ### Redis (Optional)
 - **Container**: `wisdomos_redis`
-- **Port**: `6379`
+- **Image**: `redis:7-alpine`
+- **Port**: `6379` (configurable via `REDIS_PORT`)
 - **Data Volume**: `redis_data`
 - **Purpose**: Future caching/sessions
+- **Security**: Password protection, persistence enabled
 
 ### WisdomOS Application
 - **Container**: `wisdomos_app`
-- **Port**: `3000`
+- **Image**: Built from `node:20-alpine`
+- **Port**: `3000` (configurable via `APP_PORT`)
 - **Health Check**: `/api/health`
 - **Environment**: Production-ready build
+- **Security**: Non-root user, read-only filesystem, signal handling
 
 ## Environment Variables
 
+All environment variables can be configured using a `.env` file. Copy `.env.example` to `.env` and customize as needed.
+
 ### Required Variables
 ```env
-DATABASE_URL=postgresql://postgres:postgres@postgres:5432/wisdomos?schema=public
-JWT_SECRET=your-secure-secret-here
+# Security (CHANGE THESE IN PRODUCTION!)
+JWT_SECRET=your-very-secure-jwt-secret-key
+POSTGRES_PASSWORD=your_secure_postgres_password
+
+# Application
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+DATABASE_URL=postgresql://postgres:your_secure_postgres_password@postgres:5432/wisdomos?schema=public
 ```
 
 ### Optional Variables
 ```env
-NODE_ENV=production
-REDIS_URL=redis://redis:6379
+# Ports
+APP_PORT=3000
+POSTGRES_PORT=5432
+REDIS_PORT=6379
+
+# Redis (if using)
+REDIS_PASSWORD=your_secure_redis_password
+REDIS_URL=redis://:your_secure_redis_password@redis:6379
+
+# Development
+DEV_PORT=3001
+DEV_APP_URL=http://localhost:3001
 ```
 
 ## Database Setup
@@ -175,13 +217,45 @@ docker-compose logs -f postgres
 
 ## Production Deployment
 
-### Docker Registry Push
+### Docker Hub Deployment
+
+#### 1. Build and Tag for Docker Hub
 ```bash
 # Build production image
-docker build -t your-registry/wisdomos-web:latest .
+docker build -t wisdomos-web:latest .
 
-# Push to registry
-docker push your-registry/wisdomos-web:latest
+# Tag for Docker Hub (replace 'username' with your Docker Hub username)
+docker tag wisdomos-web:latest username/wisdomos-web:latest
+docker tag wisdomos-web:latest username/wisdomos-web:$(date +%Y%m%d)
+
+# Login to Docker Hub
+docker login
+
+# Push to Docker Hub
+docker push username/wisdomos-web:latest
+docker push username/wisdomos-web:$(date +%Y%m%d)
+```
+
+#### 2. Pull and Run from Docker Hub
+```bash
+# Pull the latest image
+docker pull username/wisdomos-web:latest
+
+# Run with environment file
+docker run -d \
+  --name wisdomos-app \
+  --env-file .env \
+  -p 3000:3000 \
+  username/wisdomos-web:latest
+```
+
+### Private Registry Push
+```bash
+# Build production image
+docker build -t your-registry.com/wisdomos-web:latest .
+
+# Push to private registry
+docker push your-registry.com/wisdomos-web:latest
 ```
 
 ### Kubernetes Deployment (Example)
@@ -269,16 +343,31 @@ docker system df
 
 ## Security Considerations
 
-### Production Security
-- **Environment Variables**: Use Docker secrets or external secret management
+### Production Security Features
 - **Non-root User**: Application runs as `nextjs` user (UID 1001)
-- **Network Isolation**: Services communicate via Docker network
+- **Read-only Filesystem**: Application container filesystem is read-only
+- **Security Options**: `no-new-privileges` enabled for all containers
+- **Signal Handling**: Proper signal handling with `dumb-init`
+- **Network Isolation**: Services communicate via dedicated Docker network
 - **Health Monitoring**: Built-in health checks for all services
+- **Latest Base Images**: Using Node.js 20, PostgreSQL 16, Redis 7
+
+### Production Security Checklist
+- [ ] **Change Default Passwords**: Update all passwords in `.env`
+- [ ] **Use Strong JWT Secret**: Generate a cryptographically secure JWT secret
+- [ ] **Enable HTTPS**: Configure SSL/TLS termination (reverse proxy)
+- [ ] **Limit Container Resources**: Set memory and CPU limits
+- [ ] **Regular Updates**: Keep base images and dependencies updated
+- [ ] **Secret Management**: Use Docker secrets or external services (not env files)
+- [ ] **Database Backups**: Implement automated backup strategy
+- [ ] **Log Management**: Configure centralized logging
+- [ ] **Monitoring**: Set up application and infrastructure monitoring
 
 ### Development Security
 - **Database Isolation**: Database not exposed externally by default
 - **Volume Permissions**: Proper file permissions on mounted volumes
 - **Secret Management**: Development secrets separate from production
+- **Network Segmentation**: Services isolated in Docker network
 
 ## Backup and Recovery
 

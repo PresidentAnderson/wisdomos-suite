@@ -1,51 +1,38 @@
 #!/bin/bash
-
-# WisdomOS Database Setup Script
-# Run this after setting up Supabase and configuring Vercel environment variables
-
 set -e
 
-echo "🗃️ Setting up WisdomOS database..."
+echo "🚀 WisdomOS Database Setup Script"
+echo "=================================="
 
-# Check if DATABASE_URL is set
-if [ -z "$DATABASE_URL" ]; then
-    echo "❌ DATABASE_URL environment variable not set"
-    echo "Please set your Supabase connection string:"
-    echo "export DATABASE_URL='postgresql://postgres:[password]@[host]:5432/postgres?schema=public'"
+# Check if DATABASE_URL is set and not placeholder
+if [[ -z "$DATABASE_URL" ]] || [[ "$DATABASE_URL" == *"YOUR_SUPABASE_DATABASE_URL"* ]]; then
+    echo "❌ Error: Please update DATABASE_URL in .env.local with your actual Supabase connection string"
+    echo "   Format: postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
     exit 1
 fi
 
-echo "✅ DATABASE_URL found"
-
-# 1. Generate Prisma client
-echo "📦 Generating Prisma client..."
-npx prisma generate
-
-# 2. Push schema to database (creates tables)
-echo "🏗️ Creating database schema..."
-npx prisma db push --accept-data-loss
-
-# 3. Run additional privacy system migration
-echo "🔐 Setting up privacy system..."
-if command -v psql &> /dev/null; then
-    psql "$DATABASE_URL" -f prisma/migrations/privacy_system.sql
-    echo "✅ Privacy system migration completed"
-else
-    echo "⚠️ psql not found - privacy migration skipped"
-    echo "You may need to run the SQL migration manually if you want privacy features"
-fi
-
-# 4. Seed database with demo data
-echo "🌱 Seeding database..."
-npx prisma db seed
+echo "📊 Database URL configured: ${DATABASE_URL%%@*}@***"
 
 echo ""
-echo "🎉 Database setup complete!"
+echo "🔄 Step 1: Generating Prisma client..."
+npm run prisma:generate
+
 echo ""
-echo "📧 Demo login: demo@wisdomos.app"
-echo "🌐 App URL: https://wisdomos-bxyh1r2u1-axaiinovation.vercel.app"
+echo "🏗️  Step 2: Pushing database schema to Supabase..."
+npm run prisma:push
+
 echo ""
-echo "Next steps:"
-echo "1. Set environment variables in Vercel"
-echo "2. Redeploy: vercel --prod"
-echo "3. Test the application"
+echo "🌱 Step 3: Seeding database with demo data..."
+npm run prisma:seed
+
+echo ""
+echo "✅ Database setup complete!"
+echo ""
+echo "🔍 Next steps:"
+echo "   1. Run 'npm run prisma:studio' to view your data"
+echo "   2. Test the application with 'npm run dev'"
+echo "   3. Login with: demo@wisdomos.app"
+echo ""
+echo "📝 Don't forget to:"
+echo "   - Add these environment variables to Vercel"
+echo "   - Save your Supabase credentials securely"

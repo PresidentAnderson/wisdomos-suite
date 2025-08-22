@@ -1,0 +1,132 @@
+{
+  "timestamp": "2025-08-21T23:50:02.229Z",
+  "summary": {
+    "total": 17,
+    "passed": 15,
+    "failed": 0,
+    "warnings": 2,
+    "successRate": "88.2%"
+  },
+  "results": [
+    {
+      "test": "Health Check",
+      "status": "PASS",
+      "message": "API is healthy",
+      "details": null,
+      "timestamp": "2025-08-21T23:49:55.552Z"
+    },
+    {
+      "test": "Authentication - Login",
+      "status": "PASS",
+      "message": "Login successful",
+      "details": null,
+      "timestamp": "2025-08-21T23:49:55.849Z"
+    },
+    {
+      "test": "Authentication - Me",
+      "status": "PASS",
+      "message": "User info retrieved",
+      "details": null,
+      "timestamp": "2025-08-21T23:49:55.908Z"
+    },
+    {
+      "test": "Goals - CREATE",
+      "status": "PASS",
+      "message": "Goal created successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:49:56.072Z"
+    },
+    {
+      "test": "Goals - READ",
+      "status": "PASS",
+      "message": "Retrieved 1 goals",
+      "details": null,
+      "timestamp": "2025-08-21T23:49:56.080Z"
+    },
+    {
+      "test": "Goals - UPDATE",
+      "status": "PASS",
+      "message": "Goal updated successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:00.096Z"
+    },
+    {
+      "test": "Goals - DELETE",
+      "status": "PASS",
+      "message": "Goal deleted successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:00.111Z"
+    },
+    {
+      "test": "Contributions - CREATE",
+      "status": "PASS",
+      "message": "Contribution created successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:00.658Z"
+    },
+    {
+      "test": "Contributions - READ",
+      "status": "PASS",
+      "message": "Retrieved 1 contributions",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:00.665Z"
+    },
+    {
+      "test": "Contributions - UPDATE",
+      "status": "WARN",
+      "message": "UPDATE not implemented in API",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:00.665Z"
+    },
+    {
+      "test": "Contributions - DELETE",
+      "status": "PASS",
+      "message": "Contribution deleted successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:01.219Z"
+    },
+    {
+      "test": "Autobiography - CREATE",
+      "status": "PASS",
+      "message": "Autobiography entry created successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:01.556Z"
+    },
+    {
+      "test": "Autobiography - READ",
+      "status": "PASS",
+      "message": "Retrieved 1 autobiography entries",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:01.562Z"
+    },
+    {
+      "test": "Autobiography - UPDATE",
+      "status": "WARN",
+      "message": "UPDATE not implemented in API",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:01.562Z"
+    },
+    {
+      "test": "Autobiography - DELETE",
+      "status": "PASS",
+      "message": "Autobiography entry deleted successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:01.988Z"
+    },
+    {
+      "test": "Settings - GET",
+      "status": "PASS",
+      "message": "Settings retrieved successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:02.218Z"
+    },
+    {
+      "test": "Settings - UPDATE",
+      "status": "PASS",
+      "message": "Settings updated successfully",
+      "details": null,
+      "timestamp": "2025-08-21T23:50:02.229Z"
+    }
+  ],
+  "recommendations": []
+}
