@@ -25,7 +25,13 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search')
     const tag = searchParams.get('tag')
     
-    const where: Record<string, any> = { userId: user.sub }
+    interface WhereClause {
+      userId: string
+      OR?: Array<{ [key: string]: { contains: string; mode: string } }>
+      tags?: { has: string }
+    }
+    
+    const where: WhereClause = { userId: user.sub }
     
     if (search) {
       where.OR = [
