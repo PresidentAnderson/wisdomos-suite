@@ -82,16 +82,16 @@ export async function PUT(req: NextRequest) {
       create: {
         userId: user.sub,
         // Set defaults for required fields if not provided
-        showJournalEntries: typeof updateData.showJournalEntries === 'boolean' ? updateData.showJournalEntries : true,
-        enableGoals: typeof updateData.enableGoals === 'boolean' ? updateData.enableGoals : true,
-        enableContributions: typeof updateData.enableContributions === 'boolean' ? updateData.enableContributions : true,
-        enableAutobiography: typeof updateData.enableAutobiography === 'boolean' ? updateData.enableAutobiography : true,
-        enableAssessments: typeof updateData.enableAssessments === 'boolean' ? updateData.enableAssessments : true,
-        defaultEntryVisibility: (typeof updateData.defaultEntryVisibility === 'string' ? updateData.defaultEntryVisibility : 'private') as 'private' | 'cohort' | 'coach' | 'public' | 'anonymous',
+        journalEnabled: typeof updateData.journalEnabled === 'boolean' ? updateData.journalEnabled : true,
+        goalsEnabled: typeof updateData.goalsEnabled === 'boolean' ? updateData.goalsEnabled : true,
+        contributionsEnabled: typeof updateData.contributionsEnabled === 'boolean' ? updateData.contributionsEnabled : true,
+        autobiographyEnabled: typeof updateData.autobiographyEnabled === 'boolean' ? updateData.autobiographyEnabled : true,
+        assessmentsEnabled: typeof updateData.assessmentsEnabled === 'boolean' ? updateData.assessmentsEnabled : true,
+        defaultVisibility: typeof updateData.defaultVisibility === 'string' ? updateData.defaultVisibility : 'private',
         allowDataExport: typeof updateData.allowDataExport === 'boolean' ? updateData.allowDataExport : true,
-        allowAnonymousData: typeof updateData.allowAnonymousData === 'boolean' ? updateData.allowAnonymousData : false,
+        allowAnonymousAnalytics: typeof updateData.allowAnonymousAnalytics === 'boolean' ? updateData.allowAnonymousAnalytics : false,
         theme: typeof updateData.theme === 'string' ? updateData.theme : 'dark',
-        timeZone: typeof updateData.timeZone === 'string' ? updateData.timeZone : 'UTC'
+        timezone: typeof updateData.timezone === 'string' ? updateData.timezone : 'UTC'
       }
     })
     
