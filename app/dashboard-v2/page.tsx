@@ -59,7 +59,7 @@ export default function DashboardV2Page() {
       })
       if (goalsResponse.ok) {
         const goals = await goalsResponse.json()
-        stats.goals = goals.filter((g: any) => !g.isCompleted).length
+        stats.goals = goals.filter((g: { isCompleted: boolean }) => !g.isCompleted).length
       }
 
       // Fetch contributions count
@@ -309,7 +309,7 @@ export default function DashboardV2Page() {
         <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-lg rounded-xl p-8 border border-indigo-500/30 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Daily Wisdom</h2>
           <p className="text-xl text-gray-200 italic mb-4">
-            "The unexamined life is not worth living."
+            &ldquo;The unexamined life is not worth living.&rdquo;
           </p>
           <p className="text-lg text-gray-300">— Socrates</p>
           <div className="mt-6">

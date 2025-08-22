@@ -11,7 +11,7 @@ interface Contact {
   phoneE164?: string
   notes?: string
   tags: string[]
-  lifeAreaLinks?: any[]
+  lifeAreaLinks?: { lifeArea: { name: string } }[]
   lastInteraction?: string
 }
 
@@ -34,7 +34,7 @@ export default function ContactsPage() {
 
   useEffect(() => {
     fetchContacts()
-  }, [searchTerm, selectedTag])
+  }, [searchTerm, selectedTag]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchContacts = async () => {
     try {

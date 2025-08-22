@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search')
     const tag = searchParams.get('tag')
     
-    const where: any = { userId: user.sub }
+    const where: Record<string, any> = { userId: user.sub }
     
     if (search) {
       where.OR = [
