@@ -36,9 +36,9 @@ export async function GET(req: NextRequest) {
       journalEntries,
       goals,
       contacts,
-      contributions,
+      contributions
       // autobiography - not used in current calculations but fetched for future use
-      autobiography
+      // autobiography
     ] = await Promise.all([
       prisma.journalEntry.findMany({
         where: { 

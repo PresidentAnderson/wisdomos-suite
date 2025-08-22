@@ -14,7 +14,14 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type') || 'all'
     
     // Fetch user data based on type
-    const data: Record<string, any> = {}
+    interface ExportData {
+      journalEntries?: any[]
+      contacts?: any[]
+      goals?: any[]
+      contributions?: any[]
+      autobiography?: any[]
+    }
+    const data: ExportData = {}
     
     if (type === 'all' || type === 'journal') {
       data.journalEntries = await prisma.journalEntry.findMany({
