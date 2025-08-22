@@ -45,7 +45,7 @@ export default function SignupPage() {
       } else {
         setError(data.error || 'Signup failed')
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)

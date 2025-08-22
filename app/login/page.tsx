@@ -31,7 +31,7 @@ export default function LoginPage() {
       } else {
         setError(data.error || 'Login failed')
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)
@@ -55,7 +55,7 @@ export default function LoginPage() {
         localStorage.setItem('token', data.token)
         router.push('/dashboard')
       }
-    } catch (err) {
+    } catch {
       setError('Demo login failed')
     } finally {
       setLoading(false)
@@ -137,7 +137,7 @@ export default function LoginPage() {
         
         <div className="mt-6 text-center">
           <p className="text-gray-300">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-cyan-400 hover:text-cyan-300">
               Sign Up
             </Link>

@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type') || 'all'
     
     // Fetch user data based on type
-    let data: any = {}
+    const data: Record<string, any> = {}
     
     if (type === 'all' || type === 'journal') {
       data.journalEntries = await prisma.journalEntry.findMany({
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
       if (data.journalEntries) {
         csv += 'Journal Entries\n'
         csv += 'Date,Title,Type,Mood,Body,Tags\n'
-        data.journalEntries.forEach((entry: any) => {
+        data.journalEntries.forEach((entry: { createdAt: Date; title?: string; type: string; mood?: string; body: string; tags: string[] }) => {
           csv += `"${entry.createdAt}","${entry.title || ''}","${entry.type}","${entry.mood || ''}","${entry.body.replace(/"/g, '""')}","${entry.tags.join(', ')}"\n`
         })
         csv += '\n'
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
       if (data.contacts) {
         csv += 'Contacts\n'
         csv += 'First Name,Last Name,Email,Phone,Notes,Tags\n'
-        data.contacts.forEach((contact: any) => {
+        data.contacts.forEach((contact: { firstName: string; lastName: string; email?: string; phoneE164?: string; notes?: string; tags: string[] }) => {
           csv += `"${contact.firstName}","${contact.lastName}","${contact.email || ''}","${contact.phoneE164 || ''}","${(contact.notes || '').replace(/"/g, '""')}","${contact.tags.join(', ')}"\n`
         })
         csv += '\n'
@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
       if (data.goals) {
         csv += 'Goals\n'
         csv += 'Title,Description,Sprint,Completed,Due Date,Tags\n'
-        data.goals.forEach((goal: any) => {
+        data.goals.forEach((goal: { title: string; description?: string; isSprint: boolean; isCompleted: boolean; dueDate?: Date; tags: string[] }) => {
           csv += `"${goal.title}","${(goal.description || '').replace(/"/g, '""')}","${goal.isSprint}","${goal.isCompleted}","${goal.dueDate || ''}","${goal.tags.join(', ')}"\n`
         })
         csv += '\n'

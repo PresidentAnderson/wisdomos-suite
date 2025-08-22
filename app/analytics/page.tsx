@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 interface Analytics {
   journalStats: {
@@ -40,7 +39,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     fetchAnalytics()
-  }, [timeRange])
+  }, [timeRange]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAnalytics = async () => {
     try {

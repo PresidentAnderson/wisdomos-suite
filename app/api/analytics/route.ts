@@ -37,6 +37,7 @@ export async function GET(req: NextRequest) {
       goals,
       contacts,
       contributions,
+      // autobiography - not used in current calculations but fetched for future use
       autobiography
     ] = await Promise.all([
       prisma.journalEntry.findMany({
@@ -72,7 +73,7 @@ export async function GET(req: NextRequest) {
         e.createdAt >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
       ).length,
       byMood: Object.entries(
-        journalEntries.reduce((acc: any, entry) => {
+        journalEntries.reduce((acc: Record<string, number>, entry) => {
           if (entry.mood) {
             acc[entry.mood] = (acc[entry.mood] || 0) + 1
           }
@@ -80,7 +81,7 @@ export async function GET(req: NextRequest) {
         }, {})
       ).map(([mood, count]) => ({ mood, count: count as number })),
       byType: Object.entries(
-        journalEntries.reduce((acc: any, entry) => {
+        journalEntries.reduce((acc: Record<string, number>, entry) => {
           acc[entry.type] = (acc[entry.type] || 0) + 1
           return acc
         }, {})
@@ -137,13 +138,13 @@ export async function GET(req: NextRequest) {
     }
     
     // Calculate most active day
-    const dayActivity = allEntries.reduce((acc: any, date) => {
+    const dayActivity = allEntries.reduce((acc: Record<string, number>, date) => {
       const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' })
       acc[day] = (acc[day] || 0) + 1
       return acc
     }, {})
     
-    const mostActiveDay = Object.entries(dayActivity).sort((a: any, b: any) => b[1] - a[1])[0]?.[0] || 'N/A'
+    const mostActiveDay = Object.entries(dayActivity).sort((a, b) => (b[1] as number) - (a[1] as number))[0]?.[0] || 'N/A'
     
     const activityStats = {
       streakDays,
