@@ -215,8 +215,8 @@ if (typeof window !== 'undefined') {
     captureError(event.error || event.message, {
       type: 'unhandled_error',
       filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno
+      lineno: event.lineno?.toString(),
+      colno: event.colno?.toString()
     }, 'high');
   });
 
