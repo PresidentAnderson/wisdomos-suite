@@ -10,7 +10,7 @@ interface ErrorContext {
   userAgent?: string;
   ip?: string;
   timestamp?: string;
-  [key: string]: any;
+  [key: string]: string | undefined;
 }
 
 interface ErrorReport {
@@ -89,7 +89,7 @@ class ErrorTracker {
   captureAPIError(
     error: Error | string,
     request: Request,
-    additionalContext: Record<string, any> = {}
+    additionalContext: Record<string, string> = {}
   ): string {
     const context: ErrorContext = {
       endpoint: new URL(request.url).pathname,
@@ -187,7 +187,7 @@ export const captureError = (
 export const captureAPIError = (
   error: Error | string,
   request: Request,
-  context?: Record<string, any>
+  context?: Record<string, string>
 ) => errorTracker.captureAPIError(error, request, context);
 
 export const captureAuthError = (
