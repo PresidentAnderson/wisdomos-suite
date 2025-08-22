@@ -62,15 +62,10 @@ export async function PUT(
     const body = await req.json()
     const data = UpdateGoalSchema.parse(body)
     
-    // Remove undefined values and handle tags
+    // Remove undefined values
     const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
     )
-    
-    // Convert tags array to JSON string if present
-    if ('tags' in updateData) {
-      updateData.tags = JSON.stringify(updateData.tags)
-    }
     
     const goal = await prisma.goal.updateMany({
       where: { 

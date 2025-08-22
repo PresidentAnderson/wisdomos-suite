@@ -67,8 +67,7 @@ export async function POST(req: NextRequest) {
     
     const goal = await prisma.goal.create({
       data: { 
-        ...data, 
-        tags: JSON.stringify(data.tags || []),
+        ...data,
         userId: user.sub 
       }
     })
