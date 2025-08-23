@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import QuickMoodTracker from '@/components/QuickMoodTracker'
+import MoodHistory from '@/components/MoodHistory'
 
 export default function DashboardPage() {
   const [user, setUser] = useState<{ name?: string; sub?: string } | null>(null)
@@ -121,6 +123,18 @@ export default function DashboardPage() {
           <p className="text-gray-300 text-lg">
             Your personal growth operating system
           </p>
+        </div>
+
+        {/* Mood Tracking Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <QuickMoodTracker 
+            onMoodSaved={(mood) => {
+              console.log('Mood saved:', mood)
+              // Optionally refresh stats or show a notification
+              fetchStats()
+            }}
+          />
+          <MoodHistory />
         </div>
 
         {/* Stats Grid */}

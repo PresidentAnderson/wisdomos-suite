@@ -9,7 +9,8 @@ const CreateJournalSchema = z.object({
   type: z.enum(['journal', 'voice', 'reflection']).default('journal'),
   mood: z.string().optional(),
   tags: z.array(z.string()).optional().default([]),
-  audioUrl: z.string().optional()
+  audioUrl: z.string().optional(),
+  isQuickMood: z.boolean().optional().default(false)
 })
 
 export async function GET(req: NextRequest) {

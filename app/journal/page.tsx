@@ -7,6 +7,7 @@ import TagInput from '@/components/TagInput'
 import JournalTemplates from '@/components/JournalTemplates'
 import JournalPrompts from '@/components/JournalPrompts'
 import JournalStats from '@/components/JournalStats'
+import QuickMoodTracker from '@/components/QuickMoodTracker'
 import type { Template } from '@/components/JournalTemplates'
 
 interface JournalEntry {
@@ -267,6 +268,16 @@ export default function JournalPage() {
             <JournalTemplates onSelectTemplate={handleSelectTemplate} />
           </div>
         )}
+
+        {/* Quick Mood Check-in */}
+        <div className="mb-8">
+          <QuickMoodTracker 
+            onMoodSaved={() => {
+              // Refresh entries after saving mood
+              fetchEntries()
+            }}
+          />
+        </div>
 
         {/* Daily Prompt Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
