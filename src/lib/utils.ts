@@ -105,7 +105,7 @@ export function formatFileSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -117,7 +117,7 @@ export function debounce<T extends (...args: any[]) => any>(
   }
 }
 
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => void>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -143,7 +143,7 @@ export function generateAvatar(name: string): string {
   return `<div class="w-10 h-10 rounded-full ${colors[colorIndex]} flex items-center justify-center text-white font-semibold">${initials}</div>`
 }
 
-export function downloadAsJSON(data: any, filename: string): void {
+export function downloadAsJSON<T>(data: T, filename: string): void {
   const jsonStr = JSON.stringify(data, null, 2)
   const blob = new Blob([jsonStr], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -157,7 +157,7 @@ export function downloadAsJSON(data: any, filename: string): void {
   URL.revokeObjectURL(url)
 }
 
-export function downloadAsCSV(data: any[], filename: string): void {
+export function downloadAsCSV<T extends Record<string, unknown>>(data: T[], filename: string): void {
   if (data.length === 0) return
   
   const headers = Object.keys(data[0])

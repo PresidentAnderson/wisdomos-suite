@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from '@/contexts/AuthContext'
 // Toaster temporarily disabled
 import Script from 'next/script'
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/700.css";
 
 export const metadata: Metadata = {
   title: "WisdomOS Community Hub",
@@ -96,14 +92,10 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         
         {/* Preconnect to external domains */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
       </head>
-      <body
-        className={`${inter.variable} antialiased font-sans`}
-      >
+      <body className="antialiased font-sans">
         {/* Google Tag Manager (noscript) */}
         {process.env.NEXT_PUBLIC_GTM_ID && (
           <noscript>

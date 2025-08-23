@@ -35,13 +35,17 @@ function getSupabaseClient() {
         subscribe: () => ({}),
         unsubscribe: () => Promise.resolve(),
       }),
-    } as any
+    } as unknown as ReturnType<typeof createClient<Database>>
   }
 
   if (!supabaseInstance) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholderproject.supabase.co'
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5OTg4OTM4MTZ9.rLZz5IH-Q-sKnKS9iuJ7w-Mm2FBdN1HhFe8Q0RZwNUs'
-    
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables')
+    }
+
     supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: true,
@@ -67,9 +71,13 @@ export const getSupabaseAdmin = () => {
     throw new Error('Admin client should only be used on server side')
   }
   
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholderproject.supabase.co'
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key'
-  
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
   return createClient<Database>(
     supabaseUrl,
     serviceRoleKey,
@@ -109,7 +117,7 @@ export const signInWithEmail = async (email: string, password: string) => {
   return { data, error }
 }
 
-export const signUpWithEmail = async (email: string, password: string, metadata: any = {}) => {
+export const signUpWithEmail = async (email: string, password: string, metadata: Record<string, unknown> = {}) => {
   const { data, error } = await localSignUpWithEmail(email, password, metadata)
   return { data, error }
 }
