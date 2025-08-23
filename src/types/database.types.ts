@@ -73,7 +73,7 @@ export interface Database {
           category: string | null
           tags: string[]
           is_public: boolean
-          metadata: Record<string, any>
+          metadata: Record<string, unknown>
           created_at: string
           updated_at: string
           version: number
@@ -88,7 +88,7 @@ export interface Database {
           category?: string | null
           tags?: string[]
           is_public?: boolean
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           updated_at?: string
           version?: number
@@ -103,7 +103,7 @@ export interface Database {
           category?: string | null
           tags?: string[]
           is_public?: boolean
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           updated_at?: string
           version?: number
@@ -117,7 +117,7 @@ export interface Database {
           type: 'document_created' | 'document_updated' | 'tool_used' | 'login' | 'logout' | 'profile_updated'
           title: string
           description: string | null
-          metadata: Record<string, any>
+          metadata: Record<string, unknown>
           created_at: string
           is_public: boolean
         }
@@ -127,7 +127,7 @@ export interface Database {
           type: 'document_created' | 'document_updated' | 'tool_used' | 'login' | 'logout' | 'profile_updated'
           title: string
           description?: string | null
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           is_public?: boolean
         }
@@ -137,7 +137,7 @@ export interface Database {
           type?: 'document_created' | 'document_updated' | 'tool_used' | 'login' | 'logout' | 'profile_updated'
           title?: string
           description?: string | null
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           is_public?: boolean
         }
@@ -151,7 +151,7 @@ export interface Database {
           type: 'info' | 'success' | 'warning' | 'error'
           is_read: boolean
           action_url: string | null
-          metadata: Record<string, any>
+          metadata: Record<string, unknown>
           created_at: string
           expires_at: string | null
         }
@@ -163,7 +163,7 @@ export interface Database {
           type?: 'info' | 'success' | 'warning' | 'error'
           is_read?: boolean
           action_url?: string | null
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           expires_at?: string | null
         }
@@ -175,7 +175,7 @@ export interface Database {
           type?: 'info' | 'success' | 'warning' | 'error'
           is_read?: boolean
           action_url?: string | null
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           expires_at?: string | null
         }
@@ -185,7 +185,7 @@ export interface Database {
           id: string
           user_id: string | null
           event_name: string
-          event_data: Record<string, any>
+          event_data: Record<string, unknown>
           page_url: string
           user_agent: string | null
           ip_address: string | null
@@ -196,7 +196,7 @@ export interface Database {
           id?: string
           user_id?: string | null
           event_name: string
-          event_data?: Record<string, any>
+          event_data?: Record<string, unknown>
           page_url: string
           user_agent?: string | null
           ip_address?: string | null
@@ -207,7 +207,7 @@ export interface Database {
           id?: string
           user_id?: string | null
           event_name?: string
-          event_data?: Record<string, any>
+          event_data?: Record<string, unknown>
           page_url?: string
           user_agent?: string | null
           ip_address?: string | null
@@ -227,7 +227,7 @@ export interface Database {
           duration_minutes: number
           is_published: boolean
           tags: string[]
-          metadata: Record<string, any>
+          metadata: Record<string, unknown>
           created_at: string
           updated_at: string
         }
@@ -242,7 +242,7 @@ export interface Database {
           duration_minutes: number
           is_published?: boolean
           tags?: string[]
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           updated_at?: string
         }
@@ -257,7 +257,7 @@ export interface Database {
           duration_minutes?: number
           is_published?: boolean
           tags?: string[]
-          metadata?: Record<string, any>
+          metadata?: Record<string, unknown>
           created_at?: string
           updated_at?: string
         }

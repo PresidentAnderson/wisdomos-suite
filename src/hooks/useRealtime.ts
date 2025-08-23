@@ -230,9 +230,14 @@ export function useRealtimeNotifications() {
   return { isConnected: channel?.state === 'joined' }
 }
 
+export interface PresenceUser {
+  userId: string
+  [key: string]: unknown
+}
+
 export function useRealtimePresence(channelName: string = 'general') {
   const { user, profile } = useAuth()
-  const [onlineUsers, setOnlineUsers] = useState<any[]>([])
+  const [onlineUsers, setOnlineUsers] = useState<PresenceUser[]>([])
   const [channel, setChannel] = useState<RealtimeChannel | null>(null)
 
   useEffect(() => {
@@ -289,12 +294,17 @@ export function useRealtimePresence(channelName: string = 'general') {
 }
 
 // Hook for collaborative document editing
+export interface Collaborator {
+  userId: string
+  [key: string]: unknown
+}
+
 export function useRealtimeCollaboration(documentId: string) {
   const { user } = useAuth()
-  const [collaborators, setCollaborators] = useState<any[]>([])
+  const [collaborators, setCollaborators] = useState<Collaborator[]>([])
   const [channel, setChannel] = useState<RealtimeChannel | null>(null)
 
-  const broadcastChange = useCallback((change: any) => {
+  const broadcastChange = useCallback((change: Record<string, unknown>) => {
     if (channel) {
       channel.send({
         type: 'broadcast',
@@ -309,7 +319,7 @@ export function useRealtimeCollaboration(documentId: string) {
     }
   }, [channel, documentId, user?.id])
 
-  const broadcastCursor = useCallback((cursor: any) => {
+  const broadcastCursor = useCallback((cursor: Record<string, unknown>) => {
     if (channel) {
       channel.send({
         type: 'broadcast',

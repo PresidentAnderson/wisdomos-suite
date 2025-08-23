@@ -26,8 +26,9 @@ export function usePWA(): PWAInstallState {
   useEffect(() => {
     // Check if app is running in standalone mode
     const checkStandalone = () => {
+      const nav = window.navigator as Navigator & { standalone?: boolean }
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
-        (window.navigator as any).standalone === true ||
+        nav.standalone === true ||
         document.referrer.includes('android-app://')
       
       setIsStandalone(isStandaloneMode)
@@ -92,9 +93,10 @@ export function usePWA(): PWAInstallState {
 
     // Handle iOS install prompt
     const checkIOSInstallPrompt = () => {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-      const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
-      const isInStandaloneMode = (window.navigator as any).standalone === true
+      const nav = window.navigator as Navigator & { standalone?: boolean }
+      const isIOS = /iPad|iPhone|iPod/.test(nav.userAgent)
+      const isSafari = /Safari/.test(nav.userAgent) && !/Chrome/.test(nav.userAgent)
+      const isInStandaloneMode = nav.standalone === true
 
       if (isIOS && isSafari && !isInStandaloneMode) {
         // Show iOS install instructions

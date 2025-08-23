@@ -2,17 +2,11 @@ import { supabase } from './supabase'
 
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void
-    fbq: (...args: any[]) => void
-    clarity: (...args: any[]) => void
-    dataLayer: any[]
+    gtag: (...args: unknown[]) => void
+    fbq: (...args: unknown[]) => void
+    clarity: (...args: unknown[]) => void
+    dataLayer: unknown[]
   }
-}
-
-interface AnalyticsEvent {
-  name: string
-  parameters?: Record<string, any>
-  user_id?: string
 }
 
 class Analytics {
@@ -66,8 +60,8 @@ class Analytics {
 
     // Initialize gtag
     window.dataLayer = window.dataLayer || []
-    window.gtag = function gtag() {
-      window.dataLayer.push(arguments)
+    window.gtag = (...args: unknown[]) => {
+      window.dataLayer.push(args)
     }
 
     window.gtag('js', new Date())
@@ -82,23 +76,27 @@ class Analytics {
     const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID!
     
     // Load Facebook Pixel
-    !(function (f: any, b, e, v, n, t, s) {
-      if (f.fbq) return
-      n = f.fbq = function () {
-        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-      }
-      if (!f._fbq) f._fbq = n
-      n.push = n
-      n.loaded = !0
-      n.version = '2.0'
-      n.queue = []
-      t = b.createElement(e)
-      t.async = !0
-      t.src = v
-      s = b.getElementsByTagName(e)[0]
-      s.parentNode.insertBefore(t, s)
-    })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js')
+    const script = document.createElement('script')
+    script.async = true
+    script.src = 'https://connect.facebook.net/en_US/fbevents.js'
+    document.head.appendChild(script)
 
+    type FBQ = ((...args: unknown[]) => void) & {
+      callMethod?: (...args: unknown[]) => void
+      q?: unknown[]
+      loaded?: boolean
+      version?: string
+    }
+
+    const fbq: FBQ = function (...args: unknown[]) {
+      fbq.callMethod ? fbq.callMethod(...args) : (fbq.q = fbq.q || []).push(args)
+    }
+
+    fbq.loaded = true
+    fbq.version = '2.0'
+    fbq.q = []
+
+    window.fbq = fbq
     window.fbq('init', FB_PIXEL_ID)
     window.fbq('track', 'PageView')
   }
@@ -107,20 +105,20 @@ class Analytics {
     const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID!
     
     // Load Microsoft Clarity
-    !(function (c: any, l: any, a: any, r: any, i: any, t: any, y: any) {
-      c[a] = c[a] || function () {
-        (c[a].q = c[a].q || []).push(arguments)
-      }
-      t = l.createElement(r)
-      t.async = 1
-      t.src = 'https://www.clarity.ms/tag/' + i
-      y = l.getElementsByTagName(r)[0]
-      y.parentNode.insertBefore(t, y)
-    })(window, document, 'clarity', 'script', CLARITY_ID)
+    type Clarity = ((...args: unknown[]) => void) & { q?: unknown[] }
+    const clarity: Clarity = function (...args: unknown[]) {
+      (clarity.q = clarity.q || []).push(args)
+    }
+    window.clarity = clarity
+
+    const script = document.createElement('script')
+    script.async = true
+    script.src = 'https://www.clarity.ms/tag/' + CLARITY_ID
+    document.head.appendChild(script)
   }
 
   // Track events across all platforms
-  async track(eventName: string, parameters: Record<string, any> = {}, userId?: string) {
+  async track(eventName: string, parameters: Record<string, unknown> = {}, userId?: string) {
     if (!this.isInitialized) {
       await this.initialize()
     }
@@ -169,7 +167,7 @@ class Analytics {
   private async storeEvent(event: {
     user_id: string | null
     event_name: string
-    event_data: Record<string, any>
+    event_data: Record<string, unknown>
     page_url: string
     user_agent: string
     session_id: string
@@ -199,7 +197,7 @@ class Analytics {
   }
 
   // User identification
-  identify(userId: string, properties: Record<string, any> = {}) {
+  identify(userId: string, properties: Record<string, unknown> = {}) {
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('config', process.env.NEXT_PUBLIC_GA_ID!, {
         user_id: userId,
@@ -214,7 +212,7 @@ class Analytics {
   }
 
   // E-commerce tracking
-  purchase(transactionId: string, value: number, currency: string, items: any[] = []) {
+  purchase(transactionId: string, value: number, currency: string, items: Record<string, unknown>[] = []) {
     const eventData = {
       transaction_id: transactionId,
       value,
@@ -249,12 +247,12 @@ class Analytics {
   }
 
   // User engagement
-  engagement(eventName: string, details: Record<string, any> = {}) {
+  engagement(eventName: string, details: Record<string, unknown> = {}) {
     this.track(`engagement_${eventName}`, details)
   }
 
   // Error tracking
-  error(error: Error, context: Record<string, any> = {}) {
+  error(error: Error, context: Record<string, unknown> = {}) {
     this.track('error_occurred', {
       error_message: error.message,
       error_stack: error.stack,
@@ -277,25 +275,25 @@ class Analytics {
 export const analytics = new Analytics()
 
 // Convenience functions
-export const trackEvent = (name: string, parameters?: Record<string, any>, userId?: string) => 
+export const trackEvent = (name: string, parameters?: Record<string, unknown>, userId?: string) =>
   analytics.track(name, parameters, userId)
 
 export const trackPageView = (url?: string, title?: string) => 
   analytics.pageView(url, title)
 
-export const identifyUser = (userId: string, properties?: Record<string, any>) => 
+export const identifyUser = (userId: string, properties?: Record<string, unknown>) =>
   analytics.identify(userId, properties)
 
-export const trackPurchase = (transactionId: string, value: number, currency: string, items?: any[]) => 
+export const trackPurchase = (transactionId: string, value: number, currency: string, items?: Record<string, unknown>[]) =>
   analytics.purchase(transactionId, value, currency, items)
 
 export const trackLead = (value?: number, currency?: string) => 
   analytics.generateLead(value, currency)
 
-export const trackEngagement = (eventName: string, details?: Record<string, any>) => 
+export const trackEngagement = (eventName: string, details?: Record<string, unknown>) =>
   analytics.engagement(eventName, details)
 
-export const trackError = (error: Error, context?: Record<string, any>) => 
+export const trackError = (error: Error, context?: Record<string, unknown>) =>
   analytics.error(error, context)
 
 export const trackPerformance = (metric: string, value: number, unit?: string) => 
