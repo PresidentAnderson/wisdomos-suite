@@ -200,6 +200,8 @@ export default function DashboardV2Page() {
               <Link href="/journal" className="text-white/70 hover:text-white">Journal</Link>
               <Link href="/contacts" className="text-white/70 hover:text-white">Contacts</Link>
               <Link href="/fulfillment" className="text-white/70 hover:text-white">Life Areas</Link>
+              <Link href="/habits" className="text-white/70 hover:text-white">Habits</Link>
+              <Link href="/insights" className="text-white/70 hover:text-white">Insights</Link>
               <Link href="/analytics" className="text-white/70 hover:text-white">Analytics</Link>
               <Link href="/settings" className="text-white/70 hover:text-white">Settings</Link>
               <button

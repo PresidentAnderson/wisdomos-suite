@@ -31,16 +31,20 @@ export async function POST(req: NextRequest) {
         }
       })
       
-      // In production, send email with reset link
-      // For now, log the reset link
-      console.log(`Reset link: ${process.env.NEXT_PUBLIC_URL}/reset-password?token=${resetToken}`)
+      // Send email with reset link
+      const resetLink = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
       
-      // TODO: Send email using service like SendGrid, Resend, etc.
-      // await sendEmail({
-      //   to: email,
-      //   subject: 'Password Reset - WisdomOS',
-      //   html: `Click here to reset your password: ${resetLink}`
-      // })
+      if (process.env.RESEND_API_KEY) {
+        const { sendEmail, emailTemplates } = await import('@/lib/email')
+        await sendEmail({
+          to: email,
+          subject: 'Password Reset - WisdomOS',
+          html: emailTemplates.passwordReset(user.name || '', resetLink)
+        })
+      } else {
+        // Fallback for development
+        console.log(`Reset link: ${resetLink}`)
+      }
     }
     
     // Always return success to prevent email enumeration

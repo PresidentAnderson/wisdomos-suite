@@ -1,170 +1,242 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { getUser } from '@/lib/auth'
+import { NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
+import jwt from 'jsonwebtoken'
+import { subDays, format, startOfMonth, endOfMonth } from 'date-fns'
 
-export async function GET(req: NextRequest) {
+const prisma = new PrismaClient()
+
+export async function GET(request: Request) {
   try {
-    const user = await getUser(req)
-    if (!user) {
+    // Get auth token
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
-    const { searchParams } = new URL(req.url)
-    const range = searchParams.get('range') || 'month'
-    
-    // Calculate date range
-    const now = new Date()
-    let startDate = new Date()
-    
-    switch (range) {
-      case 'week':
-        startDate.setDate(now.getDate() - 7)
-        break
-      case 'month':
-        startDate.setMonth(now.getMonth() - 1)
-        break
-      case 'year':
-        startDate.setFullYear(now.getFullYear() - 1)
-        break
-      case 'all':
-        startDate = new Date(0)
-        break
+
+    const token = authHeader.replace('Bearer ', '')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { sub: string }
+    const userId = decoded.sub
+
+    // Get time range
+    const { searchParams } = new URL(request.url)
+    const days = parseInt(searchParams.get('days') || '30')
+    const startDate = subDays(new Date(), days)
+
+    // Fetch journal statistics
+    const journalEntries = await prisma.journalEntry.findMany({
+      where: {
+        userId,
+        createdAt: { gte: startDate }
+      },
+      select: {
+        body: true,
+        mood: true,
+        createdAt: true
+      }
+    })
+
+    const allJournalEntries = await prisma.journalEntry.findMany({
+      where: { userId },
+      select: { createdAt: true }
+    })
+
+    const last7DaysEntries = journalEntries.filter(e => 
+      e.createdAt >= subDays(new Date(), 7)
+    )
+
+    const last30DaysEntries = journalEntries.filter(e => 
+      e.createdAt >= subDays(new Date(), 30)
+    )
+
+    // Calculate mood distribution
+    const moodCounts: Record<string, number> = {}
+    journalEntries.forEach(entry => {
+      if (entry.mood) {
+        moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1
+      }
+    })
+
+    const moodDistribution = Object.entries(moodCounts).map(([mood, count]) => ({
+      mood,
+      count
+    }))
+
+    // Calculate entries by day
+    const entriesByDay: Record<string, number> = {}
+    for (let i = 0; i < days; i++) {
+      const date = format(subDays(new Date(), i), 'MMM dd')
+      entriesByDay[date] = 0
     }
-    
-    // Fetch all data
-    const [
-      journalEntries,
-      goals,
-      contacts,
-      contributions
-      // autobiography - not used in current calculations but fetched for future use
-      // autobiography
-    ] = await Promise.all([
-      prisma.journalEntry.findMany({
-        where: { 
-          userId: user.sub,
-          createdAt: { gte: startDate }
+
+    journalEntries.forEach(entry => {
+      const date = format(entry.createdAt, 'MMM dd')
+      if (entriesByDay.hasOwnProperty(date)) {
+        entriesByDay[date]++
+      }
+    })
+
+    const entriesByDayArray = Object.entries(entriesByDay)
+      .map(([date, count]) => ({ date, count }))
+      .reverse()
+
+    // Fetch goal statistics
+    const goals = await prisma.goal.findMany({
+      where: { userId },
+      select: {
+        isCompleted: true,
+        isSprint: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    })
+
+    const completedGoals = goals.filter(g => g.isCompleted)
+    const sprintGoals = goals.filter(g => g.isSprint)
+    const completionRate = goals.length > 0 
+      ? (completedGoals.length / goals.length) * 100 
+      : 0
+
+    // Goals by month
+    const goalsByMonth: Record<string, { created: number; completed: number }> = {}
+    for (let i = 0; i < 6; i++) {
+      const monthStart = startOfMonth(subDays(new Date(), i * 30))
+      const monthName = format(monthStart, 'MMM')
+      goalsByMonth[monthName] = { created: 0, completed: 0 }
+    }
+
+    goals.forEach(goal => {
+      const monthName = format(goal.createdAt, 'MMM')
+      if (goalsByMonth[monthName]) {
+        goalsByMonth[monthName].created++
+        if (goal.isCompleted) {
+          goalsByMonth[monthName].completed++
         }
-      }),
-      prisma.goal.findMany({
-        where: { userId: user.sub }
-      }),
-      prisma.contact.findMany({
-        where: { userId: user.sub }
-      }),
-      prisma.contribution.findMany({
-        where: { 
-          userId: user.sub,
-          createdAt: { gte: startDate }
+      }
+    })
+
+    const goalsByMonthArray = Object.entries(goalsByMonth)
+      .map(([month, data]) => ({ month, ...data }))
+      .reverse()
+
+    // Fetch habit statistics
+    const habits = await prisma.habit.findMany({
+      where: { userId },
+      select: {
+        name: true,
+        currentStreak: true,
+        completedDates: true,
+        isActive: true
+      }
+    })
+
+    const activeHabits = habits.filter(h => h.isActive)
+    const totalCompletions = habits.reduce((sum, h) => sum + h.completedDates.length, 0)
+    const avgStreak = habits.length > 0
+      ? habits.reduce((sum, h) => sum + h.currentStreak, 0) / habits.length
+      : 0
+
+    const topHabits = habits
+      .sort((a, b) => b.currentStreak - a.currentStreak)
+      .slice(0, 5)
+      .map(h => ({
+        name: h.name,
+        streak: h.currentStreak,
+        completions: h.completedDates.length
+      }))
+
+    // Habit completions by day
+    const completionsByDay: Record<string, number> = {}
+    for (let i = 0; i < days; i++) {
+      const date = format(subDays(new Date(), i), 'MMM dd')
+      completionsByDay[date] = 0
+    }
+
+    habits.forEach(habit => {
+      habit.completedDates.forEach(dateStr => {
+        const date = format(new Date(dateStr), 'MMM dd')
+        if (completionsByDay.hasOwnProperty(date)) {
+          completionsByDay[date]++
         }
-      }),
-      prisma.autobiographyEntry.findMany({
-        where: { userId: user.sub }
       })
-    ])
-    
-    // Calculate journal stats
-    const journalStats = {
-      total: journalEntries.length,
-      thisWeek: journalEntries.filter(e => 
-        e.createdAt >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      ).length,
-      thisMonth: journalEntries.filter(e => 
-        e.createdAt >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-      ).length,
-      byMood: Object.entries(
-        journalEntries.reduce((acc: Record<string, number>, entry) => {
-          if (entry.mood) {
-            acc[entry.mood] = (acc[entry.mood] || 0) + 1
-          }
-          return acc
-        }, {})
-      ).map(([mood, count]) => ({ mood, count: count as number })),
-      byType: Object.entries(
-        journalEntries.reduce((acc: Record<string, number>, entry) => {
-          acc[entry.type] = (acc[entry.type] || 0) + 1
-          return acc
-        }, {})
-      ).map(([type, count]) => ({ type, count: count as number }))
-    }
-    
-    // Calculate goal stats
-    const goalStats = {
-      total: goals.length,
-      completed: goals.filter(g => g.isCompleted).length,
-      sprint: goals.filter(g => g.isSprint && !g.isCompleted).length,
-      completionRate: goals.length > 0 
-        ? Math.round((goals.filter(g => g.isCompleted).length / goals.length) * 100 * 10) / 10
-        : 0
-    }
-    
-    // Calculate contact stats
-    const contactStats = {
-      total: contacts.length,
-      withEmail: contacts.filter(c => c.email).length,
-      withPhone: contacts.filter(c => c.phoneE164).length,
-      recentlyAdded: contacts.filter(c => 
-        c.createdAt >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      ).length
-    }
-    
-    // Calculate activity stats
-    const allEntries = [
-      ...journalEntries.map(e => e.createdAt),
-      ...contributions.map(c => c.createdAt),
-      ...goals.map(g => g.createdAt)
-    ].sort((a, b) => b.getTime() - a.getTime())
-    
-    // Calculate streak
-    let streakDays = 0
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    for (let i = 0; i < 365; i++) {
-      const checkDate = new Date(today)
-      checkDate.setDate(today.getDate() - i)
-      
-      const hasActivity = allEntries.some(date => {
-        const entryDate = new Date(date)
-        entryDate.setHours(0, 0, 0, 0)
-        return entryDate.getTime() === checkDate.getTime()
-      })
-      
-      if (hasActivity) {
-        streakDays++
-      } else if (i > 0) {
-        break
+    })
+
+    const completionsByDayArray = Object.entries(completionsByDay)
+      .map(([date, count]) => ({ date, count }))
+      .reverse()
+
+    // Fetch contribution statistics
+    const contributions = await prisma.contribution.findMany({
+      where: { userId },
+      select: { type: true }
+    })
+
+    const contributionByType: Record<string, number> = {}
+    contributions.forEach(c => {
+      contributionByType[c.type] = (contributionByType[c.type] || 0) + 1
+    })
+
+    const contributionByTypeArray = Object.entries(contributionByType)
+      .map(([type, count]) => ({ type, count }))
+
+    // Fetch contact statistics
+    const contacts = await prisma.contact.findMany({
+      where: { userId },
+      select: {
+        email: true,
+        phoneE164: true
+      }
+    })
+
+    const interactions = await prisma.interaction.findMany({
+      where: {
+        userId,
+        occurredAt: { gte: subDays(new Date(), 30) }
+      },
+      select: { id: true }
+    })
+
+    // Compile all analytics data
+    const analyticsData = {
+      journalStats: {
+        totalEntries: allJournalEntries.length,
+        last7Days: last7DaysEntries.length,
+        last30Days: last30DaysEntries.length,
+        avgLength: journalEntries.length > 0 
+          ? journalEntries.reduce((sum, e) => sum + e.body.length, 0) / journalEntries.length
+          : 0,
+        moodDistribution,
+        entriesByDay: entriesByDayArray
+      },
+      goalStats: {
+        total: goals.length,
+        completed: completedGoals.length,
+        inProgress: goals.length - completedGoals.length,
+        sprint: sprintGoals.length,
+        completionRate,
+        goalsByMonth: goalsByMonthArray
+      },
+      habitStats: {
+        active: activeHabits.length,
+        totalCompletions,
+        avgStreak,
+        topHabits,
+        completionsByDay: completionsByDayArray
+      },
+      contributionStats: {
+        total: contributions.length,
+        byType: contributionByTypeArray
+      },
+      contactStats: {
+        total: contacts.length,
+        withEmail: contacts.filter(c => c.email).length,
+        withPhone: contacts.filter(c => c.phoneE164).length,
+        recentInteractions: interactions.length
       }
     }
-    
-    // Calculate most active day
-    const dayActivity = allEntries.reduce((acc: Record<string, number>, date) => {
-      const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' })
-      acc[day] = (acc[day] || 0) + 1
-      return acc
-    }, {})
-    
-    const mostActiveDay = Object.entries(dayActivity).sort((a, b) => (b[1] as number) - (a[1] as number))[0]?.[0] || 'N/A'
-    
-    const activityStats = {
-      streakDays,
-      totalDays: new Set(allEntries.map(d => d.toISOString().split('T')[0])).size,
-      mostActiveDay,
-      lastActive: allEntries[0] ? new Date(allEntries[0]).toLocaleDateString() : 'Never'
-    }
-    
-    return NextResponse.json({
-      journalStats,
-      goalStats,
-      contactStats,
-      activityStats
-    })
-    
+
+    return NextResponse.json(analyticsData)
   } catch (error) {
     console.error('Analytics error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch analytics' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 })
   }
 }

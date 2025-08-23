@@ -2,40 +2,63 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts'
+import { format, subDays, startOfWeek, startOfMonth } from 'date-fns'
 
-interface Analytics {
+interface AnalyticsData {
   journalStats: {
-    total: number
-    thisWeek: number
-    thisMonth: number
-    byMood: { mood: string; count: number }[]
-    byType: { type: string; count: number }[]
+    totalEntries: number
+    last7Days: number
+    last30Days: number
+    avgLength: number
+    moodDistribution: { mood: string; count: number }[]
+    entriesByDay: { date: string; count: number }[]
   }
   goalStats: {
     total: number
     completed: number
+    inProgress: number
     sprint: number
     completionRate: number
+    goalsByMonth: { month: string; created: number; completed: number }[]
+  }
+  habitStats: {
+    active: number
+    totalCompletions: number
+    avgStreak: number
+    topHabits: { name: string; streak: number; completions: number }[]
+    completionsByDay: { date: string; count: number }[]
+  }
+  contributionStats: {
+    total: number
+    byType: { type: string; count: number }[]
   }
   contactStats: {
     total: number
     withEmail: number
     withPhone: number
-    recentlyAdded: number
+    recentInteractions: number
   }
-  activityStats: {
-    streakDays: number
-    totalDays: number
-    mostActiveDay: string
-    lastActive: string
-  }
+}
+
+const MOOD_COLORS = {
+  happy: '#10b981',
+  neutral: '#6b7280',
+  sad: '#3b82f6',
+  excited: '#f59e0b',
+  anxious: '#ef4444',
+  grateful: '#8b5cf6',
+  motivated: '#ec4899'
 }
 
 export default function AnalyticsPage() {
   const router = useRouter()
-  const [analytics, setAnalytics] = useState<Analytics | null>(null)
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
+  const [timeRange, setTimeRange] = useState('30')
   const [loading, setLoading] = useState(true)
-  const [timeRange, setTimeRange] = useState('month')
 
   useEffect(() => {
     fetchAnalytics()
@@ -44,7 +67,7 @@ export default function AnalyticsPage() {
   const fetchAnalytics = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`/api/analytics?range=${timeRange}`, {
+      const response = await fetch(`/api/analytics?days=${timeRange}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       
@@ -67,46 +90,13 @@ export default function AnalyticsPage() {
     )
   }
 
-  // Mock data for visualization
-  const mockAnalytics: Analytics = analytics || {
-    journalStats: {
-      total: 42,
-      thisWeek: 7,
-      thisMonth: 28,
-      byMood: [
-        { mood: 'grateful', count: 12 },
-        { mood: 'happy', count: 8 },
-        { mood: 'inspired', count: 6 },
-        { mood: 'peaceful', count: 5 },
-        { mood: 'thoughtful', count: 11 }
-      ],
-      byType: [
-        { type: 'journal', count: 25 },
-        { type: 'voice', count: 10 },
-        { type: 'reflection', count: 7 }
-      ]
-    },
-    goalStats: {
-      total: 15,
-      completed: 8,
-      sprint: 3,
-      completionRate: 53.3
-    },
-    contactStats: {
-      total: 45,
-      withEmail: 38,
-      withPhone: 25,
-      recentlyAdded: 5
-    },
-    activityStats: {
-      streakDays: 12,
-      totalDays: 45,
-      mostActiveDay: 'Monday',
-      lastActive: 'Today'
-    }
+  if (!analytics) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white">No data available</div>
+      </div>
+    )
   }
-
-  const data = mockAnalytics
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -121,155 +111,189 @@ export default function AnalyticsPage() {
           </button>
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Analytics</h1>
-              <p className="text-gray-300">Track your growth and progress</p>
+              <h1 className="text-4xl font-bold text-white mb-2">Analytics Dashboard</h1>
+              <p className="text-gray-300">Track your personal growth journey with data insights</p>
             </div>
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="bg-white/20 text-white px-4 py-2 rounded-lg border border-white/30"
-            >
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-              <option value="year">This Year</option>
-              <option value="all">All Time</option>
-            </select>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setTimeRange('7')}
+                className={`px-4 py-2 rounded-lg ${timeRange === '7' ? 'bg-cyan-500 text-white' : 'bg-white/20 text-white'}`}
+              >
+                7 Days
+              </button>
+              <button
+                onClick={() => setTimeRange('30')}
+                className={`px-4 py-2 rounded-lg ${timeRange === '30' ? 'bg-cyan-500 text-white' : 'bg-white/20 text-white'}`}
+              >
+                30 Days
+              </button>
+              <button
+                onClick={() => setTimeRange('90')}
+                className={`px-4 py-2 rounded-lg ${timeRange === '90' ? 'bg-cyan-500 text-white' : 'bg-white/20 text-white'}`}
+              >
+                90 Days
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Activity Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 backdrop-blur-lg rounded-xl p-6 border border-cyan-500/30">
-            <div className="text-4xl font-bold text-white mb-2">{data.activityStats.streakDays}</div>
-            <div className="text-cyan-300 text-sm">Day Streak 🔥</div>
-          </div>
-          <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-lg rounded-xl p-6 border border-green-500/30">
-            <div className="text-4xl font-bold text-white mb-2">{data.activityStats.totalDays}</div>
-            <div className="text-green-300 text-sm">Active Days</div>
-          </div>
-          <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-lg rounded-xl p-6 border border-purple-500/30">
-            <div className="text-4xl font-bold text-white mb-2">{data.journalStats.total}</div>
-            <div className="text-purple-300 text-sm">Journal Entries</div>
-          </div>
-          <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-lg rounded-xl p-6 border border-yellow-500/30">
-            <div className="text-4xl font-bold text-white mb-2">{data.goalStats.completionRate}%</div>
-            <div className="text-yellow-300 text-sm">Goals Complete</div>
-          </div>
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Journal Mood Distribution */}
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <h2 className="text-xl font-semibold text-white mb-4">Journal Mood Distribution</h2>
-            <div className="space-y-3">
-              {data.journalStats.byMood.map((item) => {
-                const percentage = (item.count / data.journalStats.total) * 100
-                return (
-                  <div key={item.mood}>
-                    <div className="flex justify-between text-sm text-gray-300 mb-1">
-                      <span className="capitalize">{item.mood}</span>
-                      <span>{item.count}</span>
-                    </div>
-                    <div className="w-full bg-white/20 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
+            <div className="text-3xl mb-2">📝</div>
+            <div className="text-2xl font-bold text-white">{analytics.journalStats.totalEntries}</div>
+            <div className="text-gray-300">Journal Entries</div>
+            <div className="text-sm text-cyan-400 mt-2">
+              +{analytics.journalStats.last7Days} this week
             </div>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <div className="text-3xl mb-2">🎯</div>
+            <div className="text-2xl font-bold text-white">
+              {Math.round(analytics.goalStats.completionRate)}%
+            </div>
+            <div className="text-gray-300">Goal Completion</div>
+            <div className="text-sm text-green-400 mt-2">
+              {analytics.goalStats.completed}/{analytics.goalStats.total} completed
+            </div>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <div className="text-3xl mb-2">💪</div>
+            <div className="text-2xl font-bold text-white">{analytics.habitStats.active}</div>
+            <div className="text-gray-300">Active Habits</div>
+            <div className="text-sm text-purple-400 mt-2">
+              ~{Math.round(analytics.habitStats.avgStreak)} day avg streak
+            </div>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <div className="text-3xl mb-2">👥</div>
+            <div className="text-2xl font-bold text-white">{analytics.contactStats.total}</div>
+            <div className="text-gray-300">Contacts</div>
+            <div className="text-sm text-blue-400 mt-2">
+              {analytics.contactStats.recentInteractions} recent interactions
+            </div>
+          </div>
+        </div>
+
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Journal Entries Over Time */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h2 className="text-xl font-semibold text-white mb-4">Journal Activity</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={analytics.journalStats.entriesByDay}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="date" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px' }}
+                  labelStyle={{ color: '#9ca3af' }}
+                />
+                <Line type="monotone" dataKey="count" stroke="#06b6d4" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Mood Distribution */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h2 className="text-xl font-semibold text-white mb-4">Mood Distribution</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={analytics.journalStats.moodDistribution}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ mood, percent }) => `${mood} ${((percent || 0) * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="count"
+                >
+                  {analytics.journalStats.moodDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={MOOD_COLORS[entry.mood as keyof typeof MOOD_COLORS] || '#8884d8'} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Goals Progress */}
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
             <h2 className="text-xl font-semibold text-white mb-4">Goals Progress</h2>
-            <div className="flex justify-center items-center h-48">
-              <div className="relative">
-                <svg className="w-40 h-40 transform -rotate-90">
-                  <circle
-                    cx="80"
-                    cy="80"
-                    r="70"
-                    stroke="rgba(255,255,255,0.2)"
-                    strokeWidth="10"
-                    fill="none"
-                  />
-                  <circle
-                    cx="80"
-                    cy="80"
-                    r="70"
-                    stroke="url(#gradient)"
-                    strokeWidth="10"
-                    fill="none"
-                    strokeDasharray={`${2 * Math.PI * 70}`}
-                    strokeDashoffset={`${2 * Math.PI * 70 * (1 - data.goalStats.completionRate / 100)}`}
-                    className="transition-all duration-1000"
-                  />
-                  <defs>
-                    <linearGradient id="gradient">
-                      <stop offset="0%" stopColor="#06b6d4" />
-                      <stop offset="100%" stopColor="#3b82f6" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-3xl font-bold text-white">{data.goalStats.completed}</div>
-                  <div className="text-sm text-gray-300">of {data.goalStats.total}</div>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-white">{data.goalStats.total}</div>
-                <div className="text-xs text-gray-400">Total</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">{data.goalStats.completed}</div>
-                <div className="text-xs text-gray-400">Completed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-400">{data.goalStats.sprint}</div>
-                <div className="text-xs text-gray-400">Sprint</div>
-              </div>
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={analytics.goalStats.goalsByMonth}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="month" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px' }}
+                  labelStyle={{ color: '#9ca3af' }}
+                />
+                <Legend />
+                <Bar dataKey="created" fill="#3b82f6" name="Created" />
+                <Bar dataKey="completed" fill="#10b981" name="Completed" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Habit Completions */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h2 className="text-xl font-semibold text-white mb-4">Habit Tracking</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={analytics.habitStats.completionsByDay}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="date" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px' }}
+                  labelStyle={{ color: '#9ca3af' }}
+                />
+                <Line type="monotone" dataKey="count" stroke="#8b5cf6" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Entry Types */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {data.journalStats.byType.map((item) => (
-            <div key={item.type} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-white capitalize">{item.type}</h3>
-                <span className="text-2xl">
-                  {item.type === 'journal' ? '📝' : item.type === 'voice' ? '🎙️' : '💭'}
-                </span>
+        {/* Top Habits */}
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">Top Performing Habits</h2>
+          <div className="space-y-3">
+            {analytics.habitStats.topHabits.map((habit, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="text-2xl">
+                    {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'}
+                  </div>
+                  <div>
+                    <div className="text-white font-medium">{habit.name}</div>
+                    <div className="text-gray-400 text-sm">
+                      {habit.completions} completions
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-cyan-400">{habit.streak}</div>
+                  <div className="text-gray-400 text-sm">day streak</div>
+                </div>
               </div>
-              <div className="text-3xl font-bold text-cyan-400">{item.count}</div>
-              <div className="text-sm text-gray-400">entries</div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Export Section */}
+        {/* Contribution Types */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-          <h2 className="text-xl font-semibold text-white mb-4">Export Your Data</h2>
-          <div className="flex gap-4">
-            <button
-              onClick={() => window.location.href = '/api/export?format=json'}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-lg hover:from-cyan-600 hover:to-blue-600"
-            >
-              Export as JSON
-            </button>
-            <button
-              onClick={() => window.location.href = '/api/export?format=csv'}
-              className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-emerald-600"
-            >
-              Export as CSV
-            </button>
+          <h2 className="text-xl font-semibold text-white mb-4">Contribution Types</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {analytics.contributionStats.byType.map((contrib) => (
+              <div key={contrib.type} className="text-center">
+                <div className="text-3xl font-bold text-white">{contrib.count}</div>
+                <div className="text-gray-300 capitalize">{contrib.type}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -2,6 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import MoodSelector from '@/components/MoodSelector'
+import TagInput from '@/components/TagInput'
+import JournalTemplates from '@/components/JournalTemplates'
+import JournalPrompts from '@/components/JournalPrompts'
+import JournalStats from '@/components/JournalStats'
+import type { Template } from '@/components/JournalTemplates'
 
 interface JournalEntry {
   id: string
@@ -25,8 +31,11 @@ export default function JournalPage() {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [mood, setMood] = useState('')
-  const [tags, setTags] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [showStats, setShowStats] = useState(false)
+  const [showTemplates, setShowTemplates] = useState(false)
+  const [showPrompts, setShowPrompts] = useState(false)
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -135,7 +144,7 @@ export default function JournalPage() {
           body,
           type: entryType === 'voice' ? 'voice' : 'journal',
           mood,
-          tags: tags.split(',').map(t => t.trim()).filter(t => t)
+          tags
         })
       })
       
@@ -147,7 +156,7 @@ export default function JournalPage() {
         setTitle('')
         setBody('')
         setMood('')
-        setTags('')
+        setTags([])
         setAudioBlob(null)
         setShowNewEntry(false)
         setEntryType('text')
@@ -158,6 +167,18 @@ export default function JournalPage() {
       console.error('Error saving journal entry:', error)
       alert('Failed to save journal entry')
     }
+  }
+
+  const handleSelectTemplate = (template: Template) => {
+    setTitle(template.name)
+    setBody(template.prompts.map(p => `${p}\n\n`).join(''))
+    setShowTemplates(false)
+    setShowNewEntry(true)
+  }
+
+  const handleSelectPrompt = (prompt: string) => {
+    setBody(body ? `${body}\n\n${prompt}\n\n` : `${prompt}\n\n`)
+    setShowPrompts(false)
   }
 
   const getMoodEmoji = (mood: string) => {
@@ -209,12 +230,71 @@ export default function JournalPage() {
               <h1 className="text-4xl font-bold text-gray-800 mb-2">Journal</h1>
               <p className="text-gray-600">Capture your thoughts, insights, and reflections</p>
             </div>
-            <button
-              onClick={() => setShowNewEntry(true)}
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-            >
-              <span>✍️</span> New Entry
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+              >
+                <span>📊</span> Stats
+              </button>
+              <button
+                onClick={() => setShowTemplates(!showTemplates)}
+                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              >
+                <span>📋</span> Templates
+              </button>
+              <button
+                onClick={() => setShowNewEntry(true)}
+                className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+              >
+                <span>✍️</span> New Entry
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Journal Stats Section */}
+        {showStats && (
+          <div className="mb-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6">
+            <JournalStats />
+          </div>
+        )}
+
+        {/* Templates Section */}
+        {showTemplates && (
+          <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Choose a Template</h2>
+            <JournalTemplates onSelectTemplate={handleSelectTemplate} />
+          </div>
+        )}
+
+        {/* Daily Prompt Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="md:col-span-2">
+            <JournalPrompts onSelectPrompt={handleSelectPrompt} />
+          </div>
+          <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-xl p-6 border border-cyan-500/30">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Quick Actions</h3>
+            <div className="space-y-2">
+              <button
+                onClick={() => setShowPrompts(!showPrompts)}
+                className="w-full bg-white/50 hover:bg-white/70 text-gray-800 py-2 px-4 rounded-lg transition-colors text-left"
+              >
+                💭 Get Writing Prompt
+              </button>
+              <button
+                onClick={() => setShowTemplates(!showTemplates)}
+                className="w-full bg-white/50 hover:bg-white/70 text-gray-800 py-2 px-4 rounded-lg transition-colors text-left"
+              >
+                📋 Use Template
+              </button>
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className="w-full bg-white/50 hover:bg-white/70 text-gray-800 py-2 px-4 rounded-lg transition-colors text-left"
+              >
+                📊 View Statistics
+              </button>
+            </div>
           </div>
         </div>
 
@@ -361,38 +441,44 @@ export default function JournalPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mood</label>
-                    <select
-                      value={mood}
-                      onChange={(e) => setMood(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                      <option value="">Select mood...</option>
-                      <option value="happy">😊 Happy</option>
-                      <option value="grateful">🙏 Grateful</option>
-                      <option value="excited">🎉 Excited</option>
-                      <option value="peaceful">😌 Peaceful</option>
-                      <option value="inspired">✨ Inspired</option>
-                      <option value="thoughtful">🤔 Thoughtful</option>
-                      <option value="anxious">😰 Anxious</option>
-                      <option value="sad">😢 Sad</option>
-                      <option value="frustrated">😤 Frustrated</option>
-                      <option value="neutral">😐 Neutral</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-                    <input
-                      type="text"
-                      value={tags}
-                      onChange={(e) => setTags(e.target.value)}
-                      placeholder="growth, insight, reflection..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mood</label>
+                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-4">
+                    <MoodSelector 
+                      selectedMood={mood}
+                      onMoodSelect={setMood}
+                      size="sm"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-4">
+                    <TagInput 
+                      tags={tags}
+                      onTagsChange={setTags}
+                      placeholder="Add tags to organize your entries..."
+                    />
+                  </div>
+                </div>
+
+                {/* Add Prompt Helper */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowPrompts(true)}
+                    className="flex-1 bg-purple-100 text-purple-700 py-2 px-4 rounded-lg hover:bg-purple-200 transition-colors"
+                  >
+                    💭 Use a Prompt
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowTemplates(true)}
+                    className="flex-1 bg-blue-100 text-blue-700 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors"
+                  >
+                    📋 Use Template
+                  </button>
                 </div>
               </div>
 
