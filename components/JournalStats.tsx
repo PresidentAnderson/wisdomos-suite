@@ -88,7 +88,7 @@ export default function JournalStats({ userId }: JournalStatsProps) {
     <div className="space-y-6">
       {/* Period Selector */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Journal Statistics</h2>
+        <h2 className="text-2xl font-bold text-black">Journal Statistics</h2>
         <div className="flex gap-2">
           {(['week', 'month', 'year', 'all'] as const).map(period => (
             <button
@@ -96,8 +96,8 @@ export default function JournalStats({ userId }: JournalStatsProps) {
               onClick={() => setSelectedPeriod(period)}
               className={`px-3 py-1 rounded-lg text-sm capitalize transition-colors
                 ${selectedPeriod === period 
-                  ? 'bg-cyan-500 text-white' 
-                  : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
+                  ? 'bg-cyan-500 text-black' 
+                  : 'bg-white text-gray-700 hover:bg-gray-100'}`}
             >
               {period === 'all' ? 'All Time' : period}
             </button>
@@ -107,35 +107,35 @@ export default function JournalStats({ userId }: JournalStatsProps) {
       
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
+        <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
           <div className="text-3xl mb-2">📝</div>
-          <div className="text-2xl font-bold text-white">{stats.totalEntries}</div>
-          <div className="text-gray-400 text-sm">Total Entries</div>
+          <div className="text-2xl font-bold text-black">{stats.totalEntries}</div>
+          <div className="text-gray-600 text-sm">Total Entries</div>
         </div>
         
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
+        <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
           <div className="text-3xl mb-2">{getStreakEmoji(stats.currentStreak)}</div>
-          <div className="text-2xl font-bold text-white">{stats.currentStreak} days</div>
-          <div className="text-gray-400 text-sm">Current Streak</div>
+          <div className="text-2xl font-bold text-black">{stats.currentStreak} days</div>
+          <div className="text-gray-600 text-sm">Current Streak</div>
         </div>
         
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
+        <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
           <div className="text-3xl mb-2">📊</div>
-          <div className="text-2xl font-bold text-white">{stats.averageWords}</div>
-          <div className="text-gray-400 text-sm">Avg Words/Entry</div>
+          <div className="text-2xl font-bold text-black">{stats.averageWords}</div>
+          <div className="text-gray-600 text-sm">Avg Words/Entry</div>
         </div>
         
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
+        <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
           <div className="text-3xl mb-2">⏰</div>
-          <div className="text-lg font-bold text-white">{stats.favoriteTime}</div>
-          <div className="text-gray-400 text-sm">Favorite Time</div>
+          <div className="text-lg font-bold text-black">{stats.favoriteTime}</div>
+          <div className="text-gray-600 text-sm">Favorite Time</div>
         </div>
       </div>
       
       {/* Writing Goal Progress */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
+      <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-white font-semibold">Monthly Writing Goal</h3>
+          <h3 className="text-black font-semibold">Monthly Writing Goal</h3>
           <span className="text-cyan-400">{stats.goalProgress}/{stats.writingGoal} entries</span>
         </div>
         <div className="w-full bg-black/20 rounded-full h-3">
@@ -144,7 +144,7 @@ export default function JournalStats({ userId }: JournalStatsProps) {
             style={{ width: `${Math.min(100, (stats.goalProgress / stats.writingGoal) * 100)}%` }}
           />
         </div>
-        <p className="text-gray-400 text-sm mt-2">
+        <p className="text-gray-600 text-sm mt-2">
           {stats.writingGoal - stats.goalProgress > 0 
             ? `${stats.writingGoal - stats.goalProgress} entries to reach your goal!`
             : '🎉 Goal achieved!'}
@@ -152,16 +152,16 @@ export default function JournalStats({ userId }: JournalStatsProps) {
       </div>
       
       {/* Mood Distribution */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
-        <h3 className="text-white font-semibold mb-4">Mood Patterns</h3>
+      <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
+        <h3 className="text-black font-semibold mb-4">Mood Patterns</h3>
         <div className="space-y-2">
           {stats.moodDistribution.map(mood => (
             <div key={mood.mood} className="flex items-center gap-3">
               <span className="text-2xl">{mood.emoji}</span>
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-gray-300 capitalize">{mood.mood}</span>
-                  <span className="text-gray-400 text-sm">{mood.count} entries</span>
+                  <span className="text-gray-700 capitalize">{mood.mood}</span>
+                  <span className="text-gray-600 text-sm">{mood.count} entries</span>
                 </div>
                 <div className="w-full bg-black/20 rounded-full h-2">
                   <div 
@@ -176,24 +176,24 @@ export default function JournalStats({ userId }: JournalStatsProps) {
       </div>
       
       {/* Top Tags */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
-        <h3 className="text-white font-semibold mb-4">Top Topics</h3>
+      <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
+        <h3 className="text-black font-semibold mb-4">Top Topics</h3>
         <div className="flex flex-wrap gap-2">
           {stats.topTags.map(tag => (
             <span 
               key={tag.tag}
-              className="px-3 py-1 bg-white/10 rounded-full text-sm text-gray-300 flex items-center gap-1"
+              className="px-3 py-1 bg-white rounded-full text-sm text-gray-700 flex items-center gap-1"
             >
               #{tag.tag}
-              <span className="text-xs text-gray-500">({tag.count})</span>
+              <span className="text-xs text-gray-700">({tag.count})</span>
             </span>
           ))}
         </div>
       </div>
       
       {/* Writing Activity Chart */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
-        <h3 className="text-white font-semibold mb-4">Writing Activity</h3>
+      <div className="bg-white backdrop-blur-lg rounded-xl p-4 border border-gray-200">
+        <h3 className="text-black font-semibold mb-4">Writing Activity</h3>
         <div className="flex items-end gap-2 h-32">
           {stats.entriesByMonth.map(month => (
             <div key={month.month} className="flex-1 flex flex-col items-center">
@@ -201,7 +201,7 @@ export default function JournalStats({ userId }: JournalStatsProps) {
                 className="w-full bg-gradient-to-t from-cyan-500 to-blue-500 rounded-t"
                 style={{ height: `${(month.count / Math.max(...stats.entriesByMonth.map(m => m.count))) * 100}%` }}
               />
-              <span className="text-xs text-gray-400 mt-1">{month.month}</span>
+              <span className="text-xs text-gray-600 mt-1">{month.month}</span>
             </div>
           ))}
         </div>
@@ -209,23 +209,23 @@ export default function JournalStats({ userId }: JournalStatsProps) {
       
       {/* Achievements */}
       <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-lg rounded-xl p-4 border border-purple-500/30">
-        <h3 className="text-white font-semibold mb-4">Recent Achievements</h3>
+        <h3 className="text-black font-semibold mb-4">Recent Achievements</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="text-center">
             <div className="text-3xl mb-1">🌟</div>
-            <p className="text-xs text-gray-300">First Entry</p>
+            <p className="text-xs text-gray-700">First Entry</p>
           </div>
           <div className="text-center">
             <div className="text-3xl mb-1">🔥</div>
-            <p className="text-xs text-gray-300">7-Day Streak</p>
+            <p className="text-xs text-gray-700">7-Day Streak</p>
           </div>
           <div className="text-center">
             <div className="text-3xl mb-1">📚</div>
-            <p className="text-xs text-gray-300">25 Entries</p>
+            <p className="text-xs text-gray-700">25 Entries</p>
           </div>
           <div className="text-center opacity-50">
             <div className="text-3xl mb-1">🏆</div>
-            <p className="text-xs text-gray-400">30-Day Streak</p>
+            <p className="text-xs text-gray-600">30-Day Streak</p>
           </div>
         </div>
       </div>

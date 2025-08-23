@@ -149,7 +149,7 @@ export default function NotificationCenter() {
       {/* Notification Bell */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+        className="relative p-2 text-black hover:bg-white/10 rounded-lg transition-colors"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -159,7 +159,7 @@ export default function NotificationCenter() {
         
         {/* Unread Badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-black text-xs rounded-full h-5 w-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -175,7 +175,7 @@ export default function NotificationCenter() {
         <div className="absolute right-0 mt-2 w-96 bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 shadow-xl z-50">
           <div className="p-4 border-b border-white/10">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">Notifications</h3>
+              <h3 className="text-lg font-semibold text-black">Notifications</h3>
               {unreadCount > 0 && (
                 <button
                   onClick={() => markAsRead(notifications.filter(n => !n.read).map(n => n.id))}
@@ -189,7 +189,7 @@ export default function NotificationCenter() {
           
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="p-8 text-center text-gray-400">
+              <div className="p-8 text-center text-gray-600">
                 <div className="text-4xl mb-2">🔔</div>
                 <p>No notifications yet</p>
               </div>
@@ -207,8 +207,8 @@ export default function NotificationCenter() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="text-white font-medium">{notification.title}</h4>
-                          <p className="text-gray-300 text-sm mt-1">{notification.message}</p>
+                          <h4 className="text-black font-medium">{notification.title}</h4>
+                          <p className="text-gray-700 text-sm mt-1">{notification.message}</p>
                         </div>
                         {!notification.read && (
                           <span className="h-2 w-2 bg-cyan-400 rounded-full mt-2" />

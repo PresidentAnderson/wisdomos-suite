@@ -67,16 +67,16 @@ export default function TagInput({
   
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2 p-3 bg-white/10 rounded-lg border border-white/20">
+      <div className="flex flex-wrap gap-2 p-3 bg-white rounded-lg border border-gray-300">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full text-sm"
           >
             #{tag}
             <button
               onClick={() => removeTag(index)}
-              className="hover:text-white transition-colors"
+              className="hover:text-red-600 transition-colors"
             >
               ×
             </button>
@@ -93,21 +93,21 @@ export default function TagInput({
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={tags.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[120px] bg-transparent text-white placeholder-gray-500 outline-none"
+          className="flex-1 min-w-[120px] bg-transparent text-black placeholder-gray-400 outline-none"
           disabled={tags.length >= maxTags}
         />
       </div>
       
       {/* Tag Suggestions */}
       {showSuggestions && inputValue && filteredSuggestions.length > 0 && (
-        <div className="bg-slate-800 rounded-lg border border-white/20 p-2 max-h-40 overflow-y-auto">
-          <p className="text-xs text-gray-400 mb-2">Suggestions:</p>
+        <div className="bg-white rounded-lg border border-gray-300 p-2 max-h-40 overflow-y-auto shadow-lg">
+          <p className="text-xs text-gray-600 mb-2">Suggestions:</p>
           <div className="flex flex-wrap gap-1">
             {filteredSuggestions.slice(0, 10).map(suggestion => (
               <button
                 key={suggestion}
                 onClick={() => addTag(suggestion)}
-                className="px-2 py-1 bg-white/10 hover:bg-white/20 text-gray-300 rounded text-sm transition-colors"
+                className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-black rounded text-sm transition-colors"
               >
                 #{suggestion}
               </button>

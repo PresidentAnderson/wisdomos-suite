@@ -234,19 +234,19 @@ export default function JournalPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowStats(!showStats)}
-                className="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+                className="bg-purple-600 text-black px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
               >
                 <span>📊</span> Stats
               </button>
               <button
                 onClick={() => setShowTemplates(!showTemplates)}
-                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="bg-blue-600 text-black px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               >
                 <span>📋</span> Templates
               </button>
               <button
                 onClick={() => setShowNewEntry(true)}
-                className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                className="bg-indigo-600 text-black px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
               >
                 <span>✍️</span> New Entry
               </button>
@@ -355,7 +355,7 @@ export default function JournalPage() {
                   onClick={() => setEntryType('text')}
                   className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
                     entryType === 'text' 
-                      ? 'bg-indigo-600 text-white' 
+                      ? 'bg-indigo-600 text-black' 
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
@@ -365,7 +365,7 @@ export default function JournalPage() {
                   onClick={() => setEntryType('voice')}
                   className={`flex-1 py-2 px-4 rounded-lg transition-colors ${
                     entryType === 'voice' 
-                      ? 'bg-indigo-600 text-white' 
+                      ? 'bg-indigo-600 text-black' 
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
@@ -392,7 +392,7 @@ export default function JournalPage() {
                       {!isRecording && !audioBlob && (
                         <button
                           onClick={startRecording}
-                          className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
+                          className="w-full bg-red-500 text-black py-3 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
                         >
                           🎤 Start Recording
                         </button>
@@ -403,7 +403,7 @@ export default function JournalPage() {
                           <div className="text-red-500 text-xl mb-4 animate-pulse">● Recording...</div>
                           <button
                             onClick={stopRecording}
-                            className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
+                            className="bg-gray-600 text-black px-6 py-2 rounded-lg hover:bg-gray-700"
                           >
                             ⏹ Stop Recording
                           </button>
@@ -418,13 +418,13 @@ export default function JournalPage() {
                           <div className="flex gap-2">
                             <button
                               onClick={transcribeAudio}
-                              className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+                              className="flex-1 bg-indigo-600 text-black py-2 rounded-lg hover:bg-indigo-700"
                             >
                               📝 Transcribe to Text
                             </button>
                             <button
                               onClick={() => setAudioBlob(null)}
-                              className="flex-1 bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700"
+                              className="flex-1 bg-gray-600 text-black py-2 rounded-lg hover:bg-gray-700"
                             >
                               🔄 Re-record
                             </button>
@@ -503,7 +503,7 @@ export default function JournalPage() {
                 <button
                   onClick={saveEntry}
                   disabled={!body}
-                  className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-indigo-600 text-black py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Save Entry
                 </button>
@@ -559,7 +559,7 @@ export default function JournalPage() {
             <p className="text-gray-500 mb-4">Start capturing your thoughts and insights</p>
             <button
               onClick={() => setShowNewEntry(true)}
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700"
+              className="bg-indigo-600 text-black px-6 py-3 rounded-lg hover:bg-indigo-700"
             >
               Create Your First Entry
             </button>

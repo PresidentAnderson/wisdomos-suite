@@ -226,7 +226,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
           )}
           
           {!isRecording && !isTranscribing && (
-            <div className="text-gray-400">
+            <div className="text-gray-600">
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                   d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" 
@@ -244,7 +244,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
 
         {/* Duration Display */}
         {isRecording && (
-          <div className="text-2xl font-mono text-white">
+          <div className="text-2xl font-mono text-black">
             {formatDuration(duration)}
           </div>
         )}
@@ -254,7 +254,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
           {!isRecording ? (
             <button
               onClick={startRecording}
-              className="bg-red-500 hover:bg-red-600 text-white p-4 rounded-full transition-colors"
+              className="bg-red-500 hover:bg-red-600 text-black p-4 rounded-full transition-colors"
               disabled={isTranscribing}
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -266,7 +266,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
               {!isPaused ? (
                 <button
                   onClick={pauseRecording}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white p-4 rounded-full transition-colors"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black p-4 rounded-full transition-colors"
                 >
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <rect x="6" y="4" width="4" height="16" />
@@ -276,7 +276,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
               ) : (
                 <button
                   onClick={resumeRecording}
-                  className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-black p-4 rounded-full transition-colors"
                 >
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
@@ -286,7 +286,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
               
               <button
                 onClick={stopRecording}
-                className="bg-gray-500 hover:bg-gray-600 text-white p-4 rounded-full transition-colors"
+                className="bg-gray-500 hover:bg-gray-600 text-black p-4 rounded-full transition-colors"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <rect x="6" y="6" width="12" height="12" />
@@ -297,7 +297,7 @@ export default function VoiceRecorder({ onTranscription, onAudioBlob }: VoiceRec
         </div>
 
         {/* Instructions */}
-        <div className="text-center text-gray-300 text-sm">
+        <div className="text-center text-gray-700 text-sm">
           {!isRecording && !isTranscribing && (
             <p>Click the red button to start recording your journal entry</p>
           )}

@@ -117,9 +117,9 @@ export default function MoodHistory() {
   }
 
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
+    <div className="bg-white/90 backdrop-blur-lg rounded-xl p-4 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">Mood History</h3>
+        <h3 className="text-lg font-semibold text-black">Mood History</h3>
         <div className="flex gap-1">
           {['day', 'week', 'month'].map(range => (
             <button
@@ -128,7 +128,7 @@ export default function MoodHistory() {
               className={`px-2 py-1 text-xs rounded capitalize ${
                 timeRange === range 
                   ? 'bg-cyan-500 text-white' 
-                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                  : 'bg-gray-100 text-black hover:bg-gray-200'
               }`}
             >
               {range}
@@ -153,7 +153,7 @@ export default function MoodHistory() {
                 <div className={`text-xl mb-1 ${isToday ? 'ring-2 ring-cyan-400 rounded-full' : ''}`}>
                   {moodEmojis[entry.mood] || '😐'}
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-gray-600">
                   {date.toLocaleDateString('en', { weekday: 'short' }).slice(0, 2)}
                 </div>
                 <div className={`w-full h-1 rounded-full mt-1 ${moodColors[entry.mood] || 'bg-gray-500'} opacity-50`} />
@@ -165,24 +165,24 @@ export default function MoodHistory() {
 
       {/* Mood Trend Indicator */}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm text-gray-300">Trend</span>
+        <span className="text-sm text-black">Trend</span>
         <div className="flex items-center gap-2">
           {trend === 'improving' && (
             <>
               <span className="text-green-400">↗️ Improving</span>
-              <span className="text-xs text-gray-400">Keep it up!</span>
+              <span className="text-xs text-gray-600">Keep it up!</span>
             </>
           )}
           {trend === 'declining' && (
             <>
               <span className="text-orange-400">↘️ Declining</span>
-              <span className="text-xs text-gray-400">Take care</span>
+              <span className="text-xs text-gray-600">Take care</span>
             </>
           )}
           {trend === 'stable' && (
             <>
               <span className="text-cyan-400">→ Stable</span>
-              <span className="text-xs text-gray-400">Consistent</span>
+              <span className="text-xs text-gray-600">Consistent</span>
             </>
           )}
         </div>
@@ -191,7 +191,7 @@ export default function MoodHistory() {
       {/* Top Moods */}
       {topMoods.length > 0 && (
         <div>
-          <p className="text-xs text-gray-400 mb-2">Most frequent moods</p>
+          <p className="text-xs text-gray-600 mb-2">Most frequent moods</p>
           <div className="flex flex-wrap gap-2">
             {topMoods.map(([mood, count]) => (
               <div
@@ -199,7 +199,7 @@ export default function MoodHistory() {
                 className="flex items-center gap-1 px-2 py-1 bg-white/10 rounded-full"
               >
                 <span>{moodEmojis[mood]}</span>
-                <span className="text-xs text-gray-300">{count}</span>
+                <span className="text-xs text-black">{count}</span>
               </div>
             ))}
           </div>
@@ -208,8 +208,8 @@ export default function MoodHistory() {
 
       {moodEntries.length === 0 && (
         <div className="text-center py-4">
-          <p className="text-gray-400 text-sm">No mood data yet</p>
-          <p className="text-gray-500 text-xs mt-1">Start tracking your moods above!</p>
+          <p className="text-gray-600 text-sm">No mood data yet</p>
+          <p className="text-gray-700 text-xs mt-1">Start tracking your moods above!</p>
         </div>
       )}
     </div>

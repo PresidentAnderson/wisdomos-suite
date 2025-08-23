@@ -190,23 +190,23 @@ export default function JournalTemplates({ onSelectTemplate, selectedCategory = 
           <button
             key={template.id}
             onClick={() => onSelectTemplate(template)}
-            className="bg-white/10 hover:bg-white/20 rounded-xl p-4 text-left transition-all hover:scale-105 border border-white/10"
+            className="bg-white hover:bg-gray-50 rounded-xl p-4 text-left transition-all hover:scale-105 border border-gray-200 shadow-md"
           >
             <div className="flex items-start gap-3 mb-3">
               <span className="text-3xl">{template.icon}</span>
               <div className="flex-1">
-                <h3 className="text-white font-semibold">{template.name}</h3>
-                <p className="text-gray-400 text-sm">{template.description}</p>
+                <h3 className="text-black font-semibold">{template.name}</h3>
+                <p className="text-gray-600 text-sm">{template.description}</p>
               </div>
             </div>
             <div className="space-y-1">
               {template.prompts.slice(0, 2).map((prompt, index) => (
-                <p key={index} className="text-gray-300 text-xs">
+                <p key={index} className="text-gray-700 text-xs">
                   • {prompt}
                 </p>
               ))}
               {template.prompts.length > 2 && (
-                <p className="text-gray-500 text-xs">
+                <p className="text-gray-600 text-xs">
                   +{template.prompts.length - 2} more prompts
                 </p>
               )}

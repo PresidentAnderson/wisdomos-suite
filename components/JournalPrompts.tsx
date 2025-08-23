@@ -79,9 +79,9 @@ export default function JournalPrompts({ onSelectPrompt, difficulty = 'all' }: J
   }
   
   return (
-    <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-xl p-6 border border-indigo-500/30">
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-black flex items-center gap-2">
           <span className="text-2xl">💭</span>
           Daily Prompt
         </h3>
@@ -102,7 +102,7 @@ export default function JournalPrompts({ onSelectPrompt, difficulty = 'all' }: J
         <div className="space-y-4">
           <div className="flex items-start gap-3">
             <div className="flex-1">
-              <p className="text-white text-lg leading-relaxed">
+              <p className="text-black text-lg leading-relaxed">
                 {currentPrompt.text}
               </p>
               <div className="flex gap-2 mt-3">
@@ -118,7 +118,7 @@ export default function JournalPrompts({ onSelectPrompt, difficulty = 'all' }: J
           
           <button
             onClick={() => onSelectPrompt(currentPrompt.text)}
-            className="w-full bg-white/20 hover:bg-white/30 text-white py-2 rounded-lg transition-colors"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors"
           >
             Use This Prompt
           </button>
@@ -127,7 +127,7 @@ export default function JournalPrompts({ onSelectPrompt, difficulty = 'all' }: J
       
       {/* Difficulty Selector */}
       <div className="mt-4 pt-4 border-t border-white/10">
-        <p className="text-sm text-gray-400 mb-2">Prompt Difficulty:</p>
+        <p className="text-sm text-gray-600 mb-2">Prompt Difficulty:</p>
         <div className="flex gap-2">
           {['all', 'easy', 'medium', 'deep'].map(diff => (
             <button
@@ -135,7 +135,7 @@ export default function JournalPrompts({ onSelectPrompt, difficulty = 'all' }: J
               className={`px-3 py-1 rounded-full text-xs capitalize transition-colors
                 ${difficulty === diff 
                   ? 'bg-cyan-500 text-white' 
-                  : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
               onClick={() => {/* Handle difficulty change */}}
             >
               {diff}

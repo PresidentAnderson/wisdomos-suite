@@ -44,11 +44,11 @@ export default function MoodSelector({ selectedMood, onMoodSelect, size = 'md' }
   return (
     <div className="relative">
       <div className="flex items-center gap-3 mb-2">
-        <span className="text-gray-300">How are you feeling?</span>
+        <span className="text-black">How are you feeling?</span>
         {selectedMoodData && (
           <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full">
             <span className="text-2xl">{selectedMoodData.emoji}</span>
-            <span className="text-white">{selectedMoodData.label}</span>
+            <span className="text-black">{selectedMoodData.label}</span>
           </div>
         )}
       </div>
@@ -71,7 +71,7 @@ export default function MoodSelector({ selectedMood, onMoodSelect, size = 'md' }
               title={mood.label}
             >
               <span>{mood.emoji}</span>
-              <span className="text-xs text-gray-300">{mood.label}</span>
+              <span className="text-xs text-black">{mood.label}</span>
             </button>
           ))
         ) : (
