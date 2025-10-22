@@ -1,0 +1,22 @@
+{
+  "name": "@wisdomos/core",
+  "version": "1.0.0",
+  "description": "WisdomOS Core - Phoenix transformation business logic",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": ["wisdomos", "phoenix", "transformation"],
+  "author": "Jonathan Anderson <contact@axaiinnovations.com>",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0"
+  }
+}
