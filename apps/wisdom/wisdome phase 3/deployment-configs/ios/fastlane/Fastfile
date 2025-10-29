@@ -1,0 +1,176 @@
+# Fastlane configuration for wisdomos-ios repository
+# Documentation: https://docs.fastlane.tools
+
+default_platform(:ios)
+
+platform :ios do
+  
+  desc "Build and test the app"
+  lane :test do
+    scan(
+      scheme: "WisdomOS",
+      device: "iPhone 15",
+      clean: true
+    )
+  end
+
+  desc "Build development version"
+  lane :development do
+    # Sync development certificates
+    match(
+      type: "development",
+      app_identifier: "com.axaiinnovations.wisdomos"
+    )
+    
+    # Build for development
+    build_app(
+      scheme: "WisdomOS",
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./builds/development"
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    # Ensure clean working directory
+    ensure_git_status_clean
+    
+    # Increment build number
+    increment_build_number(xcodeproj: "WisdomOS.xcodeproj")
+    
+    # Sync distribution certificates
+    match(
+      type: "appstore",
+      app_identifier: "com.axaiinnovations.wisdomos"
+    )
+    
+    # Run tests
+    run_tests(
+      scheme: "WisdomOS",
+      device: "iPhone 15"
+    )
+    
+    # Build app
+    build_app(
+      scheme: "WisdomOS",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./builds/testflight"
+    )
+    
+    # Upload to TestFlight
+    pilot(
+      app_identifier: "com.axaiinnovations.wisdomos",
+      skip_waiting_for_build_processing: true,
+      changelog: "Phoenix rises with new transformations! 🔥"
+    )
+    
+    # Commit version bump
+    commit_version_bump(
+      message: "Version bump for TestFlight build",
+      xcodeproj: "WisdomOS.xcodeproj"
+    )
+    
+    # Add git tag
+    add_git_tag(
+      tag: "v#{get_version_number(xcodeproj: "WisdomOS.xcodeproj")}-#{get_build_number(xcodeproj: "WisdomOS.xcodeproj")}"
+    )
+    
+    # Push changes
+    push_to_git_remote
+    
+    # Send notification
+    slack(
+      message: "🔥 WisdomOS iOS beta deployed to TestFlight!",
+      channel: "#releases"
+    )
+  end
+
+  desc "Deploy to App Store"
+  lane :release do
+    # Ensure clean working directory
+    ensure_git_status_clean
+    
+    # Increment version number
+    increment_version_number(xcodeproj: "WisdomOS.xcodeproj")
+    increment_build_number(xcodeproj: "WisdomOS.xcodeproj")
+    
+    # Sync certificates
+    match(
+      type: "appstore",
+      app_identifier: "com.axaiinnovations.wisdomos"
+    )
+    
+    # Run full test suite
+    run_tests(
+      scheme: "WisdomOS",
+      device: "iPhone 15"
+    )
+    
+    # Build release version
+    build_app(
+      scheme: "WisdomOS",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./builds/release"
+    )
+    
+    # Upload to App Store
+    deliver(
+      app_identifier: "com.axaiinnovations.wisdomos",
+      submit_for_review: false,
+      automatic_release: false,
+      metadata_path: "./fastlane/metadata",
+      screenshots_path: "./fastlane/screenshots"
+    )
+    
+    # Commit and tag
+    commit_version_bump(
+      message: "Release version #{get_version_number(xcodeproj: "WisdomOS.xcodeproj")}",
+      xcodeproj: "WisdomOS.xcodeproj"
+    )
+    
+    add_git_tag(
+      tag: "release/v#{get_version_number(xcodeproj: "WisdomOS.xcodeproj")}"
+    )
+    
+    push_to_git_remote
+    
+    # Notification
+    slack(
+      message: "🎉 WisdomOS iOS v#{get_version_number(xcodeproj: "WisdomOS.xcodeproj")} uploaded to App Store!",
+      channel: "#releases"
+    )
+  end
+
+  desc "Generate screenshots"
+  lane :screenshots do
+    capture_screenshots(
+      scheme: "WisdomOS",
+      output_directory: "./fastlane/screenshots"
+    )
+  end
+
+  desc "Sync all certificates"
+  lane :sync_certificates do
+    match(type: "development")
+    match(type: "appstore")
+  end
+
+  desc "Clean build artifacts"
+  lane :clean do
+    clear_derived_data
+    sh "rm -rf ../builds"
+  end
+
+  # Error handling
+  error do |lane, exception|
+    slack(
+      message: "❌ iOS deployment failed in #{lane}: #{exception.message}",
+      channel: "#releases",
+      success: false
+    )
+  end
+
+end

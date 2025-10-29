@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Test - WisdomOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+    <style>
+        /* Responsive Test Utilities */
+        .breakpoint-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 9999;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .test-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 640px) {
+            .breakpoint-indicator::after { content: " SM"; background-color: #ef4444; }
+        }
+        @media (min-width: 641px) and (max-width: 768px) {
+            .breakpoint-indicator::after { content: " MD"; background-color: #f59e0b; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .breakpoint-indicator::after { content: " LG"; background-color: #10b981; }
+        }
+        @media (min-width: 1025px) {
+            .breakpoint-indicator::after { content: " XL"; background-color: #3b82f6; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Breakpoint Indicator -->
+    <div class="breakpoint-indicator">Current Breakpoint:</div>
+
+    <!-- Copy the enhanced navigation from index.html -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mr-3"></div>
+                        <span class="text-xl font-bold text-purple-600 dark:text-purple-400">WisdomOS</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <!-- Home -->
+                    <a href="index.html" class="nav-link-main">Home</a>
+                    
+                    <!-- Course Dropdown -->
+                    <div class="relative dropdown-container">
+                        <button class="nav-link-main dropdown-trigger flex items-center">
+                            Course
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="wisdom-evolution.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">🧠</span>
+                                    <div>
+                                        <div class="font-semibold">Wisdom Evolution</div>
+                                        <div class="text-sm text-gray-500">4-Module Course</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Services Dropdown -->
+                    <div class="relative dropdown-container">
+                        <button class="nav-link-main dropdown-trigger flex items-center">
+                            Services
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="coaching.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">🎯</span>
+                                    <div>
+                                        <div class="font-semibold">Life Coaching</div>
+                                        <div class="text-sm text-gray-500">1-on-1 Transformation</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="flex items-center space-x-3 ml-6 border-l border-gray-200 dark:border-gray-600 pl-6">
+                        <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            🌓
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="mobile-menu-button p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <div class="hamburger">
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800">
+                <a href="index.html" class="mobile-nav-item">🏠 Home</a>
+                
+                <!-- Course Section -->
+                <div class="mobile-section">
+                    <div class="mobile-section-title">📚 Course</div>
+                    <a href="wisdom-evolution.html" class="mobile-nav-subitem">🧠 Wisdom Evolution</a>
+                </div>
+
+                <!-- Services Section -->
+                <div class="mobile-section">
+                    <div class="mobile-section-title">⚡ Services</div>
+                    <a href="coaching.html" class="mobile-nav-subitem">🎯 Life Coaching</a>
+                    <a href="workshops.html" class="mobile-nav-subitem">🎭 Workshops</a>
+                    <a href="consulting.html" class="mobile-nav-subitem">💼 Consulting</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Test Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8 dark:text-white">Responsive Behavior Test</h1>
+        
+        <!-- Navigation Test -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Navigation Test</h2>
+            <div class="test-card">
+                <h3 class="font-bold mb-2">Test Instructions:</h3>
+                <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                    <li><strong>Desktop (1024px+):</strong> Should show full navigation with dropdowns</li>
+                    <li><strong>Tablet (768-1023px):</strong> Should show full navigation, condensed</li>
+                    <li><strong>Mobile (< 768px):</strong> Should show hamburger menu</li>
+                    <li>Test hover effects on desktop, tap interactions on mobile</li>
+                    <li>Check dropdown positioning and mobile menu slide animations</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Grid Test -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Grid Responsiveness</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3 class="font-bold">Card 1</h3>
+                    <p class="text-sm text-gray-600">This grid should adapt: 1 column on mobile, 2-3 on tablet, 4+ on desktop.</p>
+                </div>
+                <div class="test-card">
+                    <h3 class="font-bold">Card 2</h3>
+                    <p class="text-sm text-gray-600">Cards should maintain consistent spacing and sizing.</p>
+                </div>
+                <div class="test-card">
+                    <h3 class="font-bold">Card 3</h3>
+                    <p class="text-sm text-gray-600">Text should remain readable at all sizes.</p>
+                </div>
+                <div class="test-card">
+                    <h3 class="font-bold">Card 4</h3>
+                    <p class="text-sm text-gray-600">Cards should scale proportionally.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typography Test -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Typography Scaling</h2>
+            <div class="test-card">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-2">Responsive Heading</h1>
+                <h2 class="text-2xl md:text-3xl lg:text-4xl font-semibold mb-2">Subheading</h2>
+                <p class="text-base md:text-lg lg:text-xl mb-4">
+                    This paragraph should scale appropriately across devices. The text size should be comfortable to read on mobile (16px base) and larger on desktop.
+                </p>
+                <p class="text-sm text-gray-600">Small text for captions and metadata.</p>
+            </div>
+        </section>
+
+        <!-- Interactive Elements Test -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Interactive Elements</h2>
+            <div class="test-card">
+                <div class="space-y-4">
+                    <button class="btn-primary">Primary Button</button>
+                    <button class="btn-secondary">Secondary Button</button>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="interactive bg-purple-600 text-white px-4 py-2 rounded">Hover Me</button>
+                        <button class="card p-4 text-sm">Card-style Button</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacing Test -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Spacing & Layout</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+                <div class="p-4 md:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+                    <h3 class="font-bold">Responsive Padding</h3>
+                    <p class="text-sm mt-2">Padding increases with screen size</p>
+                </div>
+                <div class="p-4 md:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+                    <h3 class="font-bold">Responsive Gaps</h3>
+                    <p class="text-sm mt-2">Grid gaps adapt to screen size</p>
+                </div>
+                <div class="p-4 md:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+                    <h3 class="font-bold">Column Count</h3>
+                    <p class="text-sm mt-2">1 col mobile, 2 tablet, 3 desktop</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Animation Test -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Animations & Transitions</h2>
+            <div class="test-card">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="card animate-slide-in-up">
+                        <h3 class="font-bold">Slide In</h3>
+                        <p class="text-sm">Should slide in from bottom</p>
+                    </div>
+                    <div class="card animate-fade-in-scale">
+                        <h3 class="font-bold">Fade Scale</h3>
+                        <p class="text-sm">Should fade in while scaling</p>
+                    </div>
+                    <div class="card animate-pulse-soft">
+                        <h3 class="font-bold">Pulse</h3>
+                        <p class="text-sm">Should pulse gently</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Responsive Test Script -->
+    <script>
+        // Add viewport size indicator
+        function updateViewportIndicator() {
+            const indicator = document.querySelector('.breakpoint-indicator');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            indicator.textContent = `${width}x${height}px`;
+        }
+
+        window.addEventListener('resize', updateViewportIndicator);
+        updateViewportIndicator();
+
+        // Test scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        document.querySelectorAll('.animate-slide-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+
+    <script src="assets/scripts.js"></script>
+</body>
+</html>

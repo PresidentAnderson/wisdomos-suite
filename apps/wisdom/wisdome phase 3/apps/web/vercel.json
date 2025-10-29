@@ -1,0 +1,13 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_APP_DOMAIN": "wisdomos-phoenix-frontend.vercel.app",
+    "NEXT_PUBLIC_API_BASE": "https://wisdomos-phoenix-frontend.vercel.app/api",
+    "DATABASE_URL": "file:./prisma/dev.db",
+    "NEXTAUTH_URL": "https://wisdomos-phoenix-frontend.vercel.app",
+    "NEXTAUTH_SECRET": "development-secret-key-minimum-32-characters-long-for-demo"
+  }
+}

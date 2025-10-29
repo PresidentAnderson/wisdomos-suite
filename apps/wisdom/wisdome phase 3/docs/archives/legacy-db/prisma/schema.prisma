@@ -1,0 +1,150 @@
+// WisdomOS Prisma Schema
+// Production-ready relationship management with HubSpot integration
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum interaction_channel {
+  call
+  sms
+  email
+  meeting
+  note
+  whatsapp
+  telegram
+  signal
+  messenger
+  other
+}
+
+enum sentiment_label {
+  very_negative
+  negative
+  neutral
+  positive
+  very_positive
+}
+
+model contacts {
+  id            String   @id @default(uuid())
+  first_name    String
+  last_name     String
+  email         String?  @unique @db.Citext
+  phone_e164    String?
+  hubspot_id    String?
+  salesforce_id String?
+  notes         String?
+  tags          String[]
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+  
+  links         contact_life_area_links[]
+  interactions  interactions[]
+  assessments   relationship_assessments[]
+}
+
+model life_areas {
+  id          Int     @id
+  name        String  @unique
+  description String?
+  
+  links        contact_life_area_links[]
+  interactions interactions[]
+  assessments  relationship_assessments[]
+}
+
+model contact_life_area_links {
+  id           String   @id @default(uuid())
+  contact_id   String
+  life_area_id Int
+  role_label   String?
+  frequency    String?
+  weight       Decimal? @db.Decimal(5, 2)
+  outcomes     String?
+  notes        String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+
+  contact    contacts   @relation(fields: [contact_id], references: [id], onDelete: Cascade)
+  life_area  life_areas @relation(fields: [life_area_id], references: [id], onDelete: Cascade)
+
+  @@unique([contact_id, life_area_id])
+  @@index([contact_id])
+  @@index([life_area_id])
+}
+
+model interactions {
+  id              String               @id @default(uuid())
+  contact_id      String
+  life_area_id    Int?
+  occurred_at     DateTime             @default(now())
+  channel         interaction_channel
+  direction       String               @default("internal")
+  subject         String?
+  body_text       String?
+  body_html       String?
+  uri             String?
+  sentiment       sentiment_label?
+  sentiment_score Decimal?             @db.Decimal(4, 3)
+  topics          String[]
+  entities        Json?
+  embeddings_vec  Bytes?
+  meta            Json                 @default("{}")
+  created_at      DateTime             @default(now())
+
+  contact   contacts    @relation(fields: [contact_id], references: [id], onDelete: Cascade)
+  life_area life_areas? @relation(fields: [life_area_id], references: [id])
+  
+  @@index([contact_id, occurred_at(sort: Desc)])
+  @@index([life_area_id, occurred_at(sort: Desc)])
+}
+
+model relationship_assessments {
+  id            String   @id @default(uuid())
+  contact_id    String
+  life_area_id  Int
+  assessed_on   DateTime @default(now()) @db.Date
+  trust_score   Decimal? @db.Decimal(3, 1)
+  communication Decimal? @db.Decimal(3, 1)
+  reliability   Decimal? @db.Decimal(3, 1)
+  alignment     Decimal? @db.Decimal(3, 1)
+  overall       Decimal? @db.Decimal(3, 1)
+  notes         String?
+  created_at    DateTime @default(now())
+
+  contact   contacts   @relation(fields: [contact_id], references: [id], onDelete: Cascade)
+  life_area life_areas @relation(fields: [life_area_id], references: [id], onDelete: Cascade)
+
+  @@unique([contact_id, life_area_id, assessed_on])
+  @@index([contact_id, life_area_id, assessed_on(sort: Desc)])
+}
+
+model integrations {
+  id           String   @id @default(uuid())
+  kind         String
+  status       String   @default("connected")
+  external_app String?
+  auth_meta    Json?
+  settings     Json?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+  
+  events integration_events[]
+}
+
+model integration_events {
+  id             String        @id @default(uuid())
+  integration_id String?
+  received_at    DateTime      @default(now())
+  event_type     String?
+  event_raw      Json?
+  processed_ok   Boolean       @default(false)
+  
+  integration integrations? @relation(fields: [integration_id], references: [id], onDelete: SetNull)
+}

@@ -1,0 +1,149 @@
+PROPRIETARY SOFTWARE LICENSE AGREEMENT
+
+WisdomOS API - Phoenix Transformation System
+Copyright © 2025 AXAI Innovations. All rights reserved.
+
+IMPORTANT: READ THIS SOFTWARE LICENSE AGREEMENT ("AGREEMENT") CAREFULLY BEFORE 
+USING THE SOFTWARE. BY INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE, 
+YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT.
+
+1. GRANT OF LICENSE
+
+Subject to the terms and conditions of this Agreement, AXAI Innovations ("Licensor") 
+hereby grants you a limited, non-exclusive, non-transferable, revocable license to use 
+the WisdomOS API backend system ("Software") solely for authorized integration with 
+the WisdomOS platform.
+
+2. RESTRICTIONS
+
+You may NOT:
+a) Modify, adapt, alter, translate, or create derivative works of the Software
+b) Reverse engineer, disassemble, decompile, or otherwise attempt to derive the source code
+c) Remove, alter, or obscure any proprietary notices or labels on the Software
+d) Distribute, sell, lease, rent, lend, or sublicense the Software to third parties
+e) Use the Software to develop competing products or services
+f) Access the Software to build a similar or competitive product or service
+g) Attempt to bypass any security measures or access controls
+h) Use the Software in violation of applicable laws or regulations
+
+3. API USAGE RESTRICTIONS
+
+Access to the WisdomOS API is subject to:
+a) Rate limiting and usage quotas as defined in your service agreement
+b) Authentication requirements and API key management
+c) Compliance with API terms of service
+d) Data privacy and security requirements
+e) Geographic and jurisdictional restrictions
+
+4. INTELLECTUAL PROPERTY RIGHTS
+
+The Software contains proprietary and confidential information of AXAI Innovations. 
+All intellectual property rights in the Software are and remain the exclusive property 
+of AXAI Innovations. This includes but is not limited to:
+a) Source code, algorithms, and business logic
+b) Database schemas and data models
+c) API specifications and documentation
+d) User interface designs and user experience flows
+e) Proprietary transformation methodologies
+
+5. DATA PROTECTION AND PRIVACY
+
+You acknowledge that:
+a) All user data processed through the Software remains subject to our Privacy Policy
+b) You will comply with applicable data protection regulations (GDPR, CCPA, etc.)
+c) You will implement appropriate security measures for data handling
+d) AXAI Innovations may monitor API usage for security and compliance purposes
+
+6. CONFIDENTIALITY
+
+The Software contains valuable trade secrets and proprietary information. You agree to:
+a) Keep all aspects of the Software strictly confidential
+b) Not disclose any technical or business information to third parties
+c) Implement appropriate security measures to protect access
+d) Limit system access to authorized personnel only
+e) Report any security incidents or data breaches immediately
+
+7. SERVICE LEVEL AND AVAILABILITY
+
+While AXAI Innovations strives to maintain high availability:
+a) No guarantee is made regarding uptime or performance
+b) Scheduled maintenance may result in temporary service interruptions
+c) AXAI Innovations reserves the right to modify or discontinue services
+d) Emergency maintenance may be performed without advance notice
+
+8. TERMINATION AND SUSPENSION
+
+AXAI Innovations may immediately suspend or terminate access if:
+a) You violate any terms of this Agreement
+b) Unusual or suspicious activity is detected
+c) Legal or regulatory requirements necessitate suspension
+d) Non-payment of applicable fees (if applicable)
+e) The service is discontinued
+
+9. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. LICENSOR DISCLAIMS 
+ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO 
+IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, 
+SECURITY, AND UNINTERRUPTED OPERATION.
+
+10. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, 
+CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, 
+DATA, OR USE, BUSINESS INTERRUPTION, OR LOSS OF GOODWILL, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGES. TOTAL LIABILITY SHALL NOT EXCEED $100.
+
+11. INDEMNIFICATION
+
+You agree to indemnify, defend, and hold harmless AXAI Innovations from any claims, 
+damages, losses, or expenses (including reasonable attorney fees) arising from your 
+use of the Software or violation of this Agreement.
+
+12. COMPLIANCE WITH LAWS
+
+You agree to comply with all applicable local, state, national, and international 
+laws and regulations in your use of the Software.
+
+13. EXPORT CONTROLS
+
+The Software may be subject to export control laws. You agree not to export or 
+re-export the Software in violation of such laws.
+
+14. MODIFICATIONS TO AGREEMENT
+
+AXAI Innovations reserves the right to modify this Agreement at any time. Continued 
+use of the Software after such modifications constitutes acceptance of the new terms.
+
+15. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws of the 
+State of Delaware, without regard to its conflict of law principles. Any disputes 
+shall be resolved in the courts of Delaware.
+
+16. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire agreement between you and AXAI Innovations 
+concerning the Software and supersedes all prior agreements and understandings.
+
+17. SEVERABILITY
+
+If any provision of this Agreement is found to be unenforceable, the remaining 
+provisions shall continue in full force and effect.
+
+18. CONTACT INFORMATION
+
+For questions about this license, technical support, or to request permissions:
+
+AXAI Innovations
+Email: legal@axaiinnovations.com
+Support: support@axaiinnovations.com
+Website: https://axaiinnovations.com
+
+---
+
+Phoenix rises through transformation! 🔥
+
+UNAUTHORIZED ACCESS, COPYING, DISTRIBUTION, OR USE IS STRICTLY PROHIBITED AND MAY 
+RESULT IN SEVERE CIVIL AND CRIMINAL PENALTIES. THIS SOFTWARE IS PROTECTED BY 
+COPYRIGHT, TRADE SECRET, AND OTHER INTELLECTUAL PROPERTY LAWS.

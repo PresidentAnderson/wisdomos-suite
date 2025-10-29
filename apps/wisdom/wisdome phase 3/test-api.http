@@ -1,0 +1,103 @@
+### WisdomOS API Testing
+### Use with VS Code REST Client extension or similar
+
+@baseUrl = http://localhost:4000
+@authToken = YOUR_JWT_TOKEN_HERE
+
+### Test HubSpot Connection
+GET {{baseUrl}}/integrations/hubspot/test
+Authorization: Bearer {{authToken}}
+
+### Create/Update Contact
+POST {{baseUrl}}/contacts/upsert
+Content-Type: application/json
+
+{
+  "first_name": "Jonathan",
+  "last_name": "Anderson",
+  "email": "jonathan@wisdomos.com",
+  "phone_e164": "+12125551234",
+  "notes": "Primary user - founder",
+  "tags": ["founder", "primary"],
+  "hubspot_id": null
+}
+
+### Create Contact-LifeArea Link
+POST {{baseUrl}}/contacts/{{contactId}}/links
+Content-Type: application/json
+
+{
+  "life_area_id": 4,
+  "role_label": "partner",
+  "frequency": "daily",
+  "weight": 0.9,
+  "outcomes": "Presence, honesty, shared vision"
+}
+
+### Log Interaction
+POST {{baseUrl}}/interactions/log
+Content-Type: application/json
+
+{
+  "contact_id": "{{contactId}}",
+  "life_area_id": 4,
+  "channel": "whatsapp",
+  "direction": "inbound",
+  "subject": "Evening check-in",
+  "body_text": "Hey love, how was your day?",
+  "sentiment": "positive",
+  "sentiment_score": 0.65,
+  "topics": ["connection", "check-in"],
+  "meta": {
+    "source": "whatsapp",
+    "thread_id": "wa_abc123"
+  }
+}
+
+### Create Assessment
+POST {{baseUrl}}/assessments/create
+Content-Type: application/json
+
+{
+  "contact_id": "{{contactId}}",
+  "life_area_id": 4,
+  "trust_score": 4.5,
+  "communication": 4.0,
+  "reliability": 4.0,
+  "alignment": 4.8,
+  "notes": "Post-weekend reflection"
+}
+
+### Get Contact Health Dashboard
+GET {{baseUrl}}/contacts/{{contactId}}/health
+Authorization: Bearer {{authToken}}
+
+### Get Life Area Contacts
+GET {{baseUrl}}/contacts/life-area/4
+Authorization: Bearer {{authToken}}
+
+### Search Contacts by Email
+GET {{baseUrl}}/contacts/search?email=jonathan@wisdomos.com
+Authorization: Bearer {{authToken}}
+
+### Get Latest Assessment
+GET {{baseUrl}}/assessments/latest?contact_id={{contactId}}&life_area_id=4
+Authorization: Bearer {{authToken}}
+
+### Sync Contact to HubSpot
+POST {{baseUrl}}/integrations/hubspot/sync-contact
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "contact_id": "{{contactId}}"
+}
+
+### Sync Interaction to HubSpot
+POST {{baseUrl}}/integrations/hubspot/sync-interaction
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "interaction_id": "{{interactionId}}"
+}

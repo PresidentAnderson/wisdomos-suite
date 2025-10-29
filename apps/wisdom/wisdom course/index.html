@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Course - Journey to Enlightenment</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Wisdom Course</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#modules">Modules</a></li>
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="#progress">Progress</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>Welcome to Your Journey of Wisdom</h2>
+                <p>Explore timeless teachings, practical philosophy, and transformative insights</p>
+                <button class="cta-button" onclick="scrollToModules()">Start Learning</button>
+            </div>
+        </section>
+
+        <section id="modules" class="modules-section">
+            <h2>Course Modules</h2>
+            <div class="modules-grid">
+                <div class="module-card" data-module="1">
+                    <h3>1. Foundations of Wisdom</h3>
+                    <p>Understanding the nature of wisdom and its role in human flourishing</p>
+                    <ul>
+                        <li>What is Wisdom?</li>
+                        <li>Ancient vs Modern Perspectives</li>
+                        <li>The Wisdom Traditions</li>
+                    </ul>
+                    <button onclick="loadModule(1)">Enter Module</button>
+                </div>
+
+                <div class="module-card" data-module="2">
+                    <h3>2. Self-Knowledge</h3>
+                    <p>The ancient maxim "Know Thyself" and its practical applications</p>
+                    <ul>
+                        <li>Understanding Your Mind</li>
+                        <li>Emotional Intelligence</li>
+                        <li>Values and Purpose</li>
+                    </ul>
+                    <button onclick="loadModule(2)">Enter Module</button>
+                </div>
+
+                <div class="module-card" data-module="3">
+                    <h3>3. Practical Philosophy</h3>
+                    <p>Applying philosophical insights to everyday life</p>
+                    <ul>
+                        <li>Stoic Practices</li>
+                        <li>Buddhist Mindfulness</li>
+                        <li>Decision-Making Frameworks</li>
+                    </ul>
+                    <button onclick="loadModule(3)">Enter Module</button>
+                </div>
+
+                <div class="module-card" data-module="4">
+                    <h3>4. Critical Thinking</h3>
+                    <p>Developing clear reasoning and avoiding cognitive biases</p>
+                    <ul>
+                        <li>Logic and Reasoning</li>
+                        <li>Common Fallacies</li>
+                        <li>Mental Models</li>
+                    </ul>
+                    <button onclick="loadModule(4)">Enter Module</button>
+                </div>
+
+                <div class="module-card" data-module="5">
+                    <h3>5. Ethical Living</h3>
+                    <p>Building a life of integrity and moral excellence</p>
+                    <ul>
+                        <li>Virtue Ethics</li>
+                        <li>Moral Decision Making</li>
+                        <li>Living with Purpose</li>
+                    </ul>
+                    <button onclick="loadModule(5)">Enter Module</button>
+                </div>
+
+                <div class="module-card" data-module="6">
+                    <h3>6. Wisdom in Relationships</h3>
+                    <p>Cultivating meaningful connections and communication</p>
+                    <ul>
+                        <li>Empathy and Compassion</li>
+                        <li>Conflict Resolution</li>
+                        <li>Building Community</li>
+                    </ul>
+                    <button onclick="loadModule(6)">Enter Module</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="resources" class="resources-section">
+            <h2>Resources</h2>
+            <div class="resources-container">
+                <div class="resource-category">
+                    <h3>Recommended Readings</h3>
+                    <ul>
+                        <li>Meditations - Marcus Aurelius</li>
+                        <li>The Analects - Confucius</li>
+                        <li>Letters from a Stoic - Seneca</li>
+                        <li>The Dhammapada</li>
+                    </ul>
+                </div>
+                <div class="resource-category">
+                    <h3>Daily Practices</h3>
+                    <ul>
+                        <li>Morning Reflection</li>
+                        <li>Evening Review</li>
+                        <li>Gratitude Journal</li>
+                        <li>Mindfulness Meditation</li>
+                    </ul>
+                </div>
+                <div class="resource-category">
+                    <h3>Tools & Exercises</h3>
+                    <ul>
+                        <li>Values Assessment</li>
+                        <li>Decision Matrix</li>
+                        <li>Socratic Questioning</li>
+                        <li>Perspective Taking</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="progress" class="progress-section">
+            <h2>Your Progress</h2>
+            <div class="progress-tracker">
+                <div class="overall-progress">
+                    <h3>Overall Completion</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text">0% Complete</span>
+                </div>
+                <div class="module-progress-list">
+                    <!-- Module progress will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Wisdom Course. A journey of a thousand miles begins with a single step.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

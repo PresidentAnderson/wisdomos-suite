@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Wisdom Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-purple-600 dark:text-purple-400">Wisdom Course</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="dashboard.html" class="nav-link text-purple-600">Dashboard</a>
+                    <a href="wisdom-evolution.html" class="nav-link">Wisdom Evolution</a>
+                    <a href="autobiography.html" class="nav-link">Autobiography</a>
+                    <a href="tracker.html" class="nav-link">Tracker</a>
+                    <a href="relationships.html" class="nav-link">Relationships</a>
+                    
+                    <!-- Language Switcher -->
+                    <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                        <option value="en">EN</option>
+                        <option value="fr">FR</option>
+                        <option value="ar">AR</option>
+                    </select>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        🌓
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">Personal Development Dashboard</h1>
+                    <p class="text-blue-100" id="current-date"></p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-2" id="streak-count">0</div>
+                    <div class="text-sm text-blue-100">Day Streak</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Daily Wisdom Quote -->
+    <section class="py-6 bg-white dark:bg-gray-800 border-b dark:border-gray-700">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Daily Wisdom</h2>
+            <blockquote class="text-xl italic text-purple-600 dark:text-purple-400" id="daily-quote">
+                "Loading your daily wisdom..."
+            </blockquote>
+            <button onclick="getNewQuote()" class="mt-3 text-sm text-purple-600 dark:text-purple-400 hover:underline">Get New Quote</button>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8 dark:text-white">Your Progress Overview</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Course Progress -->
+                <div class="card text-center">
+                    <div class="text-3xl text-purple-600 dark:text-purple-400 mb-2">📚</div>
+                    <h3 class="font-bold mb-1">Course Progress</h3>
+                    <div class="text-2xl font-bold text-purple-600 dark:text-purple-400" id="course-progress-stat">0%</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">Modules Completed</div>
+                </div>
+
+                <!-- Autobiography Entries -->
+                <div class="card text-center">
+                    <div class="text-3xl text-green-600 dark:text-green-400 mb-2">📝</div>
+                    <h3 class="font-bold mb-1">Life Entries</h3>
+                    <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="autobiography-count">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">Total Recorded</div>
+                </div>
+
+                <!-- Current Streak -->
+                <div class="card text-center">
+                    <div class="text-3xl text-orange-600 dark:text-orange-400 mb-2">🔥</div>
+                    <h3 class="font-bold mb-1">Daily Practice</h3>
+                    <div class="text-2xl font-bold text-orange-600 dark:text-orange-400" id="practice-streak">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">Days Streak</div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="card text-center">
+                    <div class="text-3xl text-yellow-600 dark:text-yellow-400 mb-2">🏆</div>
+                    <h3 class="font-bold mb-1">Achievements</h3>
+                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400" id="achievements-count">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">Badges Earned</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Today's Actions -->
+    <section class="py-8 bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8 dark:text-white">Today's Focus</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Daily Practices -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Daily Practices</h3>
+                    <div class="space-y-3" id="daily-practices">
+                        <div class="practice-item">
+                            <input type="checkbox" id="practice-morning" class="mr-2">
+                            <label for="practice-morning">Morning reflection and intention setting</label>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" id="practice-gratitude" class="mr-2">
+                            <label for="practice-gratitude">Express gratitude (3 things)</label>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" id="practice-authentic" class="mr-2">
+                            <label for="practice-authentic">Have one authentic conversation</label>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" id="practice-learning" class="mr-2">
+                            <label for="practice-learning">Learn something new</label>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" id="practice-contribution" class="mr-2">
+                            <label for="practice-contribution">Make a contribution to someone</label>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" id="practice-evening" class="mr-2">
+                            <label for="practice-evening">Evening review and tomorrow's intention</label>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t dark:border-gray-600">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium">Today's Progress:</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div id="daily-progress" class="bg-green-600 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span id="daily-progress-text" class="text-sm text-gray-600 dark:text-gray-300">0/6</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a href="wisdom-evolution.html" class="block p-3 bg-purple-50 dark:bg-purple-900 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-800 transition-colors">
+                            <h4 class="font-semibold text-purple-700 dark:text-purple-300">Continue Learning</h4>
+                            <p class="text-sm text-purple-600 dark:text-purple-400">Work on your Wisdom Evolution course</p>
+                        </a>
+                        <a href="autobiography.html" class="block p-3 bg-green-50 dark:bg-green-900 rounded-lg hover:bg-green-100 dark:hover:bg-green-800 transition-colors">
+                            <h4 class="font-semibold text-green-700 dark:text-green-300">Record Experience</h4>
+                            <p class="text-sm text-green-600 dark:text-green-400">Add a new life entry or milestone</p>
+                        </a>
+                        <button onclick="openJournal()" class="w-full text-left p-3 bg-blue-50 dark:bg-blue-900 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors">
+                            <h4 class="font-semibold text-blue-700 dark:text-blue-300">Reflection Journal</h4>
+                            <p class="text-sm text-blue-600 dark:text-blue-400">Write in your daily journal</p>
+                        </button>
+                        <button onclick="openGoals()" class="w-full text-left p-3 bg-yellow-50 dark:bg-yellow-900 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-800 transition-colors">
+                            <h4 class="font-semibold text-yellow-700 dark:text-yellow-300">Goals & Commitments</h4>
+                            <p class="text-sm text-yellow-600 dark:text-yellow-400">Review and update your goals</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Activities -->
+    <section class="py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8 dark:text-white">Recent Activities</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Recent Journal Entries -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Recent Reflections</h3>
+                    <div id="recent-journals" class="space-y-3">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <button onclick="openJournal()" class="mt-4 w-full px-4 py-2 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-700 transition-colors">
+                        View All Entries
+                    </button>
+                </div>
+
+                <!-- Achievements & Badges -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Recent Achievements</h3>
+                    <div id="recent-achievements" class="space-y-3">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <button onclick="showAllAchievements()" class="mt-4 w-full px-4 py-2 bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-700 transition-colors">
+                        View All Achievements
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Goals & Commitments Overview -->
+    <section class="py-8 bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8 dark:text-white">Active Goals & Commitments</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6" id="goals-overview">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Journal Modal -->
+    <div id="journal-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold dark:text-white">Daily Reflection Journal</h3>
+                <button onclick="closeJournal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Today's Reflection</label>
+                    <textarea id="journal-entry" rows="6" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" placeholder="What are you reflecting on today? What did you learn? How did you grow?"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gratitude (3 things)</label>
+                    <textarea id="gratitude-entry" rows="3" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" placeholder="1. 
+2. 
+3. "></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tomorrow's Intention</label>
+                    <textarea id="intention-entry" rows="2" class="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" placeholder="What do you intend to create or experience tomorrow?"></textarea>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button onclick="saveJournalEntry()" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save Entry</button>
+                    <button onclick="closeJournal()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goals Modal -->
+    <div id="goals-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold dark:text-white">Goals & Commitments</h3>
+                <button onclick="closeGoals()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Current Goals -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 dark:text-white">Current Goals</h4>
+                    <div id="current-goals" class="space-y-3 mb-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <button onclick="addNewGoal()" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Add New Goal</button>
+                </div>
+                
+                <!-- Current Commitments -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-3 dark:text-white">Active Commitments</h4>
+                    <div id="current-commitments" class="space-y-3 mb-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <button onclick="addNewCommitment()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Add New Commitment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/scripts.js"></script>
+    <script src="assets/dashboard.js"></script>
+</body>
+</html>

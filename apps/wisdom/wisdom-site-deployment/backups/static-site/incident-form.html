@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Incident - Wisdom Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+    <style>
+        /* Mobile optimized styles */
+        @media (max-width: 640px) {
+            .form-container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+        
+        .success-message {
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <!-- Simple Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16 items-center">
+                <span class="text-xl font-bold text-purple-600 dark:text-purple-400">Incident Report</span>
+                <div class="flex items-center space-x-4">
+                    <a href="tracker.html" class="text-gray-600 dark:text-gray-300">← Back</a>
+                    <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                        <option value="en">EN</option>
+                        <option value="fr">FR</option>
+                        <option value="ar">AR</option>
+                    </select>
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        🌓
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-lg mx-auto px-4 py-8">
+        <div class="form-container card">
+            <h1 class="text-2xl font-bold mb-6 text-center" data-i18n="incident-form-title">Report New Incident</h1>
+            
+            <!-- Success Message -->
+            <div id="success-message" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 success-message">
+                <strong>Success!</strong> Incident recorded. Redirecting...
+            </div>
+
+            <!-- Incident Form -->
+            <form id="incident-form" class="space-y-6">
+                <!-- Date -->
+                <div>
+                    <label class="block text-sm font-medium mb-2" data-i18n="date-label">Date</label>
+                    <input type="date" 
+                           id="incident-date" 
+                           required 
+                           class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-purple-500">
+                </div>
+
+                <!-- Type -->
+                <div>
+                    <label class="block text-sm font-medium mb-2" data-i18n="type-label">Type</label>
+                    <select id="incident-type" 
+                            required 
+                            class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-purple-500">
+                        <option value="">Select type...</option>
+                        <option value="boundary">Boundary Violation</option>
+                        <option value="relationship">Relationship Issue</option>
+                        <option value="finance">Financial Drift</option>
+                        <option value="health">Health Concern</option>
+                        <option value="time">Time Management</option>
+                        <option value="emotional">Emotional Pattern</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium mb-2" data-i18n="description-label">Description</label>
+                    <textarea id="incident-description" 
+                              rows="4" 
+                              required
+                              placeholder="What happened? How did it feel? What boundary was crossed?"
+                              class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="status" value="red" class="mr-2" required>
+                            <span class="status-red mr-2"></span>
+                            <span>Needs Reset</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="status" value="yellow" class="mr-2">
+                            <span class="status-yellow mr-2"></span>
+                            <span>In Progress</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="status" value="green" class="mr-2">
+                            <span class="status-green mr-2"></span>
+                            <span>Resolved</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+                        data-i18n="submit-btn">
+                    Submit Incident
+                </button>
+            </form>
+
+            <!-- Quick Reset Ritual Reminder -->
+            <div class="mt-8 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <h3 class="font-semibold mb-2">Remember the Reset Ritual:</h3>
+                <ol class="text-sm space-y-1">
+                    <li>1. Pause and acknowledge</li>
+                    <li>2. Identify the violation</li>
+                    <li>3. Forgive yourself</li>
+                    <li>4. Recommit to boundary</li>
+                    <li>5. Recalibrate systems</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/scripts.js"></script>
+    <script>
+        // Set today's date as default
+        document.getElementById('incident-date').valueAsDate = new Date();
+
+        // Handle form submission
+        document.getElementById('incident-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const incident = {
+                date: document.getElementById('incident-date').value,
+                type: {
+                    en: document.getElementById('incident-type').value,
+                    fr: document.getElementById('incident-type').value,
+                    ar: document.getElementById('incident-type').value
+                },
+                description: {
+                    en: document.getElementById('incident-description').value,
+                    fr: document.getElementById('incident-description').value,
+                    ar: document.getElementById('incident-description').value
+                },
+                status: document.querySelector('input[name="status"]:checked').value
+            };
+
+            // Store in localStorage (for demo - in production, send to server)
+            let incidents = JSON.parse(localStorage.getItem('incidents') || '[]');
+            incidents.push(incident);
+            localStorage.setItem('incidents', JSON.stringify(incidents));
+
+            // Show success message
+            document.getElementById('success-message').classList.remove('hidden');
+            
+            // Reset form
+            document.getElementById('incident-form').reset();
+            document.getElementById('incident-date').valueAsDate = new Date();
+
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'tracker.html';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

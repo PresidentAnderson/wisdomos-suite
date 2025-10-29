@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Course Integration - Jonathan Anderson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Simple, clean styles */
+        .nav-link {
+            @apply text-gray-700 hover:text-purple-600 transition-colors font-medium;
+        }
+        
+        .btn-primary {
+            @apply px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors;
+        }
+        
+        .btn-secondary {
+            @apply px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors;
+        }
+        
+        .card {
+            @apply bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow;
+        }
+        
+        /* Light theme by default */
+        body {
+            background-color: #f9fafb;
+        }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            display: none;
+        }
+        
+        .mobile-menu.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Clean Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-purple-600">Wisdom Course</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="desktop-nav flex items-center space-x-6">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="wisdom-evolution.html" class="nav-link">Course</a>
+                    <a href="tracker.html" class="nav-link">Tracker</a>
+                    <a href="relationships.html" class="nav-link">Relationships</a>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100">
+                        🌓
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn p-2" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Simple Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu bg-white border-t">
+            <div class="px-4 py-2 space-y-2">
+                <a href="index.html" class="block py-2 text-gray-700 hover:text-purple-600">Home</a>
+                <a href="dashboard.html" class="block py-2 text-gray-700 hover:text-purple-600">Dashboard</a>
+                <a href="wisdom-evolution.html" class="block py-2 text-gray-700 hover:text-purple-600">Course</a>
+                <a href="tracker.html" class="block py-2 text-gray-700 hover:text-purple-600">Tracker</a>
+                <a href="relationships.html" class="block py-2 text-gray-700 hover:text-purple-600">Relationships</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative py-20 md:py-32 bg-gradient-to-br from-purple-500 to-pink-500">
+        <div class="max-w-7xl mx-auto text-center text-white px-4">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                Wisdom Course Integration
+            </h1>
+            <p class="text-lg md:text-xl mb-8 max-w-3xl mx-auto">
+                Transforming insights into lived experience through practical wisdom and daily practice
+            </p>
+            <p class="text-base md:text-lg italic opacity-90 mb-12">
+                "Fulfillment is authored through clarity, conversation, and commitment."
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="dashboard.html" class="btn-primary">Open Dashboard</a>
+                <a href="wisdom-evolution.html" class="btn-secondary">Start Course</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purpose Section -->
+    <section class="py-16 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-800">
+                Purpose
+            </h2>
+            <div class="prose prose-lg mx-auto text-gray-600">
+                <p>
+                    This project documents my full participation in the Wisdom Unlimited Course, 
+                    integrating its tools with my real commitments in work, love, finance, and community. 
+                    It serves as both a personal transformation archive and a practical operating system for my life.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                Quick Access
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="dashboard.html" class="card hover:transform hover:-translate-y-1 transition-all">
+                    <h3 class="text-xl font-bold mb-3 text-purple-600">Personal Dashboard</h3>
+                    <p class="text-gray-600">Overview of progress, daily practices, and achievements</p>
+                </a>
+                <a href="wisdom-evolution.html" class="card hover:transform hover:-translate-y-1 transition-all">
+                    <h3 class="text-xl font-bold mb-3 text-purple-600">Wisdom Evolution Course</h3>
+                    <p class="text-gray-600">4 modules following Landmark Education methodology</p>
+                </a>
+                <a href="autobiography.html" class="card hover:transform hover:-translate-y-1 transition-all">
+                    <h3 class="text-xl font-bold mb-3 text-purple-600">Life Autobiography</h3>
+                    <p class="text-gray-600">Interactive timeline, milestones, and contribution display</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                Services & Resources
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card text-center">
+                    <span class="text-4xl mb-4 block">🎯</span>
+                    <h3 class="text-xl font-bold mb-3 text-purple-600">Life Coaching</h3>
+                    <p class="text-gray-600 mb-4">1-on-1 transformation sessions</p>
+                    <a href="coaching.html" class="text-purple-600 hover:text-purple-700 font-medium">Learn More →</a>
+                </div>
+                <div class="card text-center">
+                    <span class="text-4xl mb-4 block">🎭</span>
+                    <h3 class="text-xl font-bold mb-3 text-purple-600">Workshops</h3>
+                    <p class="text-gray-600 mb-4">Group learning experiences</p>
+                    <a href="workshops.html" class="text-purple-600 hover:text-purple-700 font-medium">View Schedule →</a>
+                </div>
+                <div class="card text-center">
+                    <span class="text-4xl mb-4 block">💼</span>
+                    <h3 class="text-xl font-bold mb-3 text-purple-600">Consulting</h3>
+                    <p class="text-gray-600 mb-4">Organizational wisdom</p>
+                    <a href="consulting.html" class="text-purple-600 hover:text-purple-700 font-medium">Get Started →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Simple mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+        }
+        
+        // Simple dark mode toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const html = document.documentElement;
+        
+        // Check for saved dark mode preference
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode === 'true') {
+            html.classList.add('dark');
+        }
+        
+        // Toggle dark mode
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                localStorage.setItem('darkMode', html.classList.contains('dark'));
+            });
+        }
+    </script>
+</body>
+</html>

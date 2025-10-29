@@ -1,0 +1,208 @@
+# Fastlane configuration for wisdomos-android repository
+# Documentation: https://docs.fastlane.tools
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Run unit tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Build debug version"
+  lane :debug do
+    gradle(
+      task: "assembleDebug",
+      print_command: false
+    )
+  end
+
+  desc "Build and upload to internal testing"
+  lane :beta do
+    # Ensure clean working directory
+    ensure_git_status_clean
+    
+    # Increment version code
+    android_set_version_code(
+      version_code: (android_get_version_code + 1)
+    )
+    
+    # Run tests
+    gradle(task: "test")
+    
+    # Build release APK/AAB
+    gradle(
+      task: "bundleRelease",
+      print_command: false
+    )
+    
+    # Upload to Play Console Internal Testing
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      release_status: "completed"
+    )
+    
+    # Commit version bump
+    git_commit(
+      path: ["app/build.gradle"],
+      message: "Version bump for internal testing build"
+    )
+    
+    # Tag release
+    add_git_tag(
+      tag: "v#{android_get_version_name}-internal-#{android_get_version_code}"
+    )
+    
+    push_to_git_remote
+    
+    # Notification
+    slack(
+      message: "🔥 WisdomOS Android beta deployed to Internal Testing!",
+      channel: "#releases"
+    )
+  end
+
+  desc "Deploy to Play Store"
+  lane :release do
+    # Ensure clean working directory
+    ensure_git_status_clean
+    
+    # Increment version
+    android_set_version_name(version_name: prompt(text: "Enter version name: "))
+    android_set_version_code(version_code: (android_get_version_code + 1))
+    
+    # Run full test suite
+    gradle(task: "test")
+    gradle(task: "connectedAndroidTest")
+    
+    # Build signed release bundle
+    gradle(
+      task: "bundleRelease",
+      print_command: false
+    )
+    
+    # Upload to Play Store
+    upload_to_play_store(
+      track: "production",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      release_status: "draft", # Manual review required
+      metadata_path: "fastlane/metadata/android",
+      changelogs_path: "fastlane/metadata/android/changelogs"
+    )
+    
+    # Commit and tag
+    git_commit(
+      path: ["app/build.gradle"],
+      message: "Release version #{android_get_version_name}"
+    )
+    
+    add_git_tag(
+      tag: "release/v#{android_get_version_name}"
+    )
+    
+    push_to_git_remote
+    
+    # Notification
+    slack(
+      message: "🎉 WisdomOS Android v#{android_get_version_name} uploaded to Play Store!",
+      channel: "#releases"
+    )
+  end
+
+  desc "Build and upload to Firebase App Distribution"
+  lane :distribute do
+    # Build debug APK for testing
+    gradle(
+      task: "assembleDebug",
+      print_command: false
+    )
+    
+    # Distribute via Firebase
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      apk_path: "app/build/outputs/apk/debug/app-debug.apk",
+      groups: "internal-testers",
+      release_notes: "Phoenix transformation features updated! 🔥",
+      firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"]
+    )
+    
+    slack(
+      message: "🚀 WisdomOS Android debug build distributed via Firebase!",
+      channel: "#releases"
+    )
+  end
+
+  desc "Generate Play Store metadata"
+  lane :metadata do
+    # Download metadata from Play Store
+    download_from_play_store(
+      metadata_path: "fastlane/metadata/android"
+    )
+  end
+
+  desc "Capture screenshots"
+  lane :screenshots do
+    # Build test APK
+    gradle(task: "assembleDebug assembleDebugAndroidTest")
+    
+    # Capture screenshots using screengrab
+    screengrab(
+      locales: ["en-US"],
+      clear_previous_screenshots: true,
+      app_package_name: "com.axaiinnovations.wisdomos"
+    )
+  end
+
+  desc "Upload screenshots to Play Store"
+  lane :upload_screenshots do
+    upload_to_play_store(
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true
+    )
+  end
+
+  desc "Clean build artifacts"
+  lane :clean do
+    gradle(task: "clean")
+  end
+
+  # Helper methods
+  private_lane :android_get_version_name do
+    File.read("../app/build.gradle")[/versionName "(.*)"/, 1]
+  end
+
+  private_lane :android_get_version_code do
+    File.read("../app/build.gradle")[/versionCode (\d+)/, 1].to_i
+  end
+
+  private_lane :android_set_version_name do |options|
+    path = "../app/build.gradle"
+    content = File.read(path)
+    content.gsub!(/versionName ".*"/, "versionName \"#{options[:version_name]}\"")
+    File.write(path, content)
+  end
+
+  private_lane :android_set_version_code do |options|
+    path = "../app/build.gradle"
+    content = File.read(path)
+    content.gsub!(/versionCode \d+/, "versionCode #{options[:version_code]}")
+    File.write(path, content)
+  end
+
+  # Error handling
+  error do |lane, exception|
+    slack(
+      message: "❌ Android deployment failed in #{lane}: #{exception.message}",
+      channel: "#releases",
+      success: false
+    )
+  end
+
+end

@@ -1,0 +1,356 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== MULTI-TENANCY MODELS ====================
+
+model Tenant {
+  id                String          @id @default(uuid())
+  name              String
+  slug              String          @unique // Used for subdomain routing
+  domain            String?         // Custom domain if applicable
+  status            TenantStatus    @default(ACTIVE)
+  plan              TenantPlan      @default(FREE)
+  
+  // Tenant Configuration
+  settings          Json            @default("{}")
+  features          String[]        @default([])
+  maxUsers          Int             @default(5)
+  maxStorage        BigInt          @default(1073741824) // 1GB in bytes
+  currentStorage    BigInt          @default(0)
+  
+  // Billing Information
+  stripeCustomerId  String?
+  stripeSubscriptionId String?
+  billingEmail      String?
+  trialEndsAt       DateTime?
+  
+  // Metadata
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  deletedAt         DateTime?       // Soft delete
+  
+  // Relations
+  users             User[]
+  invitations       TenantInvitation[]
+  auditLogs         TenantAuditLog[]
+  
+  @@index([slug])
+  @@index([status])
+  @@map("tenants")
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+  TRIAL
+}
+
+enum TenantPlan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+model TenantInvitation {
+  id            String         @id @default(uuid())
+  tenantId      String
+  email         String
+  role          UserRole       @default(MEMBER)
+  token         String         @unique @default(uuid())
+  expiresAt     DateTime
+  acceptedAt    DateTime?
+  createdAt     DateTime       @default(now())
+  
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([token])
+  @@index([tenantId, email])
+  @@map("tenant_invitations")
+}
+
+model TenantAuditLog {
+  id            String         @id @default(uuid())
+  tenantId      String
+  userId        String?
+  action        String
+  resource      String?
+  resourceId    String?
+  metadata      Json?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime       @default(now())
+  
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([tenantId, createdAt])
+  @@index([userId])
+  @@map("tenant_audit_logs")
+}
+
+// ==================== USER MODEL WITH MULTI-TENANCY ====================
+
+model User {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Every user belongs to a tenant
+  email         String
+  name          String?
+  passwordHash  String?
+  role          UserRole       @default(MEMBER)
+  isOwner       Boolean        @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  // Relations
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lifeAreas     LifeArea[]
+  journals      Journal[]
+  relationships Relationship[]
+  resets        Reset[]
+  vault         Vault[]
+  badges        Badge[]
+  audits        Audit[]
+  auditLogs     TenantAuditLog[]
+  
+  @@unique([tenantId, email]) // Email unique per tenant
+  @@index([tenantId])
+  @@index([email])
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model LifeArea {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  name          String
+  phoenixName   String?        // "Your Sacred Fire", etc.
+  status        LifeStatus     @default(GREEN)
+  score         Int            @default(0)
+  sortOrder     Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  journals      Journal[]
+  resets        Reset[]
+  relationships Relationship[]
+  events        Event[]
+  audits        Audit[]
+  
+  @@unique([userId, name])
+  @@index([tenantId])
+  @@index([userId])
+  @@map("life_areas")
+}
+
+enum LifeStatus {
+  GREEN
+  YELLOW
+  RED
+}
+
+model Journal {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  lifeAreaId    String
+  content       String         @db.Text
+  upsetDetected Boolean        @default(false)
+  aiReframe     String?        @db.Text
+  tags          String[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+  @@index([userId, createdAt])
+  @@index([lifeAreaId])
+  @@map("journals")
+}
+
+model Event {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  lifeAreaId    String
+  type          EventType
+  impact        Int            // -2 to +2
+  title         String
+  notes         String?        @db.Text
+  occurredAt    DateTime       @default(now())
+  createdAt     DateTime       @default(now())
+  
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+  @@index([userId, occurredAt])
+  @@index([lifeAreaId, occurredAt])
+  @@index([type])
+  @@map("events")
+}
+
+enum EventType {
+  WIN
+  COMMITMENT_KEPT
+  COMMITMENT_BROKEN
+  UPSET
+  INSIGHT
+  BOUNDARY_RESET
+  TASK_COMPLETED
+  TASK_MISSED
+}
+
+model Relationship {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  lifeAreaId    String
+  name          String
+  frequency     Int            @default(5) // 1-10 scale
+  notes         String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+  @@index([userId])
+  @@index([lifeAreaId])
+  @@map("relationships")
+}
+
+model Reset {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  lifeAreaId    String
+  
+  // 5-step reset ritual
+  step1_pause   String?        @db.Text
+  step2_identify String?       @db.Text
+  step3_acknowledge String?    @db.Text
+  step4_recommit String?       @db.Text
+  step5_recalibrate String?    @db.Text
+  
+  completed     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  completedAt   DateTime?
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+  @@index([userId, createdAt])
+  @@index([lifeAreaId])
+  @@map("resets")
+}
+
+model Badge {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  type          BadgeType
+  name          String
+  description   String
+  icon          String         // emoji
+  color         String         // hex color
+  rarity        Rarity
+  progress      Int            @default(0)
+  maxProgress   Int
+  unlocked      Boolean        @default(false)
+  unlockedAt    DateTime?
+  createdAt     DateTime       @default(now())
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, type])
+  @@index([tenantId])
+  @@index([userId, unlocked])
+  @@map("badges")
+}
+
+enum BadgeType {
+  ASHES_MASTER
+  FLAME_WALKER
+  RISING_STAR
+  FULL_FLIGHT
+  BOUNDARY_GUARDIAN
+  TRANSFORMATION_CATALYST
+  PHOENIX_BORN
+  ETERNAL_FLAME
+}
+
+enum Rarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model Vault {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  title         String
+  content       String         @db.Text
+  category      String?
+  accessLevel   AccessLevel    @default(PRIVATE)
+  tags          String[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+  @@index([userId, accessLevel])
+  @@index([userId, createdAt])
+  @@map("vault_items")
+}
+
+enum AccessLevel {
+  PRIVATE
+  SHARED
+  PUBLIC
+}
+
+model Audit {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  lifeAreaId    String
+  month         DateTime       // First day of the month
+  drift         Float          @default(0) // -1 to 1 drift metric
+  action        String?        @db.Text
+  colorSymbol   String         // Hex color for calendar display
+  notes         String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, lifeAreaId, month])
+  @@index([tenantId])
+  @@index([userId, month])
+  @@index([lifeAreaId, month])
+  @@map("audits")
+}

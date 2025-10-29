@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Tracker - Wisdom Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <!-- Navigation (same as index) -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-purple-600 dark:text-purple-400">Wisdom Course</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="tools.html" class="nav-link">Tools</a>
+                    <a href="life-areas.html" class="nav-link">Life Areas</a>
+                    <a href="tracker.html" class="nav-link">Tracker</a>
+                    <a href="relationships.html" class="nav-link">Relationships</a>
+                    <a href="legacy.html" class="nav-link">Legacy</a>
+                    
+                    <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                        <option value="en">EN</option>
+                        <option value="fr">FR</option>
+                        <option value="ar">AR</option>
+                    </select>
+                    
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        🌓
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <h1 class="text-4xl font-bold mb-8 dark:text-white" data-i18n="tracker-title">Monthly Boundary Tracker</h1>
+        
+        <!-- Incidents Table -->
+        <div class="card mb-12">
+            <h2 class="text-2xl font-bold mb-6" data-i18n="incidents-title">Recent Incidents</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b-2 dark:border-gray-600">
+                            <th class="text-left py-3 px-4" data-i18n="date">Date</th>
+                            <th class="text-left py-3 px-4" data-i18n="type">Type</th>
+                            <th class="text-left py-3 px-4" data-i18n="description">Description</th>
+                            <th class="text-left py-3 px-4" data-i18n="status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incidents-table">
+                        <!-- Populated by JavaScript from incidents.json -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reset Ritual -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-6" data-i18n="reset-title">Boundary Reset Ritual</h2>
+            <ol class="space-y-4">
+                <li class="flex items-start">
+                    <span class="text-purple-600 font-bold mr-3">1.</span>
+                    <div>
+                        <strong data-i18n="pause">Pause:</strong>
+                        <span data-i18n="pause-desc">Stop and acknowledge the drift</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 font-bold mr-3">2.</span>
+                    <div>
+                        <strong data-i18n="identify">Identify:</strong>
+                        <span data-i18n="identify-desc">Name the specific boundary violation</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 font-bold mr-3">3.</span>
+                    <div>
+                        <strong data-i18n="forgive">Forgive:</strong>
+                        <span data-i18n="forgive-desc">Release judgment and shame</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 font-bold mr-3">4.</span>
+                    <div>
+                        <strong data-i18n="recommit">Recommit:</strong>
+                        <span data-i18n="recommit-desc">Declare renewed commitment</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 font-bold mr-3">5.</span>
+                    <div>
+                        <strong data-i18n="recalibrate">Recalibrate:</strong>
+                        <span data-i18n="recalibrate-desc">Adjust systems to support the boundary</span>
+                    </div>
+                </li>
+            </ol>
+            
+            <p class="mt-8 text-center italic text-gray-600 dark:text-gray-400" data-i18n="reset-quote">
+                "Track without shame. Adjust with love."
+            </p>
+        </div>
+        
+        <!-- Add New Incident Button (Mobile Optimized) -->
+        <div class="fixed bottom-6 right-6">
+            <a href="incident-form.html" 
+               class="bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 transition-all hover:scale-110 flex items-center justify-center"
+               title="Report New Incident">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <script src="assets/scripts.js"></script>
+</body>
+</html>

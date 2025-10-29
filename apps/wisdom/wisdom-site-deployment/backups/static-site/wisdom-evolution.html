@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Evolution Course - Jonathan Anderson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-purple-600 dark:text-purple-400">Wisdom Course</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="wisdom-evolution.html" class="nav-link text-purple-600">Wisdom Evolution</a>
+                    <a href="autobiography.html" class="nav-link">Autobiography</a>
+                    <a href="tracker.html" class="nav-link">Tracker</a>
+                    <a href="relationships.html" class="nav-link">Relationships</a>
+                    
+                    <!-- Language Switcher -->
+                    <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                        <option value="en">EN</option>
+                        <option value="fr">FR</option>
+                        <option value="ar">AR</option>
+                    </select>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        🌓
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">Wisdom Evolution Course</h1>
+            <p class="text-xl opacity-90">Following the Landmark Education Methodology</p>
+            <div class="mt-6">
+                <div class="bg-white bg-opacity-20 rounded-lg p-4 inline-block">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm">Progress:</span>
+                        <div class="w-48 bg-white bg-opacity-30 rounded-full h-2">
+                            <div id="course-progress" class="bg-white h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <span id="progress-text" class="text-sm">0% Complete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Course Overview -->
+    <section class="py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8 dark:text-white">Course Structure</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="module-card" data-module="1">
+                    <div class="module-icon">🎯</div>
+                    <h3>Module 1</h3>
+                    <h4>The Nature of Fulfillment</h4>
+                    <p>Understanding what fulfillment really is and isn't</p>
+                    <div class="module-status" id="module-1-status">Not Started</div>
+                </div>
+                <div class="module-card" data-module="2">
+                    <div class="module-icon">🌊</div>
+                    <h3>Module 2</h3>
+                    <h4>The Drift</h4>
+                    <p>How we got here and what's been running our lives</p>
+                    <div class="module-status" id="module-2-status">Not Started</div>
+                </div>
+                <div class="module-card" data-module="3">
+                    <div class="module-icon">💬</div>
+                    <h3>Module 3</h3>
+                    <h4>Conversations for Fulfillment</h4>
+                    <p>Creating new conversations and possibilities</p>
+                    <div class="module-status" id="module-3-status">Not Started</div>
+                </div>
+                <div class="module-card" data-module="4">
+                    <div class="module-icon">🚀</div>
+                    <h3>Module 4</h3>
+                    <h4>Creating Your Future</h4>
+                    <p>Designing and living into your chosen future</p>
+                    <div class="module-status" id="module-4-status">Not Started</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module Content -->
+    <section class="py-12 bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <!-- Module 1: Nature of Fulfillment -->
+            <div id="module-1" class="module-content hidden">
+                <h2 class="text-3xl font-bold mb-8 text-center dark:text-white">Module 1: The Nature of Fulfillment</h2>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Key Insights</h3>
+                            <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>• Fulfillment is not happiness, satisfaction, or getting what you want</li>
+                                <li>• Fulfillment is the expression of who you are - your essential nature</li>
+                                <li>• Most people confuse fulfillment with accomplishments or experiences</li>
+                                <li>• Fulfillment is available in any moment, regardless of circumstances</li>
+                                <li>• It requires being present to what IS, not what should be</li>
+                            </ul>
+                        </div>
+
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Exercise 1: Fulfillment vs. Happiness Distinction</h3>
+                            <p class="mb-4 text-gray-700 dark:text-gray-300">Reflect on a time when you felt truly fulfilled. Describe the experience:</p>
+                            <textarea id="exercise-1-1" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="4" placeholder="Describe your experience of fulfillment..."></textarea>
+                            <p class="mt-4 mb-2 text-gray-700 dark:text-gray-300">Now, what made that moment fulfilling rather than just happy?</p>
+                            <textarea id="exercise-1-2" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="3" placeholder="What distinguished fulfillment from happiness..."></textarea>
+                            <button onclick="saveExercise('1-1')" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save Response</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Daily Practice</h3>
+                            <div class="space-y-3">
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-1-1" class="mr-2">
+                                    <label for="practice-1-1">Morning reflection: "What would fulfillment look like today?"</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-1-2" class="mr-2">
+                                    <label for="practice-1-2">Evening review: "When was I most authentic today?"</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-1-3" class="mr-2">
+                                    <label for="practice-1-3">Notice moments of being vs. doing</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="text-xl font-bold mb-4">Module Progress</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Exercises Complete</span>
+                                    <span id="module-1-exercises">0/3</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="module-1-progress" class="bg-purple-600 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <button onclick="completeModule(1)" class="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Mark Module Complete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2: The Drift -->
+            <div id="module-2" class="module-content hidden">
+                <h2 class="text-3xl font-bold mb-8 text-center dark:text-white">Module 2: The Drift</h2>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Understanding The Drift</h3>
+                            <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>• The drift is the gradual movement away from our authentic self</li>
+                                <li>• It begins early in life as we adapt to survive and belong</li>
+                                <li>• We develop a "life strategy" - a way of being that seems to work</li>
+                                <li>• This strategy becomes automatic and unconscious</li>
+                                <li>• Over time, we mistake our strategy for who we are</li>
+                                <li>• The drift creates a gap between our authentic self and our lived experience</li>
+                            </ul>
+                        </div>
+
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Exercise 2: Identifying Your Life Strategy</h3>
+                            <p class="mb-4 text-gray-700 dark:text-gray-300">Think back to your early childhood. What did you learn you needed to be/do to survive and belong?</p>
+                            <textarea id="exercise-2-1" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="4" placeholder="Describe your early survival strategies..."></textarea>
+                            <p class="mt-4 mb-2 text-gray-700 dark:text-gray-300">How does this strategy show up in your life today?</p>
+                            <textarea id="exercise-2-2" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="3" placeholder="Current manifestations of this strategy..."></textarea>
+                            <button onclick="saveExercise('2-1')" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save Response</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Daily Practice</h3>
+                            <div class="space-y-3">
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-2-1" class="mr-2">
+                                    <label for="practice-2-1">Notice when you're "performing" vs. being authentic</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-2-2" class="mr-2">
+                                    <label for="practice-2-2">Catch your automatic reactions</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-2-3" class="mr-2">
+                                    <label for="practice-2-3">Ask: "What would love do here?"</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="text-xl font-bold mb-4">Module Progress</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Exercises Complete</span>
+                                    <span id="module-2-exercises">0/3</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="module-2-progress" class="bg-purple-600 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <button onclick="completeModule(2)" class="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Mark Module Complete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3: Conversations for Fulfillment -->
+            <div id="module-3" class="module-content hidden">
+                <h2 class="text-3xl font-bold mb-8 text-center dark:text-white">Module 3: Conversations for Fulfillment</h2>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">The Power of Conversation</h3>
+                            <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>• Language creates reality - we live in the conversations we have</li>
+                                <li>• Most conversations are about the past or managing circumstances</li>
+                                <li>• Generative conversations create new possibilities</li>
+                                <li>• Speaking your commitments brings them into existence</li>
+                                <li>• Authentic conversations require vulnerability and presence</li>
+                                <li>• The quality of your life = the quality of your conversations</li>
+                            </ul>
+                        </div>
+
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Exercise 3: Creating Generative Conversations</h3>
+                            <p class="mb-4 text-gray-700 dark:text-gray-300">Identify three important relationships where you've been having the same conversation over and over:</p>
+                            <textarea id="exercise-3-1" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="4" placeholder="Describe these repetitive conversation patterns..."></textarea>
+                            <p class="mt-4 mb-2 text-gray-700 dark:text-gray-300">What new conversation could you create in each relationship?</p>
+                            <textarea id="exercise-3-2" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="3" placeholder="New conversations to create..."></textarea>
+                            <button onclick="saveExercise('3-1')" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save Response</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Daily Practice</h3>
+                            <div class="space-y-3">
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-3-1" class="mr-2">
+                                    <label for="practice-3-1">Have one authentic conversation today</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-3-2" class="mr-2">
+                                    <label for="practice-3-2">Share a vulnerability or truth</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-3-3" class="mr-2">
+                                    <label for="practice-3-3">Listen for what's not being said</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="text-xl font-bold mb-4">Module Progress</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Exercises Complete</span>
+                                    <span id="module-3-exercises">0/3</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="module-3-progress" class="bg-purple-600 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <button onclick="completeModule(3)" class="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Mark Module Complete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 4: Creating Your Future -->
+            <div id="module-4" class="module-content hidden">
+                <h2 class="text-3xl font-bold mb-8 text-center dark:text-white">Module 4: Creating Your Future</h2>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Future Creation Principles</h3>
+                            <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>• The future is not predicted but created through declaration</li>
+                                <li>• Your word has the power to create new realities</li>
+                                <li>• Commitment is the bridge between vision and reality</li>
+                                <li>• Actions aligned with your commitments transform your life</li>
+                                <li>• Creating your future requires letting go of your past</li>
+                                <li>• The quality of your future depends on your willingness to be responsible</li>
+                            </ul>
+                        </div>
+
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Exercise 4: Declaring Your Future</h3>
+                            <p class="mb-4 text-gray-700 dark:text-gray-300">If you could create any future for yourself, what would you declare? Be bold and specific:</p>
+                            <textarea id="exercise-4-1" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="4" placeholder="I declare my future to be..."></textarea>
+                            <p class="mt-4 mb-2 text-gray-700 dark:text-gray-300">What commitments will you make to ensure this future becomes reality?</p>
+                            <textarea id="exercise-4-2" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" rows="3" placeholder="My commitments are..."></textarea>
+                            <button onclick="saveExercise('4-1')" class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Save Response</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div class="card mb-6">
+                            <h3 class="text-xl font-bold mb-4">Daily Practice</h3>
+                            <div class="space-y-3">
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-4-1" class="mr-2">
+                                    <label for="practice-4-1">Take one action aligned with your future</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-4-2" class="mr-2">
+                                    <label for="practice-4-2">Renew your commitments</label>
+                                </div>
+                                <div class="practice-item">
+                                    <input type="checkbox" id="practice-4-3" class="mr-2">
+                                    <label for="practice-4-3">Share your vision with someone</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="text-xl font-bold mb-4">Module Progress</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Exercises Complete</span>
+                                    <span id="module-4-exercises">0/3</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="module-4-progress" class="bg-purple-600 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <button onclick="completeModule(4)" class="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Mark Module Complete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Completion -->
+            <div id="course-complete" class="hidden text-center py-12">
+                <div class="card max-w-2xl mx-auto">
+                    <h2 class="text-3xl font-bold mb-6 text-green-600">Congratulations!</h2>
+                    <p class="text-lg mb-6 text-gray-700 dark:text-gray-300">You have completed the Wisdom Evolution Course. Your journey of transformation has begun.</p>
+                    <div class="space-y-4">
+                        <button onclick="exportProgress()" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 mr-4">Export Your Progress</button>
+                        <button onclick="restartCourse()" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700">Start Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="assets/scripts.js"></script>
+    <script src="assets/wisdom-evolution.js"></script>
+</body>
+</html>
