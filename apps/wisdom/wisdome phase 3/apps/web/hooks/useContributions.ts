@@ -45,7 +45,7 @@ export function useContributions() {
       const data = await response.json();
       setContributions(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export function useContributions() {
       
       return newContribution;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
       throw err;
     }
   }, [fetchStatistics]);
@@ -116,10 +116,10 @@ export function useContributions() {
       setContributions(prev => 
         prev.map(c => c.id === id ? updatedContribution : c)
       );
-      
+
       return updatedContribution;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
       throw err;
     }
   }, []);
@@ -141,7 +141,7 @@ export function useContributions() {
       // Refresh statistics
       await fetchStatistics();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
       throw err;
     }
   }, [fetchStatistics]);

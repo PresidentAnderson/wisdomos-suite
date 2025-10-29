@@ -180,7 +180,7 @@ export function useRealtimeScores({
                 onScoreUpdate?.(updatePayload)
               }
             } catch (err) {
-              const error = err instanceof Error ? err : new Error('Unknown error processing update')
+              const error = err && typeof err === 'object' && 'message' in err ? (err as Error) : new Error('Unknown error processing update')
               console.error('Error processing real-time update:', error)
               setError(error)
               onError?.(error)
@@ -217,7 +217,7 @@ export function useRealtimeScores({
         setIsConnected(false)
       }
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to connect to real-time channel')
+      const error = err && typeof err === 'object' && 'message' in err ? (err as Error) : new Error('Failed to connect to real-time channel')
       console.error('Error setting up real-time subscription:', error)
       setError(error)
       onError?.(error)

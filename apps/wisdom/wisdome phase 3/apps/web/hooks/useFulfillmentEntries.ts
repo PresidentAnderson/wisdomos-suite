@@ -72,7 +72,7 @@ export function useFulfillmentEntries(lifeAreaSlug?: string) {
       const data = await response.json();
       setEntries(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -103,10 +103,10 @@ export function useFulfillmentEntries(lifeAreaSlug?: string) {
       
       const newEntry = await response.json();
       setEntries(prev => [newEntry, ...prev]);
-      
+
       return newEntry;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
       throw err;
     }
   }, []);
@@ -126,13 +126,13 @@ export function useFulfillmentEntries(lifeAreaSlug?: string) {
       if (!response.ok) throw new Error('Failed to update entry');
       
       const updatedEntry = await response.json();
-      setEntries(prev => 
+      setEntries(prev =>
         prev.map(e => e.id === id ? updatedEntry : e)
       );
-      
+
       return updatedEntry;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
       throw err;
     }
   }, []);
@@ -148,10 +148,10 @@ export function useFulfillmentEntries(lifeAreaSlug?: string) {
       });
       
       if (!response.ok) throw new Error('Failed to delete entry');
-      
+
       setEntries(prev => prev.filter(e => e.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err && typeof err === 'object' && 'message' in err ? (err as Error).message : 'Unknown error');
       throw err;
     }
   }, []);
