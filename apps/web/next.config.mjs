@@ -53,11 +53,19 @@ const nextConfig = {
   },
   // Environment variables for client-side
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || process.env.URL || 'http://localhost:3011',
-    NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE || process.env.URL + '/api' || 'http://localhost:4000',
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ||
+                          process.env.URL ||
+                          process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined ||
+                          'http://localhost:3011',
+    NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE ||
+                          (process.env.URL ? process.env.URL + '/api' : undefined) ||
+                          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api` : undefined) ||
+                          'http://localhost:4000',
     NEXT_PUBLIC_APP_VERSION: '2.0.0-phoenix',
     NEXT_PUBLIC_COMPANY: 'AXAI Innovations',
   },
+  // Optimize for serverless deployment
+  outputFileTracing: true,
 }
 
 export default nextConfig

@@ -34,7 +34,7 @@ interface AuthContextType {
   
   // Auth methods
   login: (email: string, password: string, tenantSlug?: string) => Promise<void>
-  register: (email: string, password: string, name: string, tenantName?: string) => Promise<void>
+  register: (email: string, password: string, name: string, dateOfBirth?: string, tenantName?: string) => Promise<void>
   logout: () => void
   
   // Tenant methods
@@ -121,7 +121,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string, tenantSlug?: string): Promise<void> => {
     try {
-      const existingUser = getUserByEmailFromLocalStorage(email)
+      // Normalize email to lowercase and trim whitespace
+      const normalizedEmail = email.toLowerCase().trim()
+      const existingUser = getUserByEmailFromLocalStorage(normalizedEmail)
       if (!existingUser) {
         throw new Error('User not found')
       }
@@ -187,10 +189,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  const register = async (email: string, password: string, name: string, tenantName?: string): Promise<void> => {
+  const register = async (email: string, password: string, name: string, dateOfBirth?: string, tenantName?: string): Promise<void> => {
     try {
+      // Normalize email to lowercase and trim whitespace
+      const normalizedEmail = email.toLowerCase().trim()
+
       // Check if user already exists
-      const existingUser = getUserByEmailFromLocalStorage(email)
+      const existingUser = getUserByEmailFromLocalStorage(normalizedEmail)
       if (existingUser) {
         throw new Error('User already exists')
       }
@@ -215,8 +220,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Create user
       const newUser: User = {
         id: generateId(),
-        email,
+        email: normalizedEmail,
         name,
+        dateOfBirth, // Store date of birth for Life Calendar
         tenantId: newTenant.id,
         role: 'owner',
         createdAt: new Date(),

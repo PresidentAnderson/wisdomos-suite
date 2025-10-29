@@ -3,23 +3,27 @@
 # Enhanced security and IP protection
 
 [build]
-  base = ""
-  command = "npm install && cd apps/web && npx prisma generate && npm run build"
-  publish = "apps/web/.next"
+  base = "apps/web"
+  command = "cd ../.. && npm install --legacy-peer-deps && cd apps/web && npx prisma generate && npm run build"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
   NEXT_PUBLIC_BUILD_PLATFORM = "netlify"
   NEXT_PUBLIC_PHOENIX_MODE = "production"
+  # Skip Prisma postinstall to avoid duplicate runs
+  PRISMA_SKIP_POSTINSTALL_GENERATE = "true"
 
 [context.production]
-  command = "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build"
   [context.production.environment]
     NEXT_PUBLIC_SITE_URL = "https://wisdom2026.netlify.app"
     NEXT_PUBLIC_API_BASE = "https://wisdom2026.netlify.app/api"
 
 [context.deploy-preview]
-  command = "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build"
+  [context.deploy-preview.environment]
+    NEXT_PUBLIC_SITE_URL = "$DEPLOY_PRIME_URL"
+    NEXT_PUBLIC_API_BASE = "$DEPLOY_PRIME_URL/api"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

@@ -15,6 +15,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
     name: '',
+    dateOfBirth: '',
     tenantName: '',
   })
   const [showPassword, setShowPassword] = useState(false)
@@ -58,6 +59,7 @@ export default function RegisterPage() {
         formData.email,
         formData.password,
         formData.name,
+        formData.dateOfBirth || undefined,
         formData.tenantName || undefined
       )
       router.push('/')
@@ -140,6 +142,24 @@ export default function RegisterPage() {
                   placeholder="Enter your full name"
                   required
                 />
+              </div>
+
+              {/* Date of Birth */}
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent text-black"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Used to personalize your Life Calendar and insights
+                </p>
               </div>
 
               {/* Email */}
