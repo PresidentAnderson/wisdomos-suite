@@ -2,7 +2,6 @@
   "name": "wisdomos",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",

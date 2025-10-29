@@ -334,10 +334,11 @@ export function usePhoenixSecurity() {
 // Utility function to protect components
 export function phoenixProtect(element: HTMLElement): void {
   element.setAttribute('data-phoenix-protected', 'true')
-  element.style.userSelect = 'none'
-  element.style.webkitUserSelect = 'none'
-  element.style.mozUserSelect = 'none'
-  element.style.msUserSelect = 'none'
+  const style = element.style as any
+  style.userSelect = 'none'
+  style.webkitUserSelect = 'none'
+  style.mozUserSelect = 'none'
+  style.msUserSelect = 'none'
 }
 
 // License verification function

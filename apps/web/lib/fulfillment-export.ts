@@ -319,7 +319,7 @@ export class FulfillmentExportService {
 
     // COVER PAGE
     // Phoenix gradient header
-    doc.setFillColor(...colors.phoenixOrange)
+    doc.setFillColor(colors.phoenixOrange[0], colors.phoenixOrange[1], colors.phoenixOrange[2])
     doc.rect(0, 0, pageWidth, 60, 'F')
 
     doc.setTextColor(255, 255, 255)
@@ -342,12 +342,12 @@ export class FulfillmentExportService {
     doc.setFontSize(48)
     const scoreColor = data.globalFulfillmentScore >= 80 ? colors.green :
                        data.globalFulfillmentScore >= 60 ? colors.yellow : colors.red
-    doc.setTextColor(...scoreColor)
+    doc.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2])
     doc.text(data.globalFulfillmentScore.toString(), pageWidth / 2, yPos, { align: 'center' })
 
     yPos += 5
     doc.setFontSize(12)
-    doc.setTextColor(...colors.gray)
+    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
     doc.text('out of 100', pageWidth / 2, yPos, { align: 'center' })
 
     // Summary statistics
@@ -385,7 +385,7 @@ export class FulfillmentExportService {
     // Export metadata
     yPos = (doc as any).lastAutoTable.finalY + 20
     doc.setFontSize(10)
-    doc.setTextColor(...colors.gray)
+    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
     doc.text(`Export Date: ${data.exportDate.toLocaleString()}`, 20, yPos)
     yPos += 6
     doc.text(`User ID: ${data.userId}`, 20, yPos)
@@ -408,7 +408,7 @@ export class FulfillmentExportService {
       const statusColor = area.status.toLowerCase() === 'thriving' ? colors.green :
                          area.status.toLowerCase() === 'attention' ? colors.yellow : colors.red
 
-      doc.setFillColor(...statusColor)
+      doc.setFillColor(statusColor[0], statusColor[1], statusColor[2])
       doc.rect(0, 0, pageWidth, 40, 'F')
 
       doc.setTextColor(255, 255, 255)
@@ -439,7 +439,7 @@ export class FulfillmentExportService {
       if (area.description) {
         yPos += 10
         doc.setFontSize(10)
-        doc.setTextColor(...colors.gray)
+        doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
         const descLines = doc.splitTextToSize(area.description, pageWidth - 40)
         doc.text(descLines, 20, yPos)
         yPos += descLines.length * 5
@@ -467,7 +467,7 @@ export class FulfillmentExportService {
           head: [['Dimension', 'Score', 'Weight', 'Description']],
           body: dimensionData,
           theme: 'striped',
-          headStyles: { fillColor: colors.phoenixOrange },
+          headStyles: { fillColor: colors.phoenixOrange as [number, number, number] },
           margin: { left: 20, right: 20 }
         })
 
@@ -496,7 +496,7 @@ export class FulfillmentExportService {
           head: [['Title', 'Status', 'Size', 'Created']],
           body: commitmentData,
           theme: 'striped',
-          headStyles: { fillColor: colors.phoenixGold },
+          headStyles: { fillColor: colors.phoenixGold as [number, number, number] },
           margin: { left: 20, right: 20 }
         })
 
@@ -528,7 +528,7 @@ export class FulfillmentExportService {
           head: [['Date', 'Score', 'Status', 'Event/Note']],
           body: historyData,
           theme: 'striped',
-          headStyles: { fillColor: colors.phoenixIndigo },
+          headStyles: { fillColor: colors.phoenixIndigo as [number, number, number] },
           margin: { left: 20, right: 20 }
         })
 
@@ -546,14 +546,14 @@ export class FulfillmentExportService {
         yPos += 7
         doc.setFontSize(10)
         doc.setFont('helvetica', 'normal')
-        doc.setTextColor(...colors.gray)
+        doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
         const noteLines = doc.splitTextToSize(area.notes, pageWidth - 40)
         doc.text(noteLines, 20, yPos)
       }
 
       // Footer
       doc.setFontSize(8)
-      doc.setTextColor(...colors.gray)
+      doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
       doc.text(
         `Page ${index + 2} of ${data.lifeAreas.length + 1}`,
         pageWidth / 2,

@@ -171,7 +171,7 @@ export default function PhoenixCollaboration({
 
       {/* Active Users */}
       {activeUsers.length > 0 && (
-        <PhoenixCard variant="glass" className="mb-4">
+        <PhoenixCard variant="default" className="mb-4">
           <PhoenixCardHeader>
             <PhoenixCardTitle className="flex items-center gap-2 text-sm">
               <Users className="w-4 h-4" />

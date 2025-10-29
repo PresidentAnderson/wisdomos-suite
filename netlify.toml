@@ -3,9 +3,9 @@
 # Enhanced security and IP protection
 
 [build]
-  base = "apps/web"
-  command = "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build"
-  publish = ".next"
+  base = ""
+  command = "npm install && cd apps/web && npx prisma generate && npm run build"
+  publish = "apps/web/.next"
 
 [build.environment]
   NODE_VERSION = "20"

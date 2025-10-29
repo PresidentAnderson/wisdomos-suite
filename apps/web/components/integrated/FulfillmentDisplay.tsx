@@ -2,9 +2,11 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Target, Users, Circle, Calendar, AlertCircle, TrendingUp, Activity, Check, X, Plus, Eye, EyeOff, ChevronRight } from 'lucide-react'
+import { Target, Users, Circle, Calendar, AlertCircle, TrendingUp, Activity, Check, X, Plus, Eye, EyeOff, ChevronRight, Download } from 'lucide-react'
 import { FulfillmentDisplay as FulfillmentType, LifeArea, Commitment, Relationship } from '@/types/integrated-display'
 import { useLifeAreas } from '@/contexts/LifeAreasContext'
+import ExportDataModal from '@/components/fulfillment/ExportDataModal'
+import { ExportData } from '@/lib/fulfillment-export'
 
 interface FulfillmentDisplayProps {
   data?: FulfillmentType
@@ -19,6 +21,7 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
   const [showAddCommitment, setShowAddCommitment] = useState(false)
   const [showAcceptable, setShowAcceptable] = useState(true)
   const [showNoLongerTolerated, setShowNoLongerTolerated] = useState(true)
+  const [showExportModal, setShowExportModal] = useState(false)
   const [newCommitment, setNewCommitment] = useState({
     title: '',
     description: '',
@@ -191,7 +194,7 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
       const commitments = JSON.parse(stored)
       commitments.push(commitment)
       localStorage.setItem('wisdomos_commitments', JSON.stringify(commitments))
-      
+
       // Dispatch event to notify other components
       window.dispatchEvent(new Event('wisdomos:commitment-added'))
     }
@@ -204,8 +207,61 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
       size: 'medium'
     })
     setShowAddCommitment(false)
-    
+
     alert('Commitment added successfully!')
+  }
+
+  // Prepare export data
+  const prepareExportData = (): ExportData => {
+    // Calculate global fulfillment score (average of all area scores)
+    const globalScore = Math.round(
+      lifeAreas.reduce((sum, area) => sum + (area.score || 50), 0) / lifeAreas.length
+    )
+
+    // Get all commitments from localStorage
+    const allCommitments = typeof window !== 'undefined'
+      ? JSON.parse(localStorage.getItem('wisdomos_commitments') || '[]')
+      : []
+
+    // Map life areas to export format
+    const exportAreas = lifeAreas.map(area => {
+      const areaCommitments = allCommitments.filter((c: any) => c.areaId === area.id)
+
+      return {
+        id: area.id,
+        name: area.name,
+        phoenixName: area.phoenixName,
+        status: area.status || 'ATTENTION',
+        score: area.score || 50,
+        icon: area.icon,
+        description: area.description,
+        lastAudit: new Date(),
+        notes: area.description,
+        commitments: areaCommitments.map((c: any) => ({
+          ...c,
+          createdAt: new Date(c.createdAt),
+          completedAt: c.completedAt ? new Date(c.completedAt) : undefined
+        })),
+        dimensions: (area as any).dimensions || [],
+        history: [] // Could be populated from tracking data
+      }
+    })
+
+    return {
+      exportDate: new Date(),
+      userId: displayData.userId,
+      globalFulfillmentScore: globalScore,
+      lifeAreas: exportAreas,
+      summary: {
+        totalAreas: lifeAreas.length,
+        thrivingCount: lifeAreas.filter(a => (a.status || '').toLowerCase() === 'thriving').length,
+        attentionCount: lifeAreas.filter(a => (a.status || '').toLowerCase() === 'attention').length,
+        collapsedCount: lifeAreas.filter(a => (a.status || '').toLowerCase() === 'collapsed' || (a.status || '').toLowerCase() === 'breakdown').length,
+        totalCommitments: allCommitments.length,
+        activeCommitments: allCommitments.filter((c: any) => c.status === 'active').length,
+        completedCommitments: allCommitments.filter((c: any) => c.status === 'completed').length
+      }
+    }
   }
 
   return (
@@ -245,6 +301,14 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
             className={`px-3 py-1 rounded text-sm ${viewMode === 'audit' ? 'bg-phoenix-gold text-black' : 'bg-gray-100 hover:bg-gray-200'}`}
           >
             Audit
+          </button>
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-phoenix-orange to-phoenix-red text-white rounded-lg hover:shadow-lg transition-all text-sm font-medium"
+            title="Export fulfillment data"
+          >
+            <Download className="w-4 h-4" />
+            Export
           </button>
         </div>
       </div>
@@ -858,7 +922,7 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
               className="bg-white rounded-2xl p-6 w-full max-w-md mx-4"
             >
               <h3 className="text-xl font-semibold mb-4 text-black">Add New Commitment</h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-black mb-1">
@@ -872,7 +936,7 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
                     placeholder="Commitment title"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-black mb-1">
                     Description
@@ -885,12 +949,12 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
                     rows={3}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-black mb-1">
                     Life Area
                   </label>
-                  <select 
+                  <select
                     value={newCommitment.areaId}
                     onChange={(e) => setNewCommitment({...newCommitment, areaId: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-phoenix-orange focus:border-transparent"
@@ -908,7 +972,7 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
                   <label className="block text-sm font-medium text-black mb-1">
                     Size
                   </label>
-                  <select 
+                  <select
                     value={newCommitment.size}
                     onChange={(e) => setNewCommitment({...newCommitment, size: e.target.value as 'small' | 'medium' | 'large'})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-phoenix-orange focus:border-transparent"
@@ -919,7 +983,7 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
                   </select>
                 </div>
               </div>
-              
+
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowAddCommitment(false)}
@@ -938,6 +1002,18 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
           </div>
         )}
       </AnimatePresence>
+
+      {/* Export Data Modal */}
+      <ExportDataModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        exportData={prepareExportData()}
+        availableAreas={lifeAreas.map(area => ({
+          id: area.id,
+          name: area.name,
+          icon: area.icon
+        }))}
+      />
     </div>
   )
 }

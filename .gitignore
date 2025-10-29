@@ -57,3 +57,6 @@ next-env.d.ts
 
 # Misc
 .cache/
+
+# Local Netlify folder
+.netlify
