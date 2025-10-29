@@ -1,5 +1,4 @@
 {
-  "$comment": "WisdomOS Phoenix - Vercel Configuration | AXAI Innovations - Proprietary",
   "framework": "nextjs",
   "buildCommand": "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build",
   "installCommand": "cd ../.. && npm install",
