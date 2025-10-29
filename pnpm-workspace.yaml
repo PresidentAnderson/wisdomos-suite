@@ -39,3 +39,9 @@ packages:
   - 'wisdom/editions/premium/web'
   - 'wisdom/editions/premium/mobile'
   - 'wisdom/editions/premium/desktop'
+
+  # Main Applications (CRITICAL for Vercel deployment)
+  - 'apps/web'
+  - 'apps/api'
+  - 'apps/community'
+  - 'apps/mobile'

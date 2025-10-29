@@ -1,0 +1,6 @@
+.vercel
+
+/lib/generated/prisma
+
+# Local Netlify folder
+.netlify
