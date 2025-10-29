@@ -29,17 +29,14 @@ jobs:
 
       - name: Run linter
         run: npm run lint
-        continue-on-error: true
-      
+
       - name: Run tests
         run: npm run test
-        continue-on-error: true
         env:
           CI: true
 
       - name: Build web application
         run: npm run build
-        continue-on-error: true
         env:
           CI: true
 
