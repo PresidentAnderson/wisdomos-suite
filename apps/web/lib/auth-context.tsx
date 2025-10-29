@@ -121,67 +121,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string, tenantSlug?: string): Promise<void> => {
     try {
-      const existingUser = getUserByEmailFromLocalStorage(email)
-      if (!existingUser) {
-        throw new Error('User not found')
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, tenantSlug })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed')
       }
 
-      const storedPassword = localStorage.getItem(`wisdomos_password_${existingUser.id}`)
-      if (!storedPassword) {
-        throw new Error('Invalid credentials')
-      }
+      // Store auth data
+      setUser(data.user)
+      setTenant(data.tenant)
+      setToken(data.token)
+      localStorage.setItem('wisdomos_auth_token', data.token)
+      localStorage.setItem(`wisdomos_user_${data.user.id}`, JSON.stringify(data.user))
+      localStorage.setItem(`wisdomos_tenant_${data.tenant.id}`, JSON.stringify(data.tenant))
 
-      // Try modern hash first, then legacy
-      let isValid = await verifyPassword(password, storedPassword)
-      if (!isValid) {
-        // Try legacy password format
-        isValid = verifyLegacyPassword(password, storedPassword)
-      }
-      if (!isValid) {
-        throw new Error('Invalid credentials')
-      }
-
-      let targetTenant: Tenant | null = null
-      
-      if (tenantSlug) {
-        targetTenant = getTenantBySlugFromLocalStorage(tenantSlug)
-        if (!targetTenant) {
-          throw new Error('Tenant not found')
-        }
-        
-        // Check if user is member of this tenant
-        const membership = targetTenant.members.find(m => m.userId === existingUser.id)
-        if (!membership) {
-          throw new Error('Access denied to this workspace')
-        }
-      } else {
-        targetTenant = localStorage.getItem(`wisdomos_tenant_${existingUser.tenantId}`)
-          ? JSON.parse(localStorage.getItem(`wisdomos_tenant_${existingUser.tenantId}`)!)
-          : null
-      }
-
-      if (!targetTenant) {
-        throw new Error('No accessible tenant found')
-      }
-
-      // Update last login
-      existingUser.lastLoginAt = new Date()
-      storeUserInLocalStorage(existingUser)
-
-      const payload: JWTPayload = {
-        userId: existingUser.id,
-        email: existingUser.email,
-        tenantId: targetTenant.id,
-        role: existingUser.role
-      }
-
-      const newToken = generateToken(payload)
-      
-      setUser(existingUser)
-      setTenant(targetTenant)
-      setToken(newToken)
-      localStorage.setItem('wisdomos_auth_token', newToken)
-      
     } catch (error) {
       throw error
     }
@@ -189,72 +148,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const register = async (email: string, password: string, name: string, tenantName?: string): Promise<void> => {
     try {
-      // Check if user already exists
-      const existingUser = getUserByEmailFromLocalStorage(email)
-      if (existingUser) {
-        throw new Error('User already exists')
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, tenantName })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed')
       }
 
-      // Hash password using our utility
-      const hashedPassword = await hashPassword(password)
-      
-      // Create tenant
-      const slug = tenantName ? generateSlug(tenantName) : generateSlug(name)
-      const newTenant: Tenant = {
-        id: generateId(),
-        name: tenantName || `${name}'s Workspace`,
-        slug,
-        ownerId: '', // Will be set after user creation
-        plan: 'free',
-        settings: getDefaultTenantSettings(tenantName || `${name}'s Workspace`),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        members: []
-      }
+      // Store auth data
+      setUser(data.user)
+      setTenant(data.tenant)
+      setToken(data.token)
+      localStorage.setItem('wisdomos_auth_token', data.token)
+      localStorage.setItem(`wisdomos_user_${data.user.id}`, JSON.stringify(data.user))
+      localStorage.setItem(`wisdomos_tenant_${data.tenant.id}`, JSON.stringify(data.tenant))
 
-      // Create user
-      const newUser: User = {
-        id: generateId(),
-        email,
-        name,
-        tenantId: newTenant.id,
-        role: 'owner',
-        createdAt: new Date(),
-        preferences: getDefaultPreferences()
-      }
-
-      // Update tenant with owner ID and add user as member
-      newTenant.ownerId = newUser.id
-      newTenant.members = [{
-        userId: newUser.id,
-        tenantId: newTenant.id,
-        role: 'owner',
-        permissions: getAllPermissions(),
-        invitedAt: new Date(),
-        joinedAt: new Date(),
-        invitedBy: newUser.id
-      }]
-
-      // Store user and tenant
-      storeUserInLocalStorage(newUser)
-      storeTenantInLocalStorage(newTenant)
-      localStorage.setItem(`wisdomos_password_${newUser.id}`, hashedPassword)
-
-      // Generate token
-      const payload: JWTPayload = {
-        userId: newUser.id,
-        email: newUser.email,
-        tenantId: newTenant.id,
-        role: newUser.role
-      }
-
-      const newToken = generateToken(payload)
-      
-      setUser(newUser)
-      setTenant(newTenant)
-      setToken(newToken)
-      localStorage.setItem('wisdomos_auth_token', newToken)
-      
     } catch (error) {
       throw error
     }

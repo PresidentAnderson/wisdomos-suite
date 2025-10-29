@@ -1,0 +1,21 @@
+name: Vercel Preview Deployment
+
+on:
+  push:
+    branches:
+      - feature/**
+
+jobs:
+  deploy-preview:
+    name: Deploy Preview to Vercel
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Preview deployment info
+        run: |
+          echo "Preview deployment for branch: ${{ github.ref_name }}"
+          echo "Note: Vercel integration via GitHub app is recommended"
+          echo "Manual deployment: npx vercel --token=VERCEL_TOKEN"

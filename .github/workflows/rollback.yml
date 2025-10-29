@@ -1,0 +1,28 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Commit SHA to roll back to'
+        required: true
+
+jobs:
+  rollback:
+    name: Roll Back to Previous Commit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Rollback to commit
+        run: |
+          git reset --hard ${{ inputs.commit_sha }}
+          git push --force
+          echo "Rolled back to ${{ inputs.commit_sha }}"
