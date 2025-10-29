@@ -24,29 +24,6 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# API Routes - redirect to Netlify Functions
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-
-# Protected routes with role-based access
-[[redirects]]
-  from = "/admin/*"
-  to = "/admin/index.html"
-  status = 200
-  conditions = {Role = ["admin", "owner"]}
-
-# SPA fallback for client-side routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-
 # Enhanced Security Headers with IP Protection
 [[headers]]
   for = "/*"
