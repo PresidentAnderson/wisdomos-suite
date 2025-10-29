@@ -47,10 +47,6 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  
-[[functions]]
-  path = "/api/*"
-  included_files = ["apps/api/**/*", "packages/**/*"]
 
 # Enhanced Security Headers with IP Protection
 [[headers]]
