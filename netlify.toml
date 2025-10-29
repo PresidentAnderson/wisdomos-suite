@@ -24,6 +24,10 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+# Disable Netlify Functions - using Next.js API routes instead
+[functions]
+  directory = "disabled"
+
 # Enhanced Security Headers with IP Protection
 [[headers]]
   for = "/*"
