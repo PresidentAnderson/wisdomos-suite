@@ -1,0 +1,41 @@
+packages:
+  # Shared packages
+  - 'wisdom/shared/core'
+  - 'wisdom/shared/ui-components'
+  - 'wisdom/shared/database/prisma'
+  - 'wisdom/shared/database/utils'
+  - 'wisdom/shared/assets/i18n'
+  - 'wisdom/shared/config'
+
+  # Agent System (FD-v5)
+  - 'packages/agents'
+
+  # Platform packages
+  - 'wisdom/platforms/web-saas/frontend'
+  - 'wisdom/platforms/web-saas/backend'
+  - 'wisdom/platforms/mobile/shared'
+  - 'wisdom/platforms/mobile/ios'
+  - 'wisdom/platforms/mobile/android'
+  - 'wisdom/platforms/desktop/shared'
+  - 'wisdom/platforms/desktop/macos'
+  - 'wisdom/platforms/desktop/windows'
+  - 'wisdom/platforms/desktop/unix'
+
+  # Edition packages
+  - 'wisdom/editions/free/web'
+  - 'wisdom/editions/free/mobile'
+  - 'wisdom/editions/free/desktop'
+  - 'wisdom/editions/community-hub/web'
+  - 'wisdom/editions/student/web'
+  - 'wisdom/editions/student/mobile'
+  - 'wisdom/editions/standard/web'
+  - 'wisdom/editions/standard/mobile'
+  - 'wisdom/editions/advanced/web'
+  - 'wisdom/editions/advanced/mobile'
+  - 'wisdom/editions/advanced/desktop'
+  - 'wisdom/editions/institutional/web'
+  - 'wisdom/editions/institutional/mobile'
+  - 'wisdom/editions/institutional/desktop'
+  - 'wisdom/editions/premium/web'
+  - 'wisdom/editions/premium/mobile'
+  - 'wisdom/editions/premium/desktop'

@@ -1,0 +1,900 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Calendar, CheckCircle, AlertTriangle, XCircle, Plus, 
+  Edit2, Save, RefreshCw, BarChart3, TrendingUp, Target,
+  Shield, Clock, Users, Heart, Home, Briefcase, BookOpen,
+  Palette, Gamepad2, TreePine, Sparkles, Stethoscope,
+  DollarSign, User, Download, Filter, Search, Loader2
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { boundaryAuditApi } from '@/lib/database';
+import type { BoundaryAudit } from '@/lib/supabase';
+import toast from 'react-hot-toast';
+
+interface BoundaryEntry {
+  lifeArea: string;
+  description: string;
+}
+
+interface ResetRitual {
+  id: string;
+  date: Date;
+  completed: boolean;
+  lifeArea: string;
+  violation: string;
+  pause: string;
+  identify: string;
+  forgive: string;
+  recommit: string;
+  recalibrate: string;
+  followUpDate: Date;
+}
+
+const LIFE_AREAS = [
+  'personal', 'professional', 'family', 'social'
+];
+
+const STATUS_CONFIG = {
+  draft: {
+    label: 'Draft',
+    color: 'bg-gray-500',
+    textColor: 'text-gray-700',
+    bgColor: 'bg-gray-100',
+    icon: Clock,
+    description: 'Draft boundary being developed'
+  },
+  active: {
+    label: 'Active',
+    color: 'bg-green-500',
+    textColor: 'text-green-700',
+    bgColor: 'bg-green-100',
+    icon: CheckCircle,
+    description: 'Boundary is active and being maintained'
+  },
+  completed: {
+    label: 'Completed',
+    color: 'bg-blue-500',
+    textColor: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+    icon: Target,
+    description: 'Boundary goals have been achieved'
+  }
+};
+
+const PRIORITY_CONFIG = {
+  low: {
+    label: 'Low Priority',
+    color: 'bg-gray-400',
+    textColor: 'text-gray-600'
+  },
+  medium: {
+    label: 'Medium Priority',
+    color: 'bg-yellow-400',
+    textColor: 'text-yellow-700'
+  },
+  high: {
+    label: 'High Priority',
+    color: 'bg-red-400',
+    textColor: 'text-red-700'
+  }
+};
+
+export default function BoundaryAuditTemplate() {
+  const { user } = useAuth();
+  const [audits, setAudits] = useState<BoundaryAudit[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [view, setView] = useState<'audit' | 'tracker' | 'insights' | 'reset'>('audit');
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [showAddAudit, setShowAddAudit] = useState(false);
+  const [editingAudit, setEditingAudit] = useState<BoundaryAudit | null>(null);
+  const [filterArea, setFilterArea] = useState<string>('');
+  const [filterStatus, setFilterStatus] = useState<string>('');
+  const [filterPriority, setFilterPriority] = useState<string>('');
+  const [showResetRitual, setShowResetRitual] = useState(false);
+  const [showAddEntry, setShowAddEntry] = useState(false);
+  const [newEntry, setNewEntry] = useState({
+    lifeArea: '',
+    status: 'yellow' as 'green' | 'yellow' | 'red',
+    description: '',
+    trigger: '',
+    response: '',
+    outcome: '',
+    date: new Date()
+  });
+  const [resetRituals, setResetRituals] = useState<ResetRitual[]>([]);
+  const [currentRitual, setCurrentRitual] = useState({
+    lifeArea: '',
+    violation: '',
+    pause: '',
+    identify: '',
+    forgive: '',
+    recommit: '',
+    recalibrate: '',
+    followUpDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  });
+
+  const [newAudit, setNewAudit] = useState<Partial<BoundaryAudit>>({
+    title: '',
+    category: 'personal',
+    current_boundary: '',
+    desired_boundary: '',
+    action_steps: [],
+    priority: 'medium',
+    status: 'draft'
+  });
+
+  // Load audits on component mount
+  useEffect(() => {
+    if (user) {
+      loadAudits();
+    }
+  }, [user]);
+
+  const loadAudits = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const data = await boundaryAuditApi.getAll(user.id);
+      setAudits(data);
+    } catch (error) {
+      console.error('Error loading boundary audits:', error);
+      toast.error('Failed to load boundary audits');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createAudit = async () => {
+    if (!user || !newAudit.title || !newAudit.current_boundary) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const auditData = {
+        user_id: user.id,
+        title: newAudit.title!,
+        category: newAudit.category as 'personal' | 'professional' | 'family' | 'social',
+        current_boundary: newAudit.current_boundary!,
+        desired_boundary: newAudit.desired_boundary || '',
+        action_steps: newAudit.action_steps || [],
+        priority: newAudit.priority as 'low' | 'medium' | 'high',
+        status: newAudit.status as 'draft' | 'active' | 'completed'
+      };
+
+      const createdAudit = await boundaryAuditApi.create(auditData);
+      setAudits(prev => [createdAudit, ...prev]);
+      
+      // Reset form
+      setNewAudit({
+        title: '',
+        category: 'personal',
+        current_boundary: '',
+        desired_boundary: '',
+        action_steps: [],
+        priority: 'medium',
+        status: 'draft'
+      });
+      
+      setShowAddAudit(false);
+      toast.success('Boundary audit created successfully');
+    } catch (error) {
+      console.error('Error creating boundary audit:', error);
+      toast.error('Failed to create boundary audit');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateAudit = async () => {
+    if (!user || !editingAudit) return;
+
+    try {
+      setSaving(true);
+      const updatedAudit = await boundaryAuditApi.update(editingAudit.id, user.id, {
+        title: newAudit.title!,
+        category: newAudit.category as 'personal' | 'professional' | 'family' | 'social',
+        current_boundary: newAudit.current_boundary!,
+        desired_boundary: newAudit.desired_boundary || '',
+        action_steps: newAudit.action_steps || [],
+        priority: newAudit.priority as 'low' | 'medium' | 'high',
+        status: newAudit.status as 'draft' | 'active' | 'completed'
+      });
+
+      setAudits(prev => prev.map(audit => 
+        audit.id === updatedAudit.id ? updatedAudit : audit
+      ));
+      
+      setEditingAudit(null);
+      setNewAudit({
+        title: '',
+        category: 'personal',
+        current_boundary: '',
+        desired_boundary: '',
+        action_steps: [],
+        priority: 'medium',
+        status: 'draft'
+      });
+      
+      toast.success('Boundary audit updated successfully');
+    } catch (error) {
+      console.error('Error updating boundary audit:', error);
+      toast.error('Failed to update boundary audit');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteAudit = async (auditId: string) => {
+    if (!user) return;
+
+    try {
+      await boundaryAuditApi.delete(auditId, user.id);
+      setAudits(prev => prev.filter(audit => audit.id !== auditId));
+      toast.success('Boundary audit deleted successfully');
+    } catch (error) {
+      console.error('Error deleting boundary audit:', error);
+      toast.error('Failed to delete boundary audit');
+    }
+  };
+
+  const startEdit = (audit: BoundaryAudit) => {
+    setEditingAudit(audit);
+    setNewAudit({
+      title: audit.title,
+      category: audit.category,
+      current_boundary: audit.current_boundary,
+      desired_boundary: audit.desired_boundary,
+      action_steps: audit.action_steps || [],
+      priority: audit.priority,
+      status: audit.status
+    });
+    setShowAddAudit(true);
+  };
+
+  const startResetRitual = (entry?: BoundaryEntry) => {
+    if (entry) {
+      setCurrentRitual({
+        lifeArea: entry.lifeArea,
+        violation: entry.description,
+        pause: '',
+        identify: '',
+        forgive: '',
+        recommit: '',
+        recalibrate: '',
+        followUpDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      });
+    }
+    setShowResetRitual(true);
+  };
+
+  const completeResetRitual = () => {
+    if (!currentRitual.lifeArea) return;
+
+    const ritual: ResetRitual = {
+      id: `ritual-${Date.now()}`,
+      date: new Date(),
+      completed: false,
+      ...currentRitual as ResetRitual
+    };
+
+    setResetRituals(prev => [ritual, ...prev]);
+    setCurrentRitual({
+      lifeArea: '',
+      violation: '',
+      pause: '',
+      identify: '',
+      forgive: '',
+      recommit: '',
+      recalibrate: '',
+      followUpDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    });
+    setShowResetRitual(false);
+  };
+
+  const getStatusStats = () => {
+    const stats = { green: 0, yellow: 0, red: 0 };
+    // TODO: Implement boundary tracking entries
+    // const monthEntries = entries.filter(entry => 
+    //   entry.date.toISOString().slice(0, 7) === selectedMonth
+    // );
+    
+    // monthEntries.forEach(entry => {
+    //   stats[entry.status]++;
+    // });
+    
+    return stats;
+  };
+
+  const getAreaStats = () => {
+    const areaStats: { [key: string]: { green: number; yellow: number; red: number } } = {};
+    
+    LIFE_AREAS.forEach(area => {
+      areaStats[area] = { green: 0, yellow: 0, red: 0 };
+    });
+
+    // TODO: Implement boundary tracking entries
+    // const monthEntries = entries.filter(entry => 
+    //   entry.date.toISOString().slice(0, 7) === selectedMonth
+    // );
+
+    // monthEntries.forEach(entry => {
+    //   if (areaStats[entry.lifeArea]) {
+    //     areaStats[entry.lifeArea][entry.status]++;
+    //   }
+    // });
+
+    return areaStats;
+  };
+
+  const getFilteredEntries = () => {
+    // TODO: Implement boundary tracking entries
+    return [];
+    // return entries.filter(entry => {
+    //   const matchesArea = !filterArea || entry.lifeArea === filterArea;
+    //   const matchesStatus = !filterStatus || entry.status === filterStatus;
+    //   const matchesMonth = entry.date.toISOString().slice(0, 7) === selectedMonth;
+    //   return matchesArea && matchesStatus && matchesMonth;
+    // });
+  };
+
+  const exportData = () => {
+    const data = {
+      entries: [], // TODO: Implement boundary tracking entries
+      resetRituals,
+      monthlyStats: getStatusStats(),
+      areaStats: getAreaStats(),
+      exportDate: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `boundary-audit-${selectedMonth}.json`;
+    a.click();
+  };
+
+  const renderAuditLog = () => (
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-gray-500" />
+          <input
+            type="month"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          />
+        </div>
+        
+        <select
+          value={filterArea}
+          onChange={(e) => setFilterArea(e.target.value)}
+          className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+        >
+          <option value="">All Life Areas</option>
+          {LIFE_AREAS.map(area => (
+            <option key={area} value={area}>{area}</option>
+          ))}
+        </select>
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+        >
+          <option value="">All Status</option>
+          <option value="green">Green - Strong</option>
+          <option value="yellow">Yellow - Drift</option>
+          <option value="red">Red - Collapse</option>
+        </select>
+
+        <button
+          onClick={() => setShowAddEntry(true)}
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Add Entry
+        </button>
+      </div>
+
+      {/* Entries */}
+      <div className="space-y-4">
+        {getFilteredEntries().map((entry) => {
+          const statusConfig = STATUS_CONFIG[entry.status];
+          const StatusIcon = statusConfig.icon;
+
+          return (
+            <motion.div
+              key={entry.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`border-l-4 ${statusConfig.color} bg-white dark:bg-gray-800 rounded-r-lg shadow-sm p-6`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <StatusIcon className={`w-5 h-5 ${statusConfig.textColor}`} />
+                    <span className={`px-2 py-1 rounded-full text-sm font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}>
+                      {statusConfig.label}
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {entry.lifeArea}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {entry.date.toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-900 dark:text-white mb-3 font-medium">
+                    {entry.description}
+                  </p>
+                  
+                  {entry.trigger && (
+                    <div className="mb-2">
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Trigger: </span>
+                      <span className="text-sm text-gray-900 dark:text-white">{entry.trigger}</span>
+                    </div>
+                  )}
+                  
+                  {entry.response && (
+                    <div className="mb-2">
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Response: </span>
+                      <span className="text-sm text-gray-900 dark:text-white">{entry.response}</span>
+                    </div>
+                  )}
+                  
+                  {entry.lesson && (
+                    <div className="mb-2">
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Lesson: </span>
+                      <span className="text-sm text-gray-900 dark:text-white">{entry.lesson}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {entry.status === 'red' && (
+                  <button
+                    onClick={() => startResetRitual(entry)}
+                    className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 text-sm"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Reset Ritual
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  const renderTracker = () => {
+    const areaStats = getAreaStats();
+
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Object.entries(STATUS_CONFIG).map(([status, config]) => {
+            const stats = getStatusStats();
+            const count = stats[status as keyof typeof stats];
+            const StatusIcon = config.icon;
+
+            return (
+              <div key={status} className={`${config.bgColor} rounded-xl p-6`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <StatusIcon className={`w-6 h-6 ${config.textColor}`} />
+                      <span className={`font-semibold ${config.textColor}`}>{config.label}</span>
+                    </div>
+                    <p className={`text-3xl font-bold ${config.textColor}`}>{count}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            Life Areas Status Grid
+          </h3>
+          <div className="space-y-3">
+            {LIFE_AREAS.map(area => {
+              const stats = areaStats[area];
+              const total = stats.green + stats.yellow + stats.red;
+              
+              return (
+                <div key={area} className="flex items-center gap-4">
+                  <div className="w-32 text-sm font-medium text-gray-900 dark:text-white">
+                    {area}
+                  </div>
+                  <div className="flex-1 flex gap-1 h-6 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                    {total > 0 ? (
+                      <>
+                        <div 
+                          className="bg-green-500" 
+                          style={{ width: `${(stats.green / total) * 100}%` }}
+                        />
+                        <div 
+                          className="bg-yellow-500" 
+                          style={{ width: `${(stats.yellow / total) * 100}%` }}
+                        />
+                        <div 
+                          className="bg-red-500" 
+                          style={{ width: `${(stats.red / total) * 100}%` }}
+                        />
+                      </>
+                    ) : (
+                      <div className="w-full bg-gray-300 dark:bg-gray-600" />
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {total === 0 ? 'No entries' : `${stats.green}/${stats.yellow}/${stats.red}`}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderResetRituals = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+          Reset Rituals
+        </h3>
+        <button
+          onClick={() => startResetRitual()}
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          New Reset Ritual
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        {resetRituals.map(ritual => (
+          <div key={ritual.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h4 className="font-semibold text-gray-900 dark:text-white">{ritual.lifeArea}</h4>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {ritual.date.toLocaleDateString()} • Follow-up: {ritual.followUpDate.toLocaleDateString()}
+                </p>
+              </div>
+              <div className={`px-3 py-1 rounded-full text-sm ${
+                ritual.completed 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-yellow-100 text-yellow-700'
+              }`}>
+                {ritual.completed ? 'Complete' : 'In Progress'}
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Violation: </span>
+                <p className="text-sm text-gray-900 dark:text-white">{ritual.violation}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Recommitment: </span>
+                <p className="text-sm text-gray-900 dark:text-white">{ritual.recommit}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Boundary Audit & Reset
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Track your boundaries systematically with color-coded status and reset rituals
+        </p>
+      </div>
+
+      {/* Controls */}
+      <div className="flex flex-wrap gap-4 mb-8">
+        <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+          {[
+            { id: 'audit', label: 'Audit Log', icon: BookOpen },
+            { id: 'tracker', label: 'Color Tracker', icon: BarChart3 },
+            { id: 'reset', label: 'Reset Rituals', icon: RefreshCw },
+            { id: 'insights', label: 'Insights', icon: TrendingUp }
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setView(id as any)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                view === id
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={exportData}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+        >
+          <Download className="w-4 h-4" />
+          Export Data
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        {view === 'audit' && renderAuditLog()}
+        {view === 'tracker' && renderTracker()}
+        {view === 'reset' && renderResetRituals()}
+        {view === 'insights' && (
+          <div className="text-center py-12">
+            <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Insights Coming Soon
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400">
+              Advanced analytics and trend analysis will be available here
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Add Entry Modal */}
+      <AnimatePresence>
+        {showAddEntry && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowAddEntry(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                Add Boundary Entry
+              </h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <select
+                    value={newEntry.lifeArea}
+                    onChange={(e) => setNewEntry({...newEntry, lifeArea: e.target.value})}
+                    className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  >
+                    <option value="">Select Life Area</option>
+                    {LIFE_AREAS.map(area => (
+                      <option key={area} value={area}>{area}</option>
+                    ))}
+                  </select>
+                  
+                  <select
+                    value={newEntry.status}
+                    onChange={(e) => setNewEntry({...newEntry, status: e.target.value as any})}
+                    className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  >
+                    {Object.entries(STATUS_CONFIG).map(([status, config]) => (
+                      <option key={status} value={status}>{config.label}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <textarea
+                  placeholder="Boundary description"
+                  value={newEntry.description}
+                  onChange={(e) => setNewEntry({...newEntry, description: e.target.value})}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  rows={3}
+                />
+                
+                <textarea
+                  placeholder="What triggered this situation?"
+                  value={newEntry.trigger}
+                  onChange={(e) => setNewEntry({...newEntry, trigger: e.target.value})}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  rows={2}
+                />
+                
+                <textarea
+                  placeholder="How did you respond?"
+                  value={newEntry.response}
+                  onChange={(e) => setNewEntry({...newEntry, response: e.target.value})}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  rows={2}
+                />
+                
+                <textarea
+                  placeholder="What did you learn from this?"
+                  value={newEntry.lesson}
+                  onChange={(e) => setNewEntry({...newEntry, lesson: e.target.value})}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  rows={2}
+                />
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowAddEntry(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={addEntry}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                >
+                  Add Entry
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Reset Ritual Modal */}
+      <AnimatePresence>
+        {showResetRitual && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowResetRitual(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                5-Step Boundary Reset Ritual
+              </h3>
+              
+              <div className="space-y-6">
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-200 mb-2">
+                    The 5-Step Process
+                  </h4>
+                  <ol className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
+                    <li>1. Pause - Stop and acknowledge what happened</li>
+                    <li>2. Identify - Name the specific boundary violation</li>
+                    <li>3. Forgive - Forgive yourself for the boundary collapse</li>
+                    <li>4. Recommit - Clearly state your renewed commitment</li>
+                    <li>5. Recalibrate - Adjust your approach going forward</li>
+                  </ol>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <select
+                    value={currentRitual.lifeArea}
+                    onChange={(e) => setCurrentRitual({...currentRitual, lifeArea: e.target.value})}
+                    className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  >
+                    <option value="">Select Life Area</option>
+                    {LIFE_AREAS.map(area => (
+                      <option key={area} value={area}>{area}</option>
+                    ))}
+                  </select>
+                  
+                  <input
+                    type="date"
+                    value={currentRitual.followUpDate?.toISOString().split('T')[0]}
+                    onChange={(e) => setCurrentRitual({...currentRitual, followUpDate: new Date(e.target.value)})}
+                    className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  />
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      1. Pause - What boundary was violated?
+                    </label>
+                    <textarea
+                      value={currentRitual.violation}
+                      onChange={(e) => setCurrentRitual({...currentRitual, violation: e.target.value})}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      2. Identify - Specifically name the violation
+                    </label>
+                    <textarea
+                      value={currentRitual.identify}
+                      onChange={(e) => setCurrentRitual({...currentRitual, identify: e.target.value})}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      3. Forgive - How do you forgive yourself?
+                    </label>
+                    <textarea
+                      value={currentRitual.forgive}
+                      onChange={(e) => setCurrentRitual({...currentRitual, forgive: e.target.value})}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      4. Recommit - What do you recommit to?
+                    </label>
+                    <textarea
+                      value={currentRitual.recommit}
+                      onChange={(e) => setCurrentRitual({...currentRitual, recommit: e.target.value})}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      5. Recalibrate - How will you adjust your approach?
+                    </label>
+                    <textarea
+                      value={currentRitual.recalibrate}
+                      onChange={(e) => setCurrentRitual({...currentRitual, recalibrate: e.target.value})}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowResetRitual(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={completeResetRitual}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                >
+                  Complete Ritual
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

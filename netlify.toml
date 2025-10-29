@@ -1,0 +1,143 @@
+# WisdomOS Phoenix - Netlify Configuration
+# AXAI Innovations - Proprietary
+# Enhanced security and IP protection
+
+[build]
+  base = "."
+  command = "echo '🔥 Phoenix: Starting Netlify build...' && pnpm install && pnpm --filter @wisdomos/web build"
+  publish = "apps/web/.next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "8.15.0"
+  NEXT_PUBLIC_BUILD_PLATFORM = "netlify"
+  NEXT_PUBLIC_PHOENIX_MODE = "production"
+  
+[context.production]
+  command = "echo '🔥 Phoenix: Production build starting...' && pnpm install && pnpm db:generate && pnpm --filter @wisdomos/web build"
+  [context.production.environment]
+    NEXT_PUBLIC_SITE_URL = "https://wisdomos-phoenix.netlify.app"
+    NEXT_PUBLIC_API_BASE = "https://wisdomos-phoenix.netlify.app/api"
+  
+[context.deploy-preview]
+  command = "echo '🔥 Phoenix: Deploy preview build starting...' && pnpm install && pnpm db:generate && pnpm --filter @wisdomos/web build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# API Routes - redirect to Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Protected routes with role-based access
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+  conditions = {Role = ["admin", "owner"]}
+
+# SPA fallback for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  
+[[functions]]
+  path = "/api/*"
+  included_files = ["apps/api/**/*", "packages/**/*"]
+
+# Enhanced Security Headers with IP Protection
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Phoenix Branding & IP Protection
+    X-WisdomOS-Phoenix = "Active"
+    X-AXAI-Innovations = "Proprietary - All Rights Reserved"
+    X-Phoenix-Version = "2.0.0"
+    X-Powered-By = "WisdomOS Phoenix - AXAI Innovations"
+    
+    # Security Headers
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    X-DNS-Prefetch-Control = "off"
+    X-Download-Options = "noopen"
+    X-Permitted-Cross-Domain-Policies = "none"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    
+    # Enhanced Content Security Policy
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https: wss: https://*.supabase.co https://www.google-analytics.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';"
+    
+    # Prevent hotlinking and unauthorized access
+    X-Robots-Tag = "noindex, nofollow, noarchive, nosnippet, noimageindex"
+    
+    # Rate limiting information
+    X-RateLimit-Limit = "1000"
+    X-RateLimit-Remaining = "999"
+
+# Caching for static assets with Phoenix optimization
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Phoenix-Asset = "Static"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    X-Phoenix-Asset = "Image"
+
+# Phoenix theme assets
+[[headers]]
+  for = "/phoenix/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+    X-Phoenix-Asset = "Theme"
+
+# API endpoints with enhanced security
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    X-WisdomOS-API = "Phoenix-v2"
+    X-AXAI-Innovations = "Proprietary"
+    Access-Control-Allow-Origin = "https://wisdomos-phoenix.netlify.app"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
+    Access-Control-Max-Age = "86400"
+
+# Block common attack patterns
+[[redirects]]
+  from = "/.env*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.git*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/wp-*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/admin.php"
+  to = "/404"
+  status = 404
+  force = true
+
+# Edge handlers for IP protection (if available)
+[edge_handlers]
+  # This would be implemented with Netlify Edge Functions for advanced IP protection
