@@ -3,24 +3,23 @@
 # Enhanced security and IP protection
 
 [build]
-  base = "."
-  command = "echo '🔥 Phoenix: Starting Netlify build...' && pnpm install && pnpm --filter @wisdomos/web build"
-  publish = "apps/web/.next"
+  base = "apps/web"
+  command = "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
-  PNPM_VERSION = "8.15.0"
   NEXT_PUBLIC_BUILD_PLATFORM = "netlify"
   NEXT_PUBLIC_PHOENIX_MODE = "production"
-  
+
 [context.production]
-  command = "echo '🔥 Phoenix: Production build starting...' && pnpm install && pnpm db:generate && pnpm --filter @wisdomos/web build"
+  command = "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build"
   [context.production.environment]
-    NEXT_PUBLIC_SITE_URL = "https://wisdomos-phoenix.netlify.app"
-    NEXT_PUBLIC_API_BASE = "https://wisdomos-phoenix.netlify.app/api"
-  
+    NEXT_PUBLIC_SITE_URL = "https://wisdom2026.netlify.app"
+    NEXT_PUBLIC_API_BASE = "https://wisdom2026.netlify.app/api"
+
 [context.deploy-preview]
-  command = "echo '🔥 Phoenix: Deploy preview build starting...' && pnpm install && pnpm db:generate && pnpm --filter @wisdomos/web build"
+  command = "cd ../.. && npm install && cd apps/web && npx prisma generate && npm run build"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
