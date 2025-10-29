@@ -72,39 +72,15 @@ const menuItems: MenuItem[] = [
     label: 'Phoenix Tools',
     icon: Sparkles,
     subItems: [
-      { 
-        label: 'Journal', 
-        href: '/journal', 
-        icon: PenTool,
-        description: 'Capture thoughts and reflections'
-      },
-      { 
-        label: 'Reset Ritual', 
-        href: '/reset', 
-        icon: RefreshCw,
-        description: '5-step boundary reset process'
-      },
-      { 
-        label: 'Fulfillment Display', 
-        href: '/fulfillment', 
-        icon: Map,
-        description: 'Visualize life areas and relationships'
+      {
+        label: 'Autobiography',
+        href: '/autobiography',
+        icon: Book,
+        description: '120 years of life story mapping'
       },
       {
-        label: 'Fulfillment Timeline',
-        href: '/fulfillment-timeline',
-        icon: Calendar,
-        description: 'Track your journey over time'
-      },
-      {
-        label: 'Fulfillment Analytics',
-        href: '/fulfillment-analytics',
-        icon: BarChart3,
-        description: 'Analyze trends and patterns'
-      },
-      { 
-        label: 'Badges', 
-        href: '/badges', 
+        label: 'Badges',
+        href: '/badges',
         icon: Award,
         description: 'Track achievements and progress'
       },
@@ -115,16 +91,40 @@ const menuItems: MenuItem[] = [
         description: 'Manage your connections and relationships'
       },
       {
+        label: 'Contribution Display',
+        href: '/contribution',
+        icon: Star,
+        description: 'Who you are as contribution'
+      },
+      {
         label: 'Difficult Conversations',
         href: '/difficult-conversations',
         icon: MessageCircle,
         description: 'Scripts for boundary-setting talks'
       },
       {
-        label: 'Autobiography',
-        href: '/autobiography',
-        icon: Book,
-        description: '120 years of life story mapping'
+        label: 'Fulfillment Analytics',
+        href: '/fulfillment-analytics',
+        icon: BarChart3,
+        description: 'Analyze trends and patterns'
+      },
+      {
+        label: 'Fulfillment Display',
+        href: '/fulfillment',
+        icon: Map,
+        description: 'Visualize life areas and relationships'
+      },
+      {
+        label: 'Fulfillment Timeline',
+        href: '/fulfillment-timeline',
+        icon: Calendar,
+        description: 'Track your journey over time'
+      },
+      {
+        label: 'Journal',
+        href: '/journal',
+        icon: PenTool,
+        description: 'Capture thoughts and reflections'
       },
       {
         label: 'Priority Matrix',
@@ -133,16 +133,16 @@ const menuItems: MenuItem[] = [
         description: 'Focus on what matters most'
       },
       {
-        label: 'Contribution Display',
-        href: '/contribution',
-        icon: Star,
-        description: 'Who you are as contribution'
+        label: 'Reset Ritual',
+        href: '/reset',
+        icon: RefreshCw,
+        description: '5-step boundary reset process'
       },
       {
         label: 'Upset Inquiry',
         href: '/upset-inquiry',
         icon: AlertTriangle,
-        description: 'Pattern recognition from upsets'
+        description: 'Investigate emotional triggers'
       },
       {
         label: 'Visual Tracker',
