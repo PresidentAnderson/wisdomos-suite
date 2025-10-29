@@ -1,5 +1,88 @@
 import { NextResponse } from 'next/server'
 
+// Types for trend analysis
+type TrendDirection = 'rising' | 'falling' | 'flat'
+type TrendStrength = 'weak' | 'moderate' | 'strong'
+
+interface TrendAnalysis {
+  direction: TrendDirection
+  consecutiveDays: number
+  strength: TrendStrength
+  isSignificant: boolean
+}
+
+/**
+ * Detects consecutive rising or falling trends in a metric over time
+ * @param values - Array of metric values (e.g., energy scores for each day)
+ * @returns TrendAnalysis object with direction, consecutive days, and strength
+ */
+function detectConsecutiveTrend(values: number[]): TrendAnalysis {
+  if (values.length < 2) {
+    return {
+      direction: 'flat',
+      consecutiveDays: 0,
+      strength: 'weak',
+      isSignificant: false
+    }
+  }
+
+  // Track the longest consecutive trend ending at the most recent day
+  let currentConsecutiveDays = 0
+  let currentDirection: TrendDirection = 'flat'
+
+  // Start from the end (most recent) and work backwards
+  for (let i = values.length - 1; i > 0; i--) {
+    const currentValue = values[i]
+    const previousValue = values[i - 1]
+    const difference = currentValue - previousValue
+
+    // Determine direction (with small threshold to handle noise)
+    let dayDirection: TrendDirection
+    if (Math.abs(difference) < 0.5) {
+      dayDirection = 'flat'
+    } else if (difference > 0) {
+      dayDirection = 'rising'
+    } else {
+      dayDirection = 'falling'
+    }
+
+    // Initialize on first comparison
+    if (i === values.length - 1) {
+      currentDirection = dayDirection
+      currentConsecutiveDays = dayDirection === 'flat' ? 0 : 1
+      continue
+    }
+
+    // Check if trend continues
+    if (dayDirection === currentDirection && dayDirection !== 'flat') {
+      currentConsecutiveDays++
+    } else {
+      // Trend broke, stop counting
+      break
+    }
+  }
+
+  // Calculate trend strength based on consecutive days
+  let strength: TrendStrength
+  if (currentConsecutiveDays <= 2) {
+    strength = 'weak'
+  } else if (currentConsecutiveDays <= 4) {
+    strength = 'moderate'
+  } else {
+    strength = 'strong'
+  }
+
+  // Flag as significant if 3+ consecutive days
+  const isSignificant = currentConsecutiveDays >= 3
+
+  return {
+    direction: currentDirection,
+    consecutiveDays: currentConsecutiveDays,
+    strength,
+    isSignificant
+  }
+}
+
 // Mock data - In production, this would query your database
 // based on user authentication and real behavioral metrics
 function generatePatternData() {
@@ -35,10 +118,47 @@ function generatePatternData() {
   const avgFocus = patterns.reduce((sum, d) => sum + d.focus, 0) / patterns.length
   const avgFulfillment = patterns.reduce((sum, d) => sum + d.fulfillment, 0) / patterns.length
 
-  // Calculate trends (rising/falling)
-  const energyTrend = patterns[patterns.length - 1].energy - patterns[0].energy
-  const focusTrend = patterns[patterns.length - 1].focus - patterns[0].focus
-  const fulfillmentTrend = patterns[patterns.length - 1].fulfillment - patterns[0].fulfillment
+  // Extract metric values for trend analysis
+  const energyValues = patterns.map(p => p.energy)
+  const focusValues = patterns.map(p => p.focus)
+  const fulfillmentValues = patterns.map(p => p.fulfillment)
+
+  // Analyze consecutive trends for each metric
+  const energyTrendAnalysis = detectConsecutiveTrend(energyValues)
+  const focusTrendAnalysis = detectConsecutiveTrend(focusValues)
+  const fulfillmentTrendAnalysis = detectConsecutiveTrend(fulfillmentValues)
+
+  // Calculate overall change (first to last day)
+  const energyChange = patterns[patterns.length - 1].energy - patterns[0].energy
+  const focusChange = patterns[patterns.length - 1].focus - patterns[0].focus
+  const fulfillmentChange = patterns[patterns.length - 1].fulfillment - patterns[0].fulfillment
+
+  // Identify significant trends for recommendations engine
+  const significantTrends = []
+  if (energyTrendAnalysis.isSignificant) {
+    significantTrends.push({
+      metric: 'energy',
+      direction: energyTrendAnalysis.direction,
+      consecutiveDays: energyTrendAnalysis.consecutiveDays,
+      strength: energyTrendAnalysis.strength
+    })
+  }
+  if (focusTrendAnalysis.isSignificant) {
+    significantTrends.push({
+      metric: 'focus',
+      direction: focusTrendAnalysis.direction,
+      consecutiveDays: focusTrendAnalysis.consecutiveDays,
+      strength: focusTrendAnalysis.strength
+    })
+  }
+  if (fulfillmentTrendAnalysis.isSignificant) {
+    significantTrends.push({
+      metric: 'fulfillment',
+      direction: fulfillmentTrendAnalysis.direction,
+      consecutiveDays: fulfillmentTrendAnalysis.consecutiveDays,
+      strength: fulfillmentTrendAnalysis.strength
+    })
+  }
 
   return {
     patterns,
@@ -49,13 +169,29 @@ function generatePatternData() {
       fulfillment: Math.round(avgFulfillment)
     },
     trends: {
-      energy: energyTrend > 0 ? 'rising' : 'falling',
-      focus: focusTrend > 0 ? 'rising' : 'falling',
-      fulfillment: fulfillmentTrend > 0 ? 'rising' : 'falling',
-      energyChange: energyTrend,
-      focusChange: focusTrend,
-      fulfillmentChange: fulfillmentTrend
+      energy: {
+        direction: energyTrendAnalysis.direction,
+        change: energyChange,
+        consecutiveDays: energyTrendAnalysis.consecutiveDays,
+        trendStrength: energyTrendAnalysis.strength,
+        isSignificant: energyTrendAnalysis.isSignificant
+      },
+      focus: {
+        direction: focusTrendAnalysis.direction,
+        change: focusChange,
+        consecutiveDays: focusTrendAnalysis.consecutiveDays,
+        trendStrength: focusTrendAnalysis.strength,
+        isSignificant: focusTrendAnalysis.isSignificant
+      },
+      fulfillment: {
+        direction: fulfillmentTrendAnalysis.direction,
+        change: fulfillmentChange,
+        consecutiveDays: fulfillmentTrendAnalysis.consecutiveDays,
+        trendStrength: fulfillmentTrendAnalysis.strength,
+        isSignificant: fulfillmentTrendAnalysis.isSignificant
+      }
     },
+    significantTrends,
     aiInsight: 'Your patterns indicate stronger alignment when structured routines precede creative work. Try scheduling your highest-impact activities between 9–11am on high-energy days (Thu-Sat).'
   }
 }

@@ -1,17 +1,29 @@
 import { NextResponse } from 'next/server'
+import OpenAI from 'openai'
+
+// Initialize OpenAI client
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null
+
+interface Recommendation {
+  recommendation: string
+  reasoning: string
+  dataPoint: string
+}
 
 // Fetch pattern data from our own API
 async function getPatternData() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE || process.env.VERCEL_URL 
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE || process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : 'http://localhost:3000'
-    
+
     const res = await fetch(`${baseUrl}/api/insights/patterns`, {
       cache: 'no-store',
       headers: { 'Content-Type': 'application/json' }
     })
-    
+
     if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
     return await res.json()
   } catch (error) {
@@ -28,6 +40,70 @@ async function getPatternData() {
       trends: { energy: 'rising', focus: 'rising', fulfillment: 'rising' }
     }
   }
+}
+
+// Generate recommendations using OpenAI GPT-4
+async function generateWithOpenAI(patternData: any): Promise<Recommendation[]> {
+  if (!openai) {
+    throw new Error('OpenAI client not initialized')
+  }
+
+  const { patterns, averages, trends } = patternData
+
+  // Identify peak and low days
+  const lowEnergyDays = patterns
+    .filter((p: any) => p.energy < 70)
+    .map((p: any) => p.date)
+
+  const highPerformanceDays = patterns
+    .filter((p: any) => p.energy > 80 && p.focus > 80)
+    .map((p: any) => p.date)
+
+  const prompt = `You are a personal productivity coach providing actionable insights. Based on the user's energy, focus, and fulfillment patterns, generate exactly 5 recommendations with explanations.
+
+PATTERN DATA:
+- Averages: Energy ${averages.energy}/100, Focus ${averages.focus}/100, Fulfillment ${averages.fulfillment}/100
+- Trends: Energy is ${trends.energy}, Focus is ${trends.focus}, Fulfillment is ${trends.fulfillment}
+${lowEnergyDays.length > 0 ? `- Low energy days: ${lowEnergyDays.join(', ')}` : ''}
+${highPerformanceDays.length > 0 ? `- Peak performance days: ${highPerformanceDays.join(', ')}` : ''}
+- Daily patterns: ${patterns.map((p: any) => `${p.date}: E${p.energy} F${p.focus} Fu${p.fulfillment}`).join(', ')}
+
+REQUIREMENTS:
+- Provide exactly 5 recommendations
+- For each recommendation, provide:
+  1. The recommendation (under 25 words, actionable advice)
+  2. The reasoning (2-3 sentences explaining WHY this matters based on behavioral science or productivity principles)
+  3. The specific data point that triggered this recommendation
+
+Format each recommendation as JSON with keys: recommendation, reasoning, dataPoint
+Return a JSON array of 5 recommendation objects.`
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a productivity coach. Return recommendations as a JSON array with recommendation, reasoning, and dataPoint fields.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 2000,
+    response_format: { type: 'json_object' }
+  })
+
+  const content = completion.choices[0]?.message?.content || ''
+  const parsed = JSON.parse(content)
+  const recommendations: Recommendation[] = parsed.recommendations || []
+
+  if (recommendations.length < 5) {
+    throw new Error('OpenAI returned fewer than 5 recommendations')
+  }
+
+  return recommendations.slice(0, 5)
 }
 
 async function generateRecommendations(patternData: any) {
@@ -81,11 +157,28 @@ async function generateRecommendations(patternData: any) {
 export async function GET() {
   try {
     const patternData = await getPatternData()
-    const recommendations = await generateRecommendations(patternData)
+    let recommendations: string[]
+    let usingOpenAI = false
+
+    // Try OpenAI first
+    if (openai) {
+      try {
+        recommendations = await generateWithOpenAI(patternData)
+        usingOpenAI = true
+        console.log('Successfully generated recommendations using OpenAI')
+      } catch (openaiError) {
+        console.warn('OpenAI generation failed, falling back to rule-based:', openaiError)
+        recommendations = await generateRecommendations(patternData)
+      }
+    } else {
+      console.log('OpenAI not configured, using rule-based recommendations')
+      recommendations = await generateRecommendations(patternData)
+    }
 
     return NextResponse.json({
       recommendations,
       generatedAt: new Date().toISOString(),
+      usingAI: usingOpenAI,
       basedOn: {
         dataPoints: patternData.patterns.length,
         averageEnergy: patternData.averages.energy,
@@ -104,6 +197,7 @@ export async function GET() {
         'Schedule regular breaks to maintain sustainable performance.'
       ],
       generatedAt: new Date().toISOString(),
+      usingAI: false,
       basedOn: { dataPoints: 7, averageEnergy: 78, averageFocus: 74, averageFulfillment: 81 }
     })
   }

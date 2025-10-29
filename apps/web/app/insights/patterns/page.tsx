@@ -29,45 +29,17 @@ export default function PatternsPage() {
       try {
         const res = await fetch("/api/insights/patterns");
         if (!res.ok) {
-          // Fallback to mock data if API fails
-          setPatternData([
-            { date: "Mon", energy: 72, focus: 68, fulfillment: 75 },
-            { date: "Tue", energy: 78, focus: 70, fulfillment: 80 },
-            { date: "Wed", energy: 65, focus: 63, fulfillment: 70 },
-            { date: "Thu", energy: 80, focus: 75, fulfillment: 82 },
-            { date: "Fri", energy: 85, focus: 81, fulfillment: 88 },
-            { date: "Sat", energy: 90, focus: 88, fulfillment: 92 },
-            { date: "Sun", energy: 76, focus: 70, fulfillment: 78 },
-          ]);
-          setInsights([
-            {
-              title: "Peak Performance Window",
-              description: "Your focus peaks between Thursday and Saturday. Schedule high-impact work during these days.",
-              icon: "trending-up"
-            },
-            {
-              title: "Mid-Week Dip",
-              description: "Energy consistently drops on Wednesdays. Consider lighter tasks or self-care activities.",
-              icon: "activity"
-            },
-            {
-              title: "Weekend Recovery",
-              description: "Fulfillment scores rise sharply on weekends, indicating effective rest and restoration.",
-              icon: "brain"
-            }
-          ]);
-          setAiInsight(
-            "Your patterns indicate stronger alignment when structured routines precede creative work. Try scheduling your highest-impact activities between 9–11am on high-energy days (Thu-Sat)."
-          );
-        } else {
-          const data = await res.json();
-          setPatternData(data.patterns);
-          setInsights(data.insights || []);
-          setAiInsight(data.aiInsight || "");
+          throw new Error("Failed to fetch patterns");
         }
+
+        const data = await res.json();
+        setPatternData(data.patterns);
+        setInsights(data.insights || []);
+        setAiInsight(data.aiInsight || "");
       } catch (err) {
         console.error("Error fetching patterns:", err);
-        // Use fallback data
+
+        // Fallback data
         setPatternData([
           { date: "Mon", energy: 72, focus: 68, fulfillment: 75 },
           { date: "Tue", energy: 78, focus: 70, fulfillment: 80 },
@@ -77,6 +49,26 @@ export default function PatternsPage() {
           { date: "Sat", energy: 90, focus: 88, fulfillment: 92 },
           { date: "Sun", energy: 76, focus: 70, fulfillment: 78 },
         ]);
+        setInsights([
+          {
+            title: "Peak Performance Window",
+            description: "Your focus peaks between Thursday and Saturday. Schedule high-impact work during these days.",
+            icon: "trending-up"
+          },
+          {
+            title: "Mid-Week Dip",
+            description: "Energy consistently drops on Wednesdays. Consider lighter tasks or self-care activities.",
+            icon: "activity"
+          },
+          {
+            title: "Weekend Recovery",
+            description: "Fulfillment scores rise sharply on weekends, indicating effective rest and restoration.",
+            icon: "brain"
+          }
+        ]);
+        setAiInsight(
+          "Your patterns indicate stronger alignment when structured routines precede creative work. Try scheduling your highest-impact activities between 9–11am on high-energy days (Thu-Sat)."
+        );
       } finally {
         setLoading(false);
       }
