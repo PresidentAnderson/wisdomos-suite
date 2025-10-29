@@ -3,9 +3,9 @@
  * Creates sample users, tenants, and data to demonstrate functionality
  */
 
-import { 
-  User, 
-  Tenant, 
+import {
+  User,
+  Tenant,
   generateId,
   getDefaultPreferences,
   getAllPermissions,
@@ -13,6 +13,7 @@ import {
   storeUserInLocalStorage,
   storeTenantInLocalStorage
 } from './auth'
+import { hashPassword } from './password-utils'
 
 export async function setupDemoData() {
   // Only setup if demo data doesn't exist
@@ -128,10 +129,14 @@ export async function setupDemoData() {
     storeUserInLocalStorage(viewerUser)
     storeTenantInLocalStorage(demoTenant)
 
-    // Store demo passwords (in production, these would be properly hashed)
-    localStorage.setItem('wisdomos_password_demo-user-001', '$2b$12$XDemoPW1Phoenix123Demo')
-    localStorage.setItem('wisdomos_password_demo-user-002', '$2b$12$XDemoPW2Phoenix123Demo')
-    localStorage.setItem('wisdomos_password_demo-user-003', '$2b$12$XDemoPW3Phoenix123Demo')
+    // Store demo passwords (properly hashed)
+    const demoPassword = await hashPassword('password123')
+    const collabPassword = await hashPassword('password123')
+    const viewerPassword = await hashPassword('password123')
+
+    localStorage.setItem('wisdomos_password_demo-user-001', demoPassword)
+    localStorage.setItem('wisdomos_password_demo-user-002', collabPassword)
+    localStorage.setItem('wisdomos_password_demo-user-003', viewerPassword)
 
     // Create sample journal entries
     const sampleJournalEntries = [
@@ -411,7 +416,7 @@ export function isDemoDataSetup(): boolean {
 export function getDemoCredentials() {
   return {
     email: 'demo@wisdomos.com',
-    password: 'phoenix123',
+    password: 'password123',
     tenantSlug: 'demo-workspace'
   }
 }
