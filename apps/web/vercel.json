@@ -1,7 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm install && npx prisma generate && npm run build",
-  "installCommand": "npm install",
   "regions": ["iad1", "sfo1"],
   "functions": {
     "app/**/*.{ts,js}": {
