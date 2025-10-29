@@ -109,7 +109,7 @@ model User {
   lastLoginAt   DateTime?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  
+
   // Relations
   tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   lifeAreas     LifeArea[]
@@ -120,7 +120,9 @@ model User {
   badges        Badge[]
   audits        Audit[]
   auditLogs     TenantAuditLog[]
-  
+  patternData   PatternData[]
+  recommendations UserRecommendation[]
+
   @@unique([tenantId, email]) // Email unique per tenant
   @@index([tenantId])
   @@index([email])
@@ -344,13 +346,53 @@ model Audit {
   notes         String?        @db.Text
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  
+
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, lifeAreaId, month])
   @@index([tenantId])
   @@index([userId, month])
   @@index([lifeAreaId, month])
   @@map("audits")
+}
+
+// ==================== INSIGHTS & PATTERN DATA ====================
+
+model PatternData {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  date          DateTime       // Date for this pattern data point
+  energy        Int            // Energy score (0-100)
+  focus         Int            // Focus score (0-100)
+  fulfillment   Int            // Fulfillment score (0-100)
+  createdAt     DateTime       @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date]) // One data point per user per day
+  @@index([tenantId])
+  @@index([userId, date])
+  @@index([userId, createdAt])
+  @@map("pattern_data")
+}
+
+model UserRecommendation {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  recommendation String        @db.Text // The recommendation text
+  reasoning     String?        @db.Text // Why this recommendation was made
+  dataPoint     Json?          // Associated data that led to this recommendation
+  generatedAt   DateTime       @default(now())
+  viewed        Boolean        @default(false)
+  viewedAt      DateTime?
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId, generatedAt])
+  @@index([userId, viewed])
+  @@map("user_recommendations")
 }

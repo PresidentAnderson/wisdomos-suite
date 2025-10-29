@@ -33,6 +33,8 @@ export function createTenantPrismaClient() {
             'Badge',
             'Vault',
             'Audit',
+            'PatternData',
+            'UserRecommendation',
           ];
 
           // Skip if model is not tenant-scoped

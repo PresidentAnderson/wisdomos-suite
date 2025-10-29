@@ -3,10 +3,16 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Sparkles, CheckCircle2, RefreshCw, TrendingUp, Target } from "lucide-react";
+import { Loader2, Sparkles, CheckCircle2, RefreshCw, TrendingUp, Target, ChevronDown, ChevronUp, Info } from "lucide-react";
+
+interface Recommendation {
+  recommendation: string;
+  reasoning: string;
+  dataPoint: string;
+}
 
 interface RecommendationResponse {
-  recommendations: string[];
+  recommendations: Recommendation[];
   generatedAt: string;
   basedOn: {
     dataPoints: number;
@@ -14,6 +20,74 @@ interface RecommendationResponse {
     averageFocus: number;
     averageFulfillment: number;
   };
+}
+
+function RecommendationItem({ rec, index }: { rec: Recommendation; index: number }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <li className="bg-slate-800/40 border border-slate-700 rounded-lg hover:border-phoenix-orange/50 transition-all group">
+      <div className="flex items-start gap-4 p-4">
+        <div className="flex-shrink-0 mt-1">
+          <CheckCircle2 className="h-5 w-5 text-green-500/70 group-hover:text-green-400 transition-colors" />
+        </div>
+        <div className="flex-1 space-y-3">
+          <p className="text-slate-300 leading-relaxed group-hover:text-slate-100 transition-colors">
+            {rec.recommendation}
+          </p>
+
+          {/* Expandable reasoning section */}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setIsExpanded(!isExpanded);
+              }
+            }}
+            className="flex items-center gap-2 text-sm text-phoenix-orange/80 hover:text-phoenix-orange transition-colors focus:outline-none focus:ring-2 focus:ring-phoenix-orange/50 focus:ring-offset-2 focus:ring-offset-slate-800 rounded px-2 py-1 -ml-2"
+            aria-expanded={isExpanded}
+            aria-controls={`reasoning-${index}`}
+          >
+            <Info className="h-4 w-4" />
+            <span className="font-medium">Why this matters</span>
+            {isExpanded ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Expanded reasoning content */}
+          {isExpanded && (
+            <div
+              id={`reasoning-${index}`}
+              className="pl-6 border-l-2 border-phoenix-orange/30 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200"
+            >
+              <div className="space-y-2">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">
+                    Explanation
+                  </p>
+                  <p className="text-sm text-slate-400 leading-relaxed">
+                    {rec.reasoning}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">
+                    Based On
+                  </p>
+                  <p className="text-sm text-slate-500 leading-relaxed font-mono">
+                    {rec.dataPoint}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </li>
+  );
 }
 
 export default function RecommendationsPage() {
@@ -40,11 +114,31 @@ export default function RecommendationsPage() {
       // Fallback recommendations
       setData({
         recommendations: [
-          "Establish consistent sleep and wake times for better energy regulation.",
-          "Batch similar tasks to reduce context switching and improve focus.",
-          "Conduct weekly reviews to identify patterns and adjust your approach.",
-          "Protect high-energy windows for strategic, high-impact work.",
-          "Schedule regular breaks to maintain sustainable performance."
+          {
+            recommendation: "Establish consistent sleep and wake times for better energy regulation.",
+            reasoning: "Sleep consistency regulates cortisol and melatonin rhythms, stabilizing energy throughout the day. This creates predictable energy patterns that make planning easier.",
+            dataPoint: "Fallback recommendation"
+          },
+          {
+            recommendation: "Batch similar tasks to reduce context switching and improve focus.",
+            reasoning: "Task batching eliminates the cognitive overhead of context switching. Each switch costs 15-25 minutes of focus recovery time.",
+            dataPoint: "Fallback recommendation"
+          },
+          {
+            recommendation: "Conduct weekly reviews to identify patterns and adjust your approach.",
+            reasoning: "Weekly reviews create awareness of what is working and what is not. This metacognition enables continuous improvement in your systems.",
+            dataPoint: "Fallback recommendation"
+          },
+          {
+            recommendation: "Protect high-energy windows for strategic, high-impact work.",
+            reasoning: "Peak energy times are limited and should be reserved for your most important work. Tactical tasks can be done during lower-energy periods.",
+            dataPoint: "Fallback recommendation"
+          },
+          {
+            recommendation: "Schedule regular breaks to maintain sustainable performance.",
+            reasoning: "Breaks prevent mental fatigue and maintain cognitive performance throughout the day. Working without breaks leads to diminishing returns.",
+            dataPoint: "Fallback recommendation"
+          }
         ],
         generatedAt: new Date().toISOString(),
         basedOn: {
@@ -181,17 +275,7 @@ export default function RecommendationsPage() {
           {data?.recommendations && data.recommendations.length > 0 ? (
             <ul className="space-y-4">
               {data.recommendations.map((rec, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-start gap-4 p-4 bg-slate-800/40 border border-slate-700 rounded-lg hover:border-phoenix-orange/50 transition-all group"
-                >
-                  <div className="flex-shrink-0 mt-1">
-                    <CheckCircle2 className="h-5 w-5 text-green-500/70 group-hover:text-green-400 transition-colors" />
-                  </div>
-                  <p className="text-slate-300 leading-relaxed group-hover:text-slate-100 transition-colors">
-                    {rec}
-                  </p>
-                </li>
+                <RecommendationItem key={idx} rec={rec} index={idx} />
               ))}
             </ul>
           ) : (
