@@ -9,9 +9,10 @@
     "prisma"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -27,14 +28,14 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
+    "@prisma/client": "^5.22.0",
     "@wisdomos/types": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",
     "dotenv": "^16.0.0",
     "jest": "^29.5.0",
-    "prisma": "^5.7.1",
+    "prisma": "^5.22.0",
     "ts-jest": "^29.1.0",
     "tsx": "^4.6.2",
     "typescript": "^5.3.3"

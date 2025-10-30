@@ -1,8 +1,8 @@
 {
-  "buildCommand": "pnpm build",
+  "buildCommand": "cd ../.. && pnpm install && cd packages/database && pnpm db:generate && cd ../../apps/wiseplay-marketplace && pnpm build",
+  "installCommand": "cd ../.. && pnpm install",
   "outputDirectory": ".next",
   "devCommand": "pnpm dev",
-  "installCommand": "pnpm install",
   "framework": "nextjs",
   "regions": ["iad1"]
 }

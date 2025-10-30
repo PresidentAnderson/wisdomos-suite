@@ -8,6 +8,7 @@
     "start": "next start -p 3012",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "postinstall": "cd ../../packages/database && prisma generate",
     "db:generate": "cd ../../packages/database && prisma generate",
     "db:push": "cd ../../packages/database && prisma db push",
     "db:migrate": "cd ../../packages/database && prisma migrate dev",
