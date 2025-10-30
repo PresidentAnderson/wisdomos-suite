@@ -145,14 +145,15 @@ model LifeArea {
   sortOrder     Int            @default(0)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  
+
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   journals      Journal[]
   resets        Reset[]
   relationships Relationship[]
   events        Event[]
   audits        Audit[]
-  
+  subdomains    Subdomain[]
+
   @@unique([userId, name])
   @@index([tenantId])
   @@index([userId])
@@ -344,13 +345,66 @@ model Audit {
   notes         String?        @db.Text
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  
+
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, lifeAreaId, month])
   @@index([tenantId])
   @@index([userId, month])
   @@index([lifeAreaId, month])
   @@map("audits")
+}
+
+// ==================== FULFILLMENT DISPLAY V5 MODELS ====================
+
+model Subdomain {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  lifeAreaId    String
+  name          String         // Creative, Operational, Strategic, etc.
+  description   String?        @db.Text
+  sortOrder     Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  lifeArea      LifeArea       @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  dimensions    Dimension[]
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([lifeAreaId])
+  @@map("subdomains")
+}
+
+model Dimension {
+  id            String         @id @default(uuid())
+  tenantId      String         // REQUIRED: Tenant isolation
+  userId        String
+  subdomainId   String
+  name          DimensionName  // Being, Doing, Having, Relating, Becoming
+  focus         String         @db.Text
+  inquiry       String         @db.Text
+  practices     String[]       // Array of practice strings
+  metric        Int?           // 1-5 scale
+  notes         String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  subdomain     Subdomain      @relation(fields: [subdomainId], references: [id], onDelete: Cascade)
+
+  @@unique([subdomainId, name]) // One dimension of each type per subdomain
+  @@index([tenantId])
+  @@index([userId])
+  @@index([subdomainId])
+  @@map("dimensions")
+}
+
+enum DimensionName {
+  BEING
+  DOING
+  HAVING
+  RELATING
+  BECOMING
 }
