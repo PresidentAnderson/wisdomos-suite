@@ -1,11 +1,14 @@
 'use client'
 
+// Force dynamic rendering - must be before imports
+export const dynamic = 'force-dynamic'
+export const dynamicParams = true
+export const revalidate = 0
+
 import React from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import FulfillmentDisplayV5 from '@/components/fulfillment/FulfillmentDisplayV5'
 import { LifeArea } from '@/types/fulfillment-v5'
-
-export const dynamic = 'force-dynamic'
 
 const fetchFulfillmentData = async (): Promise<{ lifeAreas: LifeArea[] }> => {
   const response = await fetch('/api/fulfillment-v5')
