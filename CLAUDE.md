@@ -198,6 +198,65 @@ The system supports multiple organizations with row-level security (RLS) policie
 - **E2E Tests**: Jest configuration for integration tests
 - **Type Checking**: TypeScript strict mode across all packages
 
+## Session Documentation Protocol
+
+### End-of-Session Documentation Rule
+When the user indicates they want to end a session (phrases like "close this session", "end session", "write documentation"), Claude Code MUST produce ALL of the following deliverables:
+
+1. **Full Verbatim Session Transcript** (`SESSION_ARCHIVES/YYYY-MM-DD_[Topic]_Session.md`)
+   - Complete word-for-word conversation log without modification
+   - All code snippets and tool outputs
+   - Chronological timeline of events
+   - All errors encountered and resolutions
+   - 6000+ lines for comprehensive sessions
+
+2. **Session Summary Document** (`[TOPIC]_SESSION_SUMMARY.md`)
+   - Executive summary of work completed
+   - All files created/modified with line counts
+   - Key decisions and technical choices
+   - Deployment details and URLs
+   - Testing checklist
+   - Performance metrics
+   - Future enhancement recommendations
+   - 800-1000 lines for major features
+
+3. **Structured Todo List** (in session summary)
+   - All tasks completed (✅)
+   - Any remaining tasks for next session
+   - Manual testing required
+   - Known issues or blockers
+
+4. **Decision Log / Changelog** (in session summary)
+   - Architecture decisions made
+   - Technology choices with rationale
+   - Trade-offs considered
+   - Git commit hashes and messages
+   - Deployment timestamps
+
+### Archive Structure
+```
+SESSION_ARCHIVES/
+├── 2025-10-29-30_Autobiography_Feature_Complete_Session.md
+├── 2025-10-30_[Next_Feature]_Session.md
+└── README.md  # Index of all sessions
+
+[PROJECT_ROOT]/
+├── AUTOBIOGRAPHY_SESSION_SUMMARY.md
+├── [NEXT_FEATURE]_SESSION_SUMMARY.md
+└── CLAUDE.md
+```
+
+### Session Archive Template
+Each session archive MUST include:
+- Date range and duration
+- User's primary requests
+- Complete chronological conversation
+- All code changes with diffs
+- Deployment process step-by-step
+- Troubleshooting logs
+- Resources and URLs
+- Continuation points for next session
+
 ## Important Notes
 - Web app runs on port 3011 in development, 3000 in production
 - API server auto-discovers available ports
