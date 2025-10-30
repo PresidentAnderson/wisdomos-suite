@@ -1,10 +1,5 @@
 'use client'
 
-// Force dynamic rendering - must be before imports
-export const dynamic = 'force-dynamic'
-export const dynamicParams = true
-export const revalidate = 0
-
 /**
  * Fulfillment Display v5 Analytics Dashboard
  *
