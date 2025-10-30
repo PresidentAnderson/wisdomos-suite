@@ -2,6 +2,9 @@ import { getFeaturedServices, getCategories } from '@/lib/marketplace/search';
 import ServiceCard from '@/components/marketplace/ServiceCard';
 import Link from 'next/link';
 
+// Force dynamic rendering - don't pre-render this page
+export const dynamic = 'force-dynamic';
+
 export default async function MarketplacePage() {
   const [featuredServices, allCategories] = await Promise.all([
     getFeaturedServices(6),
