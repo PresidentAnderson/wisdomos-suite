@@ -16,9 +16,18 @@
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+// Lazy-load OpenAI client only when needed (prevents build-time errors)
+let openaiClient: OpenAI | null = null
+function getOpenAI(): OpenAI {
+  if (!openaiClient) {
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY environment variable is not set')
+    }
+    openaiClient = new OpenAI({ apiKey })
+  }
+  return openaiClient
+}
 
 // =====================================================
 // Type Definitions
@@ -234,7 +243,7 @@ Themes: ${themes.join(', ')}
 
 Respond with ONLY the life area ID (e.g., "work" or "romantic-intimacy"). No explanation.`
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAI().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
@@ -378,7 +387,7 @@ Respond in JSON format:
   "reason": "Brief reason if distressed"
 }`
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAI().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
@@ -429,7 +438,7 @@ Respond in JSON:
   "description": "Brief 1-sentence description"
 }`
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAI().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.4,
@@ -493,7 +502,7 @@ Current Context:
 ${relationshipContext ? `- Relationship mentioned: ${relationshipContext.relationshipName}` : ''}
 `
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAI().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
