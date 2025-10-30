@@ -40,7 +40,9 @@ import {
   User,
   Crown,
   Layers,
-  MessageSquare
+  MessageSquare,
+  Mic,
+  History
 } from 'lucide-react'
 import PhoenixLogo from './PhoenixLogo'
 
@@ -156,6 +158,24 @@ const menuItems: MenuItem[] = [
         href: '/reflective-feedback',
         icon: MessageSquare,
         description: 'Multi-dimensional growth tracking'
+      },
+      {
+        label: 'Voice Coach',
+        href: '/coach',
+        icon: Mic,
+        description: 'AI-powered voice reflection sessions'
+      },
+      {
+        label: 'Coach Analytics',
+        href: '/coach/analytics',
+        icon: BarChart3,
+        description: 'Visualize coaching insights'
+      },
+      {
+        label: 'Session History',
+        href: '/coach/sessions',
+        icon: History,
+        description: 'Browse past coaching sessions'
       }
     ]
   },
