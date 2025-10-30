@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
-import { prisma } from '@/lib/db'
-import { LifeStatus } from '@prisma/client'
-import { getUserFromRequest } from '@/lib/auth'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 interface DimensionMetric {
   lifeAreaName: string
-  lifeAreaId: string
+  lifeAreaId: number
   subdomainName: string
   dimensionName: string
   metric: number
@@ -14,66 +15,59 @@ interface DimensionMetric {
 }
 
 interface LifeAreaAnalytics {
-  id: string
+  id: number
   name: string
   phoenixName: string | null
-  score: number
-  status: string
   subdomainCount: number
   avgMetric: number
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // Get authenticated user and tenant
-    const authResult = await getUserFromRequest(request)
-
-    if ('error' in authResult) {
+    // Get auth token from request headers
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { user } = authResult
-    const userId = user.id
-    const tenantId = user.tenantId
+    // Create Supabase client with user's token
+    const token = authHeader.replace('Bearer ', '')
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      global: { headers: { Authorization: authHeader } }
+    })
+
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     // Fetch all life areas with their subdomains and dimensions
-    const lifeAreas = await prisma.lifeArea.findMany({
-      where: { userId, tenantId },
-      include: {
-        subdomains: {
-          include: {
-            dimensions: {
-              select: {
-                id: true,
-                name: true,
-                focus: true,
-                metric: true,
-              }
-            }
-          }
-        }
-      },
-      orderBy: { sortOrder: 'asc' }
-    })
+    const { data: lifeAreas, error: lifeAreasError } = await supabase
+      .from('life_areas')
+      .select(`
+        *,
+        subdomains (
+          *,
+          dimensions (
+            id,
+            name,
+            focus,
+            metric
+          )
+        )
+      `)
+      .eq('user_id', user.id)
+
+    if (lifeAreasError) {
+      console.error('Error fetching life areas:', lifeAreasError)
+      return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 })
+    }
 
     // ==================== CALCULATE OVERVIEW METRICS ====================
 
     let totalMetricsSum = 0
     let totalMetricsCount = 0
-    let thrivingCount = 0 // GREEN status
-    let needsAttentionCount = 0 // YELLOW status
-    let breakdownCount = 0 // RED status
-
-    // Count life areas by status
-    lifeAreas.forEach(area => {
-      if (area.status === LifeStatus.GREEN) {
-        thrivingCount++
-      } else if (area.status === LifeStatus.YELLOW) {
-        needsAttentionCount++
-      } else if (area.status === LifeStatus.RED) {
-        breakdownCount++
-      }
-    })
 
     // ==================== COLLECT DIMENSION METRICS ====================
 
@@ -88,10 +82,10 @@ export async function GET(request: NextRequest) {
       BECOMING: { sum: 0, count: 0 }
     }
 
-    lifeAreas.forEach(lifeArea => {
-      lifeArea.subdomains.forEach(subdomain => {
-        subdomain.dimensions.forEach(dimension => {
-          if (dimension.metric !== null) {
+    lifeAreas?.forEach((lifeArea: any) => {
+      lifeArea.subdomains?.forEach((subdomain: any) => {
+        subdomain.dimensions?.forEach((dimension: any) => {
+          if (dimension.metric !== null && dimension.metric !== undefined) {
             // Collect for overall metrics
             totalMetricsSum += dimension.metric
             totalMetricsCount++
@@ -158,15 +152,15 @@ export async function GET(request: NextRequest) {
 
     // ==================== CALCULATE LIFE AREA BREAKDOWN ====================
 
-    const lifeAreaBreakdown: LifeAreaAnalytics[] = lifeAreas.map(lifeArea => {
+    const lifeAreaBreakdown: LifeAreaAnalytics[] = lifeAreas?.map((lifeArea: any) => {
       let areaMetricsSum = 0
       let areaMetricsCount = 0
       let subdomainCount = 0
 
-      lifeArea.subdomains.forEach(subdomain => {
+      lifeArea.subdomains?.forEach((subdomain: any) => {
         subdomainCount++
-        subdomain.dimensions.forEach(dimension => {
-          if (dimension.metric !== null) {
+        subdomain.dimensions?.forEach((dimension: any) => {
+          if (dimension.metric !== null && dimension.metric !== undefined) {
             areaMetricsSum += dimension.metric
             areaMetricsCount++
           }
@@ -180,13 +174,11 @@ export async function GET(request: NextRequest) {
       return {
         id: lifeArea.id,
         name: lifeArea.name,
-        phoenixName: lifeArea.phoenixName,
-        score: lifeArea.score,
-        status: lifeArea.status,
+        phoenixName: lifeArea.phoenix_name,
         subdomainCount,
         avgMetric: Math.round(avgMetric * 100) / 100 // Round to 2 decimals
       }
-    })
+    }) || []
 
     // ==================== CALCULATE OVERALL AVERAGE SCORE ====================
 
@@ -198,11 +190,11 @@ export async function GET(request: NextRequest) {
 
     const response = {
       overview: {
-        totalLifeAreas: lifeAreas.length,
+        totalLifeAreas: lifeAreas?.length || 0,
         averageScore,
-        thrivingCount,
-        needsAttentionCount,
-        breakdownCount
+        thrivingCount: 0, // Not using status in this implementation
+        needsAttentionCount: 0,
+        breakdownCount: 0
       },
       dimensionAverages: {
         being: Math.round(dimensionAverages.being * 100) / 100,

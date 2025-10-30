@@ -345,7 +345,7 @@ export default function FulfillmentV5Page() {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <Link href="/journal">
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -387,6 +387,18 @@ export default function FulfillmentV5Page() {
               <List className="w-8 h-8 text-amber-600 mb-3" />
               <h3 className="font-semibold text-gray-900">Hierarchy View</h3>
               <p className="text-sm text-gray-600 mt-1">Structured breakdown</p>
+            </motion.div>
+          </Link>
+
+          <Link href="/fulfillment-orbital">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200 hover:border-purple-400 transition-all cursor-pointer shadow-sm hover:shadow-md"
+            >
+              <Orbit className="w-8 h-8 text-purple-600 mb-3" />
+              <h3 className="font-semibold text-gray-900">Orbital View</h3>
+              <p className="text-sm text-gray-600 mt-1">Physics simulation</p>
             </motion.div>
           </Link>
         </div>
