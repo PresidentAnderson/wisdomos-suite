@@ -1,4 +1,8 @@
 {
+  "buildCommand": "cd apps/web && cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @wisdomos/web build",
+  "framework": "nextjs",
+  "installCommand": "echo 'Skipping separate install - using buildCommand'",
+  "outputDirectory": "apps/web/.next",
   "crons": [
     {
       "path": "/api/cron/pattern-detection",
