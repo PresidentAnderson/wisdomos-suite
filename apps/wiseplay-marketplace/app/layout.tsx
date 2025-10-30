@@ -5,8 +5,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "WisePlay Marketplace - Learn Through Play",
-  description: "Discover educational games and learning experiences for all ages",
+  title: "WisePlay - Landmark Community Hub",
+  description: "Where Landmark community members connect, contribute, and create transformation together",
 }
 
 export default function RootLayout({

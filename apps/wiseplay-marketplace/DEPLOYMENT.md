@@ -1,4 +1,6 @@
-# WisePlay Marketplace - Deployment Guide
+# WisePlay - Deployment Guide
+
+**Where Landmark Community Creates Possibility**
 
 ## Current Deployment Status
 
@@ -14,7 +16,7 @@
 
 ## Overview
 
-WisePlay Marketplace is a complete service marketplace built with Next.js 14, Prisma, Stripe Connect, and PostgreSQL. This guide covers deployment to Vercel with production-ready configurations.
+WisePlay is a community contribution platform built with Next.js 14, Prisma, Stripe, and PostgreSQL. This guide covers deployment to Vercel with production-ready configurations.
 
 ## Prerequisites
 

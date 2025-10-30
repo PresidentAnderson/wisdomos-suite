@@ -1,8 +1,10 @@
-# WisePlay Marketplace - Complete Implementation Guide
+# WisePlay - Complete Implementation Guide
+
+**Where Landmark Community Creates Possibility**
 
 ## Project Overview
 
-WisePlay Marketplace is a full-featured service marketplace platform built on Next.js 14 with Stripe Connect integration, PostgreSQL database, and a 6% platform fee model. It enables providers to offer services and buyers to discover, book, and pay for those services seamlessly.
+WisePlay is a community contribution platform built on Next.js 14 with Stripe integration, PostgreSQL database, and a 6% community sustainability contribution model. It enables community members to offer their unique gifts and find authentic partnerships for transformation.
 
 ## What Has Been Completed
 
