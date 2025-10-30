@@ -1,92 +1,91 @@
-import { getServerSession } from 'next-auth/next';
-import { NextRequest, NextResponse } from 'next/server';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { NextRequest } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { prisma } from './db';
 
 /**
- * Get the current session from the request
+ * Auth options for NextAuth
  */
-export async function getSession() {
-  try {
-    const session = await getServerSession(authOptions);
-    return session;
-  } catch (error) {
-    console.error('Error getting session:', error);
+export const authOptions = {
+  providers: [],
+  session: {
+    strategy: 'jwt' as const,
+  },
+  callbacks: {
+    async session({ session, token }: any) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+      }
+      return session;
+    },
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+  },
+};
+
+/**
+ * Get current authenticated user
+ */
+export async function getCurrentUser() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
     return null;
   }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: {
+      providerProfile: true,
+    },
+  });
+
+  return user;
 }
 
 /**
- * Require authentication for API routes
+ * Require authentication middleware
  */
 export async function requireAuth() {
-  const session = await getSession();
-  
-  if (!session || !session.user) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error('Unauthorized');
   }
 
-  return session;
+  return user;
 }
 
 /**
- * Require provider role
+ * Require provider authentication
  */
 export async function requireProvider() {
-  const session = await getSession();
-  
-  if (!session || !session.user) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  const user = await requireAuth();
+
+  if (!user.providerProfile) {
+    throw new Error('Provider profile required');
   }
 
-  // Check if user is a provider (you may need to adjust this based on your session structure)
-  const isProvider = (session.user as any).isProvider;
-  
-  if (!isProvider) {
-    return NextResponse.json(
-      { error: 'Forbidden: Provider access required' },
-      { status: 403 }
-    );
-  }
-
-  return session;
+  return { user, provider: user.providerProfile };
 }
 
 /**
- * Require admin role
+ * Check if user is authenticated
  */
-export async function requireAdmin() {
-  const session = await getSession();
-  
-  if (!session || !session.user) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  // Check if user is an admin (you may need to adjust this based on your session structure)
-  const isAdmin = (session.user as any).isAdmin;
-  
-  if (!isAdmin) {
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 }
-    );
-  }
-
-  return session;
+export async function isAuthenticated(): Promise<boolean> {
+  const user = await getCurrentUser();
+  return !!user;
 }
 
 /**
- * Get user ID from session
+ * Check if user has provider profile
  */
-export async function getUserId(): Promise<string | null> {
-  const session = await getSession();
-  return session?.user?.id || null;
+export async function isProvider(): Promise<boolean> {
+  const user = await getCurrentUser();
+  return !!user?.providerProfile;
 }
