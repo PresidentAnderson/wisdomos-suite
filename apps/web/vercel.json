@@ -1,13 +1,16 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "regions": ["iad1"],
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @wisdomos/web build",
+  "installCommand": "echo 'Skipping separate install - using buildCommand'",
+  "outputDirectory": ".next",
   "env": {
     "NEXT_PUBLIC_APP_DOMAIN": "wisdomos-phoenix-frontend.vercel.app",
     "NEXT_PUBLIC_API_BASE": "https://wisdomos-phoenix-frontend.vercel.app/api",
-    "DATABASE_URL": "file:./prisma/dev.db",
-    "NEXTAUTH_URL": "https://wisdomos-phoenix-frontend.vercel.app",
-    "NEXTAUTH_SECRET": "development-secret-key-minimum-32-characters-long-for-demo"
+    "DATABASE_URL": "@database_url",
+    "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+    "NEXTAUTH_URL": "@nextauth_url",
+    "NEXTAUTH_SECRET": "@nextauth_secret"
   }
 }
