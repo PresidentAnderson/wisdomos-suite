@@ -54,6 +54,9 @@ model User {
   // Reflective feedback
   reflectiveFeedback ReflectiveFeedback[] @relation("UserReflectiveFeedback")
 
+  // Coach sessions
+  coachSessions CoachSession[] @relation("UserCoachSessions")
+
   @@map("users")
 }
 
@@ -749,4 +752,32 @@ model ReflectiveFeedback {
   @@index([userId, createdAt])
   @@index([dimensionName])
   @@map("reflective_feedback")
+}
+
+// Phoenix Wisdom Coach Sessions
+model CoachSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserCoachSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  transcript  String   @db.Text
+  tags        String[] @default([])
+  audioUrl    String?  // URL to audio file in storage
+  duration    Int?     // Duration in seconds
+
+  sentiment   Json?    // AI-analyzed emotional tone
+  insights    String?  @db.Text // GPT-generated insights
+  embedding   String?  @db.Text // Store as JSON string of vector for semantic search
+
+  sessionType String   @default("reflection") // reflection, breakthrough, integration, etc.
+  mood        String?  // User's self-reported mood
+  energy      Int?     // 1-10 energy level
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([userId, sessionType])
+  @@index([createdAt])
+  @@map("coach_sessions")
 }

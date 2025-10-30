@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getUserFromRequest } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import OpenAI from "openai";
-import { createClient } from "@supabase/supabase-js";
 
 // Lazy-load OpenAI client to prevent build-time errors
 let openaiClient: OpenAI | null = null;
@@ -15,108 +16,230 @@ function getOpenAI(): OpenAI {
   return openaiClient;
 }
 
-// Lazy-load Supabase client
-let supabaseClient: ReturnType<typeof createClient> | null = null;
-function getSupabase() {
-  if (!supabaseClient) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!url || !key) {
-      throw new Error('Supabase environment variables are not set');
-    }
-    supabaseClient = createClient(url, key);
-  }
-  return supabaseClient;
-}
-
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 60; // Extended timeout for transcription
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
-    const userId = formData.get("userId") as string;
-    const sessionType = formData.get("sessionType") as string || "reflection";
+    // Get authenticated user
+    const authResult = await getUserFromRequest(request);
 
-    if (!file || !userId) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if ("error" in authResult) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Transcribe
+    const { user } = authResult;
+    const userId = user.id;
+
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+    const sessionType = formData.get("sessionType") as string || "reflection";
+    const mood = formData.get("mood") as string || null;
+    const energy = formData.get("energy") as string || null;
+
+    if (!file) {
+      return NextResponse.json(
+        { error: "No audio file uploaded" },
+        { status: 400 }
+      );
+    }
+
+    const openai = getOpenAI();
+
+    // Calculate duration from file size (rough estimate)
+    const duration = Math.floor(file.size / 16000); // Assuming 16kHz audio
+
+    console.log("🎙️ Starting transcription for user:", userId);
+
+    // 1️⃣ Transcribe with Whisper
     const transcription = await openai.audio.transcriptions.create({
       file: file,
       model: "whisper-1",
       response_format: "text",
+      language: "en",
     });
 
-    // Analyze sentiment
-    const sentimentAnalysis = await openai.chat.completions.create({
+    console.log("✅ Transcription complete:", transcription.substring(0, 100) + "...");
+
+    // 2️⃣ Analyze sentiment and tone
+    const analysisPrompt = `Analyze the emotional tone and sentiment of this reflection.
+Provide a JSON object with:
+- overall_sentiment: positive, neutral, or negative
+- primary_emotion: the main emotion expressed
+- secondary_emotions: array of other emotions present
+- intensity: 1-10 scale
+- themes: array of key themes or topics
+
+Reflection: "${transcription}"`;
+
+    const analysis = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Analyze emotional tone. Return JSON with: overall_sentiment, emotions array, tone, intensity" },
-        { role: "user", content: transcription },
+        {
+          role: "system",
+          content: "You are an emotional intelligence coach. Analyze reflections with empathy and insight."
+        },
+        { role: "user", content: analysisPrompt },
       ],
       response_format: { type: "json_object" },
     });
 
-    const sentiment = JSON.parse(sentimentAnalysis.choices[0].message.content || "{}");
+    const sentiment = JSON.parse(analysis.choices[0].message.content || "{}");
 
-    // Extract tags
-    const taggingAnalysis = await openai.chat.completions.create({
+    console.log("✅ Sentiment analysis complete");
+
+    // 3️⃣ Generate coaching insights
+    const insightsPrompt = `As a Phoenix transformation coach, provide 2-3 actionable insights based on this reflection.
+Focus on:
+- Patterns of growth or resistance
+- Opportunities for breakthrough
+- Encouragement and next steps
+
+Keep insights concise (2-3 sentences each).
+
+Reflection: "${transcription}"`;
+
+    const insightsResponse = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Extract 3-7 thematic tags. Return JSON array." },
-        { role: "user", content: transcription },
+        {
+          role: "system",
+          content: "You are a Phoenix transformation coach focused on helping people rise from their ashes into their full potential.",
+        },
+        { role: "user", content: insightsPrompt },
       ],
-      response_format: { type: "json_object" },
     });
 
-    const tagsResponse = JSON.parse(taggingAnalysis.choices[0].message.content || '{"tags": []}');
-    const tags = Array.isArray(tagsResponse.tags) ? tagsResponse.tags : [];
+    const insights = insightsResponse.choices[0].message.content;
 
-    // Generate insights
-    const insightsAnalysis = await openai.chat.completions.create({
+    console.log("✅ Insights generated");
+
+    // 4️⃣ Extract tags
+    const taggingPrompt = `Extract 3-5 concise tags that capture the essence of this reflection.
+Examples: growth, resistance, breakthrough, acceptance, fear, courage, clarity, confusion, momentum, stuck
+
+Return ONLY a comma-separated list of tags, nothing else.
+
+Reflection: "${transcription}"`;
+
+    const tagging = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Provide 2-3 actionable coaching insights." },
-        { role: "user", content: transcription },
+        { role: "system", content: "You are a tagging system. Return only comma-separated tags." },
+        { role: "user", content: taggingPrompt },
       ],
     });
 
-    const insights = insightsAnalysis.choices[0].message.content;
+    const tagsRaw = tagging.choices[0].message.content || "";
+    const tags = tagsRaw
+      .split(/[,.\n]/)
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean)
+      .slice(0, 5);
 
-    // Create embedding
-    const embeddingResponse = await openai.embeddings.create({
+    console.log("✅ Tags extracted:", tags);
+
+    // 5️⃣ Create embedding for semantic search
+    const embed = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: transcription,
     });
-    const embedding = embeddingResponse.data[0].embedding;
+    const embedding = JSON.stringify(embed.data[0].embedding);
 
-    // Save to database
-    const { data: sessionData, error: dbError } = await supabase
-      .from("coaching_sessions")
-      .insert({
-        user_id: userId,
+    console.log("✅ Embedding created");
+
+    // 6️⃣ Store in database
+    const session = await prisma.coachSession.create({
+      data: {
+        userId,
         transcript: transcription,
-        tags: tags,
-        sentiment: sentiment,
-        insights: insights,
-        embedding: embedding,
-        session_type: sessionType,
-      })
-      .select()
-      .single();
+        tags,
+        duration,
+        sentiment,
+        insights,
+        embedding,
+        sessionType,
+        mood,
+        energy: energy ? parseInt(energy) : null,
+      },
+    });
 
-    if (dbError) {
-      return NextResponse.json({ error: "Failed to save session" }, { status: 500 });
-    }
+    console.log("✅ Session saved to database:", session.id);
 
     return NextResponse.json({
       success: true,
-      session: { id: sessionData.id, transcript: transcription, tags, sentiment, insights },
+      session: {
+        id: session.id,
+        transcript: transcription,
+        tags,
+        sentiment,
+        insights,
+        duration,
+        createdAt: session.createdAt,
+      },
+      message: "Session processed and saved successfully",
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("❌ Error processing voice session:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to process voice session",
+        details: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// GET endpoint to retrieve sessions
+export async function GET(request: NextRequest) {
+  try {
+    const authResult = await getUserFromRequest(request);
+
+    if ("error" in authResult) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { user } = authResult;
+    const userId = user.id;
+
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const sessionType = searchParams.get("sessionType");
+
+    const where: any = { userId };
+    if (sessionType) {
+      where.sessionType = sessionType;
+    }
+
+    const sessions = await prisma.coachSession.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        transcript: true,
+        tags: true,
+        duration: true,
+        sentiment: true,
+        insights: true,
+        sessionType: true,
+        mood: true,
+        energy: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      sessions,
+      count: sessions.length,
+    });
+  } catch (error: any) {
+    console.error("Error fetching sessions:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch sessions", details: error.message },
+      { status: 500 }
+    );
   }
 }
