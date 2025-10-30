@@ -71,40 +71,59 @@ pnpm --filter @wisdomos/web type-check
 WisdomOS is a monorepo using **Turborepo** and **pnpm/npm workspaces**. The codebase follows a multi-tenant phoenix transformation platform pattern organized by shared components, platform implementations, and product editions.
 
 ```
-wisdom/
-├── shared/                 # Reusable code across all platforms
-│   ├── core/              # Business logic, models, authentication
-│   ├── ui-components/     # Design system
-│   ├── database/          # Prisma, migrations, utils
-│   ├── assets/            # Branding, i18n
-│   └── config/            # Feature flags by edition
+wisdomOS 2026/
+├── apps/
+│   ├── api/                # NestJS backend API
+│   ├── web/                # Next.js 14 web application
+│   ├── mobile/             # React Native/Expo mobile app
+│   ├── community/          # Community platform
+│   ├── course-leader/      # Course management app
+│   └── wisdom/             # Edition configurations and platform implementations
+│       ├── editions/       # 13 product editions with manifests
+│       │   ├── free/
+│       │   ├── student/
+│       │   ├── standard/
+│       │   ├── advanced/
+│       │   ├── premium/
+│       │   ├── institutional/
+│       │   ├── teacher/
+│       │   ├── community-hub/
+│       │   ├── coach/
+│       │   ├── org/
+│       │   ├── personal/
+│       │   ├── personal edition/
+│       │   └── experimental/
+│       ├── platforms/      # Platform-specific implementations
+│       │   ├── web-saas/
+│       │   ├── mobile/
+│       │   └── desktop/
+│       ├── shared/         # Shared wisdom code
+│       │   ├── assets/
+│       │   ├── config/
+│       │   ├── core/
+│       │   ├── database/
+│       │   └── ui-components/
+│       └── wisdome phase 3/  # Active development workspace
 │
-├── platforms/              # Platform-specific implementations
-│   ├── web-saas/
-│   │   ├── frontend/      # Next.js 14 main web application
-│   │   ├── backend/       # NestJS API server with tRPC
-│   │   └── deployment/    # Docker, K8s configs
-│   ├── mobile/
-│   │   ├── ios/           # iOS-specific code
-│   │   ├── android/       # Android-specific code
-│   │   └── shared/        # React Native/Expo shared code
-│   └── desktop/           # Electron (future)
-│       ├── windows/
-│       ├── macos/
-│       ├── unix/
-│       └── shared/
+├── packages/               # Shared packages across all apps
+│   ├── core/              # Zod schemas for validation
+│   ├── phoenix-core/      # Phoenix transformation business logic
+│   ├── database/          # Prisma ORM + Supabase (single source of truth)
+│   ├── ui/                # Shared UI components
+│   ├── agents/            # AI agents
+│   ├── ai-tags/           # AI tagging system
+│   ├── api-client/        # API client library
+│   ├── config/            # Configuration management
+│   ├── i18n/              # Internationalization
+│   ├── navigation/        # Navigation utilities
+│   ├── sync/              # Sync utilities
+│   ├── types/             # Shared TypeScript types
+│   └── [other packages]
 │
-└── editions/               # Product editions
-    ├── free/              # Free tier edition
-    ├── community-hub/     # Community edition
-    ├── student/           # Student edition
-    ├── institutional/     # Institutional edition
-    ├── standard/          # Standard edition
-    ├── advanced/          # Advanced edition
-    └── premium/           # Premium edition
-        ├── web/
-        ├── mobile/
-        └── desktop/
+├── config/                # CI/CD and Docker configs
+├── docs/                  # Documentation
+├── scripts/               # Automation scripts
+└── supabase/              # Supabase backend configuration
 ```
 
 ### Key Technologies
@@ -128,9 +147,9 @@ The system supports multiple organizations with row-level security (RLS) policie
 
 ### Database Architecture
 - **Primary DB**: Supabase PostgreSQL with RLS policies
-- **ORM**: Prisma with client generation in `packages/db`
+- **ORM**: Prisma with client generation in `packages/database`
 - **Migrations**: Located in `supabase/migrations/`
-- **Schema**: Single source of truth at `packages/db/prisma/schema.prisma`
+- **Schema**: Single source of truth at `packages/database/prisma/schema.prisma`
 
 ### API Architecture
 - **tRPC**: Type-safe API layer in NestJS
@@ -155,22 +174,23 @@ The system supports multiple organizations with row-level security (RLS) policie
 5. Start development: `pnpm dev`
 
 ### Making Changes
-1. Database changes: Update `packages/db/prisma/schema.prisma` then run `pnpm db:push`
+1. Database changes: Update `packages/database/prisma/schema.prisma` then run `pnpm db:push`
 2. API changes: Add tRPC routers in `apps/api/src/routers/`
 3. UI changes: Follow phoenix brand guidelines in `BRAND-GUIDELINES.md`
-4. Always run `pnpm lint` before commits
+4. Edition changes: Update manifests in `apps/wisdom/editions/[edition-name]/manifest.json`
+5. Always run `pnpm lint` before commits
 
 ### Package Dependencies
-- `@wisdom/shared-database` - Database schemas and client (Prisma)
-- `@wisdom/shared-ui` - Shared React/React Native components
-- `@wisdom/shared-core` - Business logic utilities
-- `@wisdom/shared-types` - TypeScript definitions
-- `@wisdom/shared-api-client` - Frontend API utilities
-- `@wisdom/shared-config` - Feature flags by edition
-- `@wisdom/shared-i18n` - Internationalization
-- `@wisdom/platform-web` - Next.js web frontend
-- `@wisdom/platform-api` - NestJS API backend
-- `@wisdom/platform-mobile` - React Native mobile app
+- `@wisdomos/database` - Database schemas and client (Prisma) - **Single source of truth**
+- `@wisdomos/core` - Zod schemas for validation
+- `@wisdomos/phoenix-core` - Phoenix transformation business logic
+- `@wisdomos/ui` - Shared React/React Native components
+- `@wisdomos/types` - TypeScript definitions
+- `@wisdomos/api-client` - Frontend API utilities
+- `@wisdomos/config` - Feature flags and edition management
+- `@wisdomos/i18n` - Internationalization
+- `@wisdomos/agents` - AI agents system
+- `@wisdomos/ai-tags` - AI tagging utilities
 
 ### Testing Strategy
 - **Unit Tests**: Jest for business logic in packages/

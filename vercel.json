@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/pattern-detection",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-summary",
+      "schedule": "0 0 * * 0"
+    },
+    {
+      "path": "/api/cron/monthly-rollup",
+      "schedule": "0 0 1 * *"
+    }
+  ]
+}

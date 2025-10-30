@@ -6,23 +6,23 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
-    "build:web": "pnpm --filter @wisdom/platform-web build",
+    "build:web": "pnpm --filter @wisdomos/web build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "db:push": "pnpm --filter @wisdom/shared-database prisma db push",
-    "db:studio": "pnpm --filter @wisdom/shared-database prisma studio",
-    "db:generate": "pnpm --filter @wisdom/shared-database prisma generate",
-    "db:migrate": "pnpm --filter @wisdom/shared-database prisma migrate dev",
-    "db:seed": "pnpm --filter @wisdom/shared-database npm run db:seed",
-    "db:seed:demo": "DATABASE_SEED_DEMO=true pnpm --filter @wisdom/shared-database npm run db:seed && tsx scripts/seed-demo-data.ts",
+    "db:push": "pnpm --filter @wisdom/database prisma db push",
+    "db:studio": "pnpm --filter @wisdom/database prisma studio",
+    "db:generate": "pnpm --filter @wisdom/database prisma generate",
+    "db:migrate": "pnpm --filter @wisdom/database prisma migrate dev",
+    "db:seed": "pnpm --filter @wisdom/database npm run db:seed",
+    "db:seed:demo": "DATABASE_SEED_DEMO=true pnpm --filter @wisdom/database npm run db:seed && tsx scripts/seed-demo-data.ts",
     "db:seed:demo-only": "tsx scripts/seed-demo-data.ts",
     "db:init": "tsx scripts/init-database.ts",
     "db:test": "tsx scripts/test-database-integration.ts",
-    "mobile:dev": "pnpm --filter @wisdom/platform-mobile expo start",
-    "mobile:ios": "pnpm --filter @wisdom/platform-mobile expo run:ios",
-    "mobile:android": "pnpm --filter @wisdom/platform-mobile expo run:android",
-    "web:dev": "pnpm --filter @wisdom/platform-web dev",
-    "api:dev": "pnpm --filter @wisdom/platform-api dev",
+    "mobile:dev": "pnpm --filter @wisdomos/mobile expo start",
+    "mobile:ios": "pnpm --filter @wisdomos/mobile expo run:ios",
+    "mobile:android": "pnpm --filter @wisdomos/mobile expo run:android",
+    "web:dev": "pnpm --filter @wisdomos/web dev",
+    "api:dev": "pnpm --filter @wisdomos/api dev",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -36,8 +36,12 @@
   },
   "dependencies": {
     "@nestjs/event-emitter": "^3.0.1",
+    "@supabase/supabase-js": "^2.77.0",
     "axios": "^1.13.1",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.2"
+    "class-validator": "^0.14.2",
+    "framer-motion": "^12.23.24",
+    "openai": "^6.7.0",
+    "zustand": "^5.0.8"
   }
 }

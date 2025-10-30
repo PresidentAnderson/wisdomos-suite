@@ -1,7 +1,7 @@
 {
-  "name": "@wisdomos/core",
+  "name": "@wisdomos/phoenix-core",
   "version": "1.0.0",
-  "description": "WisdomOS Core - Phoenix transformation business logic library",
+  "description": "WisdomOS Phoenix Core - Phoenix transformation business logic library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

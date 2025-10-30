@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Assessment Quiz - Test Your Understanding</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .quiz-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .quiz-progress {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .question-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .question-number {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .question-category {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .answer-option {
+            padding: 1rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: left;
+            font-size: 1rem;
+        }
+        
+        .answer-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(5px);
+        }
+        
+        .answer-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .answer-option.correct {
+            border-color: #27ae60;
+            background: #27ae60;
+            color: white;
+        }
+        
+        .answer-option.incorrect {
+            border-color: #e74c3c;
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .nav-button {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .prev-button {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .prev-button:hover:not(:disabled) {
+            background: #7f8c8d;
+        }
+        
+        .next-button {
+            background: #3498db;
+            color: white;
+        }
+        
+        .next-button:hover:not(:disabled) {
+            background: #2980b9;
+        }
+        
+        .submit-button {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .submit-button:hover {
+            background: #229954;
+        }
+        
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .results-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 1rem 0;
+        }
+        
+        .wisdom-level {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .results-breakdown {
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .category-score {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .category-result {
+            color: #667eea;
+        }
+        
+        .feedback-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .feedback-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .recommendation-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .recommendation-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+        
+        .retake-button {
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 2rem;
+            transition: background 0.3s ease;
+        }
+        
+        .retake-button:hover {
+            background: #5a67d8;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .explanation {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-left: 3px solid #667eea;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Wisdom Course</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#modules">Modules</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="#" class="active">Quiz</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="quiz-container">
+        <div class="quiz-header">
+            <h1>Wisdom Assessment Quiz</h1>
+            <p>Test your understanding of wisdom concepts and practices</p>
+        </div>
+
+        <div class="timer" id="timer">
+            Time: <span id="time-display">00:00</span>
+        </div>
+
+        <div id="quiz-section">
+            <div class="quiz-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill">0%</div>
+                </div>
+                <p style="text-align: center; margin-top: 0.5rem; color: #666;">
+                    Question <span id="current-question">1</span> of <span id="total-questions">30</span>
+                </p>
+            </div>
+
+            <div id="questions-container">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+
+            <div class="quiz-navigation">
+                <button class="nav-button prev-button" id="prev-btn" onclick="previousQuestion()" disabled>
+                    ← Previous
+                </button>
+                <button class="nav-button next-button" id="next-btn" onclick="nextQuestion()">
+                    Next →
+                </button>
+            </div>
+        </div>
+
+        <div class="results-section" id="results-section">
+            <div class="results-card">
+                <h2>Your Wisdom Assessment Results</h2>
+                <div class="score-display" id="score-display">0%</div>
+                <div class="wisdom-level" id="wisdom-level">Wisdom Seeker</div>
+                <p id="wisdom-description"></p>
+
+                <div class="results-breakdown">
+                    <h3>Category Breakdown</h3>
+                    <div id="category-scores">
+                        <!-- Category scores will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <h3>Personalized Recommendations</h3>
+                    <ul class="recommendation-list" id="recommendations">
+                        <!-- Recommendations will be inserted here -->
+                    </ul>
+                </div>
+
+                <button class="retake-button" onclick="retakeQuiz()">Retake Quiz</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Wisdom Course. The journey of wisdom begins with a single question.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz questions database
+        const questions = [
+            // Module 1: Foundations of Wisdom
+            {
+                category: "Foundations",
+                question: "According to Socrates, what is the foundation of wisdom?",
+                options: [
+                    "Having extensive knowledge",
+                    "Knowing that you know nothing",
+                    "Following social conventions",
+                    "Achieving material success"
+                ],
+                correct: 1,
+                explanation: "Socrates famously stated 'The only true wisdom is in knowing you know nothing,' emphasizing intellectual humility."
+            },
+            {
+                category: "Foundations",
+                question: "What is 'phronesis' in Aristotelian philosophy?",
+                options: [
+                    "Theoretical knowledge",
+                    "Practical wisdom",
+                    "Emotional intelligence",
+                    "Physical strength"
+                ],
+                correct: 1,
+                explanation: "Phronesis is practical wisdom - the ability to discern the right action in particular circumstances."
+            },
+            {
+                category: "Foundations",
+                question: "Which tradition emphasizes 'wu wei' or effortless action?",
+                options: [
+                    "Stoicism",
+                    "Buddhism",
+                    "Taoism",
+                    "Confucianism"
+                ],
+                correct: 2,
+                explanation: "Taoism teaches wu wei - acting in accordance with the natural flow of the universe."
+            },
+            {
+                category: "Foundations",
+                question: "What does Buddhism identify as the root of suffering?",
+                options: [
+                    "Poverty",
+                    "Attachment and craving",
+                    "Lack of knowledge",
+                    "Social inequality"
+                ],
+                correct: 1,
+                explanation: "Buddhism teaches that attachment and craving (tanha) are the root causes of suffering (dukkha)."
+            },
+            {
+                category: "Foundations",
+                question: "Which component is NOT typically associated with wisdom?",
+                options: [
+                    "Emotional regulation",
+                    "Tolerance for uncertainty",
+                    "Rigid thinking",
+                    "Concern for others"
+                ],
+                correct: 2,
+                explanation: "Wisdom involves flexible thinking and openness, not rigid thinking patterns."
+            },
+
+            // Module 2: Self-Knowledge
+            {
+                category: "Self-Knowledge",
+                question: "What ancient Greek maxim is fundamental to self-knowledge?",
+                options: [
+                    "Carpe diem",
+                    "Know thyself",
+                    "Fortune favors the brave",
+                    "All things in moderation"
+                ],
+                correct: 1,
+                explanation: "'Know thyself' (gnothi seauton) was inscribed at the Temple of Apollo at Delphi."
+            },
+            {
+                category: "Self-Knowledge",
+                question: "Which is NOT one of the four domains of emotional intelligence?",
+                options: [
+                    "Self-awareness",
+                    "Self-management",
+                    "Social dominance",
+                    "Relationship management"
+                ],
+                correct: 2,
+                explanation: "The four domains are self-awareness, self-management, social awareness, and relationship management."
+            },
+            {
+                category: "Self-Knowledge",
+                question: "What is the Dunning-Kruger effect?",
+                options: [
+                    "Overestimating others' abilities",
+                    "Incompetent people overestimating their competence",
+                    "Fear of success",
+                    "Perfectionism paralysis"
+                ],
+                correct: 1,
+                explanation: "The Dunning-Kruger effect describes how people with limited competence tend to overestimate their abilities."
+            },
+            {
+                category: "Self-Knowledge",
+                question: "Values serve as:",
+                options: [
+                    "Temporary preferences",
+                    "Social obligations",
+                    "Fundamental beliefs guiding decisions",
+                    "External rules to follow"
+                ],
+                correct: 2,
+                explanation: "Values are core beliefs that guide our decisions and behavior consistently over time."
+            },
+            {
+                category: "Self-Knowledge",
+                question: "What indicates alignment with your values?",
+                options: [
+                    "Constant struggle and conflict",
+                    "Feeling energized and authentic",
+                    "Seeking others' approval",
+                    "Avoiding all challenges"
+                ],
+                correct: 1,
+                explanation: "When living aligned with values, people typically feel energized, authentic, and have reduced internal conflict."
+            },
+
+            // Module 3: Practical Philosophy
+            {
+                category: "Practical Philosophy",
+                question: "What is the Stoic 'dichotomy of control'?",
+                options: [
+                    "Controlling others vs being controlled",
+                    "Mind vs body control",
+                    "Distinguishing what we can and cannot control",
+                    "Past vs future control"
+                ],
+                correct: 2,
+                explanation: "The dichotomy of control teaches us to focus on what's within our control and accept what isn't."
+            },
+            {
+                category: "Practical Philosophy",
+                question: "What is 'negative visualization' in Stoicism?",
+                options: [
+                    "Pessimistic thinking",
+                    "Imagining loss to cultivate gratitude",
+                    "Avoiding positive thoughts",
+                    "Criticizing others"
+                ],
+                correct: 1,
+                explanation: "Negative visualization (premeditatio malorum) involves imagining loss to appreciate what we have and prepare for setbacks."
+            },
+            {
+                category: "Practical Philosophy",
+                question: "The RAIN method in mindfulness stands for:",
+                options: [
+                    "Rest, Assess, Integrate, Navigate",
+                    "Recognize, Allow, Investigate, Non-identification",
+                    "Reflect, Accept, Inquire, Notice",
+                    "Relax, Attend, Inspire, Nurture"
+                ],
+                correct: 1,
+                explanation: "RAIN is a mindfulness technique: Recognize, Allow, Investigate with kindness, and Non-identification."
+            },
+            {
+                category: "Practical Philosophy",
+                question: "Which is NOT a foundation of mindfulness in Buddhism?",
+                options: [
+                    "Mindfulness of body",
+                    "Mindfulness of feelings",
+                    "Mindfulness of possessions",
+                    "Mindfulness of mind"
+                ],
+                correct: 2,
+                explanation: "The four foundations are body, feelings, mind, and mental objects (dharmas), not possessions."
+            },
+            {
+                category: "Practical Philosophy",
+                question: "The 10-10-10 rule asks how you'll feel about a decision in:",
+                options: [
+                    "10 seconds, minutes, hours",
+                    "10 minutes, months, years",
+                    "10 days, weeks, months",
+                    "10 hours, days, weeks"
+                ],
+                correct: 1,
+                explanation: "The 10-10-10 rule considers how you'll feel in 10 minutes, 10 months, and 10 years."
+            },
+
+            // Module 4: Critical Thinking
+            {
+                category: "Critical Thinking",
+                question: "What type of reasoning moves from general to specific?",
+                options: [
+                    "Inductive",
+                    "Deductive",
+                    "Abductive",
+                    "Circular"
+                ],
+                correct: 1,
+                explanation: "Deductive reasoning moves from general principles to specific conclusions."
+            },
+            {
+                category: "Critical Thinking",
+                question: "What fallacy attacks the person rather than their argument?",
+                options: [
+                    "Straw man",
+                    "Ad hominem",
+                    "False dilemma",
+                    "Slippery slope"
+                ],
+                correct: 1,
+                explanation: "Ad hominem fallacy attacks the person making the argument rather than addressing the argument itself."
+            },
+            {
+                category: "Critical Thinking",
+                question: "Confirmation bias involves:",
+                options: [
+                    "Seeking diverse perspectives",
+                    "Seeking information that confirms existing beliefs",
+                    "Confirming facts before believing",
+                    "Being skeptical of all information"
+                ],
+                correct: 1,
+                explanation: "Confirmation bias is the tendency to search for and favor information that confirms our existing beliefs."
+            },
+            {
+                category: "Critical Thinking",
+                question: "What does Occam's Razor suggest?",
+                options: [
+                    "Complex problems require complex solutions",
+                    "The simplest explanation is usually correct",
+                    "Always question everything",
+                    "Cut away emotional responses"
+                ],
+                correct: 1,
+                explanation: "Occam's Razor states that the simplest explanation that fits the facts is usually the best one."
+            },
+            {
+                category: "Critical Thinking",
+                question: "First principles thinking involves:",
+                options: [
+                    "Following established methods",
+                    "Breaking problems down to fundamental truths",
+                    "Prioritizing first attempts",
+                    "Accepting conventional wisdom"
+                ],
+                correct: 1,
+                explanation: "First principles thinking breaks down complex problems to basic elements and builds up from fundamental truths."
+            },
+
+            // Module 5: Ethical Living
+            {
+                category: "Ethical Living",
+                question: "In Aristotelian virtue ethics, virtue is:",
+                options: [
+                    "Following strict rules",
+                    "The mean between extremes",
+                    "Maximizing pleasure",
+                    "Denying all desires"
+                ],
+                correct: 1,
+                explanation: "Aristotle taught that virtue lies in the golden mean between extremes of excess and deficiency."
+            },
+            {
+                category: "Ethical Living",
+                question: "What does Kant's categorical imperative require?",
+                options: [
+                    "Maximizing happiness",
+                    "Following your emotions",
+                    "Acting only on universalizable maxims",
+                    "Obeying authority"
+                ],
+                correct: 2,
+                explanation: "The categorical imperative requires acting only on principles that could become universal laws."
+            },
+            {
+                category: "Ethical Living",
+                question: "Ikigai represents the intersection of:",
+                options: [
+                    "Work and leisure",
+                    "What you love, are good at, the world needs, and can be paid for",
+                    "Mind, body, and spirit",
+                    "Past, present, and future"
+                ],
+                correct: 1,
+                explanation: "Ikigai is found at the intersection of passion, vocation, mission, and profession."
+            },
+            {
+                category: "Ethical Living",
+                question: "Which is NOT one of the four cardinal virtues?",
+                options: [
+                    "Prudence",
+                    "Justice",
+                    "Wealth",
+                    "Temperance"
+                ],
+                correct: 2,
+                explanation: "The four cardinal virtues are prudence, justice, temperance, and courage, not wealth."
+            },
+            {
+                category: "Ethical Living",
+                question: "Care ethics emphasizes:",
+                options: [
+                    "Abstract principles",
+                    "Individual rights",
+                    "Relationships and context",
+                    "Divine commands"
+                ],
+                correct: 2,
+                explanation: "Care ethics focuses on maintaining and nurturing relationships, emphasizing context and empathy."
+            },
+
+            // Module 6: Wisdom in Relationships
+            {
+                category: "Relationships",
+                question: "Which type of empathy involves understanding how another thinks?",
+                options: [
+                    "Cognitive empathy",
+                    "Emotional empathy",
+                    "Compassionate empathy",
+                    "Sympathetic empathy"
+                ],
+                correct: 0,
+                explanation: "Cognitive empathy is the ability to understand another person's thoughts and perspective."
+            },
+            {
+                category: "Relationships",
+                question: "What does 'Ubuntu' philosophy teach?",
+                options: [
+                    "Individual independence",
+                    "I am because we are",
+                    "Survival of the fittest",
+                    "Mind over matter"
+                ],
+                correct: 1,
+                explanation: "Ubuntu teaches that individual identity emerges from community: 'I am because we are.'"
+            },
+            {
+                category: "Relationships",
+                question: "In Nonviolent Communication, what comes after stating observations?",
+                options: [
+                    "Making demands",
+                    "Expressing feelings",
+                    "Assigning blame",
+                    "Giving advice"
+                ],
+                correct: 1,
+                explanation: "NVC follows: Observation, Feelings, Needs, Request - feelings come after observations."
+            },
+            {
+                category: "Relationships",
+                question: "What type of social capital connects diverse groups?",
+                options: [
+                    "Bonding capital",
+                    "Bridging capital",
+                    "Linking capital",
+                    "Banking capital"
+                ],
+                correct: 1,
+                explanation: "Bridging capital refers to connections across diverse groups, providing new information and opportunities."
+            },
+            {
+                category: "Relationships",
+                question: "Active listening involves all EXCEPT:",
+                options: [
+                    "Paraphrasing what you heard",
+                    "Offering immediate solutions",
+                    "Asking clarifying questions",
+                    "Reflecting emotions"
+                ],
+                correct: 1,
+                explanation: "Active listening focuses on understanding, not immediately offering solutions or advice."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let startTime = Date.now();
+        let timerInterval;
+
+        // Initialize quiz
+        function initializeQuiz() {
+            renderQuestions();
+            showQuestion(0);
+            startTimer();
+            updateProgress();
+            
+            // Set total questions
+            document.getElementById('total-questions').textContent = questions.length;
+        }
+
+        // Render all questions
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `question-${index}`;
+                
+                questionCard.innerHTML = `
+                    <div class="question-header">
+                        <span class="question-number">Question ${index + 1}</span>
+                        <span class="question-category">${q.category}</span>
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="answer-options">
+                        ${q.options.map((option, i) => `
+                            <button class="answer-option" onclick="selectAnswer(${index}, ${i})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="explanation" id="explanation-${index}">
+                        <strong>Explanation:</strong> ${q.explanation}
+                    </div>
+                `;
+                
+                container.appendChild(questionCard);
+            });
+        }
+
+        // Show specific question
+        function showQuestion(index) {
+            // Hide all questions
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Show current question
+            document.getElementById(`question-${index}`).classList.add('active');
+            
+            // Update current question display
+            document.getElementById('current-question').textContent = index + 1;
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = index === 0;
+            
+            if (index === questions.length - 1) {
+                nextBtn.textContent = 'Submit Quiz';
+                nextBtn.className = 'nav-button submit-button';
+                nextBtn.onclick = submitQuiz;
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.className = 'nav-button next-button';
+                nextBtn.onclick = nextQuestion;
+            }
+            
+            // Restore selected answer if exists
+            if (userAnswers[index] !== undefined) {
+                const options = document.querySelectorAll(`#question-${index} .answer-option`);
+                options[userAnswers[index]].classList.add('selected');
+            }
+        }
+
+        // Select answer
+        function selectAnswer(questionIndex, answerIndex) {
+            // Clear previous selection
+            const options = document.querySelectorAll(`#question-${questionIndex} .answer-option`);
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Mark selected
+            options[answerIndex].classList.add('selected');
+            
+            // Store answer
+            userAnswers[questionIndex] = answerIndex;
+            
+            updateProgress();
+        }
+
+        // Navigate to next question
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Navigate to previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const answered = userAnswers.filter(a => a !== undefined).length;
+            const percentage = Math.round((answered / questions.length) * 100);
+            
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.width = percentage + '%';
+            progressFill.textContent = percentage + '%';
+        }
+
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                
+                document.getElementById('time-display').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            // Check if all questions answered
+            const unanswered = questions.length - userAnswers.filter(a => a !== undefined).length;
+            
+            if (unanswered > 0) {
+                if (!confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) {
+                    return;
+                }
+            }
+            
+            // Stop timer
+            clearInterval(timerInterval);
+            
+            // Calculate results
+            const results = calculateResults();
+            
+            // Show results
+            showResults(results);
+        }
+
+        // Calculate results
+        function calculateResults() {
+            let totalCorrect = 0;
+            const categoryScores = {};
+            
+            questions.forEach((q, i) => {
+                if (!categoryScores[q.category]) {
+                    categoryScores[q.category] = { correct: 0, total: 0 };
+                }
+                
+                categoryScores[q.category].total++;
+                
+                if (userAnswers[i] === q.correct) {
+                    totalCorrect++;
+                    categoryScores[q.category].correct++;
+                }
+            });
+            
+            const percentage = Math.round((totalCorrect / questions.length) * 100);
+            
+            return {
+                totalCorrect,
+                totalQuestions: questions.length,
+                percentage,
+                categoryScores,
+                timeSpent: Math.floor((Date.now() - startTime) / 1000)
+            };
+        }
+
+        // Show results
+        function showResults(results) {
+            // Hide quiz section
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            
+            // Show results section
+            document.getElementById('results-section').style.display = 'block';
+            
+            // Display score
+            document.getElementById('score-display').textContent = results.percentage + '%';
+            
+            // Determine wisdom level
+            let level, description;
+            if (results.percentage >= 90) {
+                level = 'Wisdom Master';
+                description = 'Exceptional understanding of wisdom concepts. You demonstrate deep insight and practical knowledge.';
+            } else if (results.percentage >= 75) {
+                level = 'Wisdom Practitioner';
+                description = 'Strong grasp of wisdom principles. You\'re well on your way to embodying wisdom in daily life.';
+            } else if (results.percentage >= 60) {
+                level = 'Wisdom Student';
+                description = 'Good foundational understanding. Continue your studies to deepen your wisdom.';
+            } else if (results.percentage >= 45) {
+                level = 'Wisdom Seeker';
+                description = 'You\'re beginning your wisdom journey. Keep exploring and practicing.';
+            } else {
+                level = 'Wisdom Beginner';
+                description = 'You\'re at the start of an exciting journey. Review the modules to build your foundation.';
+            }
+            
+            document.getElementById('wisdom-level').textContent = level;
+            document.getElementById('wisdom-description').textContent = description;
+            
+            // Display category breakdown
+            const categoryContainer = document.getElementById('category-scores');
+            categoryContainer.innerHTML = '';
+            
+            for (const [category, scores] of Object.entries(results.categoryScores)) {
+                const percentage = Math.round((scores.correct / scores.total) * 100);
+                categoryContainer.innerHTML += `
+                    <div class="category-score">
+                        <span class="category-name">${category}</span>
+                        <span class="category-result">${scores.correct}/${scores.total} (${percentage}%)</span>
+                    </div>
+                `;
+            }
+            
+            // Generate recommendations
+            const recommendations = document.getElementById('recommendations');
+            recommendations.innerHTML = '';
+            
+            const weakAreas = Object.entries(results.categoryScores)
+                .filter(([cat, scores]) => (scores.correct / scores.total) < 0.7)
+                .map(([cat]) => cat);
+            
+            if (weakAreas.length > 0) {
+                recommendations.innerHTML += `<li>Review modules on: ${weakAreas.join(', ')}</li>`;
+            }
+            
+            if (results.percentage < 60) {
+                recommendations.innerHTML += '<li>Revisit the foundational concepts in Module 1</li>';
+                recommendations.innerHTML += '<li>Practice daily reflection and journaling</li>';
+            }
+            
+            if (results.categoryScores['Critical Thinking'] && 
+                (results.categoryScores['Critical Thinking'].correct / results.categoryScores['Critical Thinking'].total) < 0.7) {
+                recommendations.innerHTML += '<li>Practice identifying logical fallacies in daily life</li>';
+            }
+            
+            if (results.categoryScores['Relationships'] && 
+                (results.categoryScores['Relationships'].correct / results.categoryScores['Relationships'].total) < 0.7) {
+                recommendations.innerHTML += '<li>Focus on empathy and active listening exercises</li>';
+            }
+            
+            recommendations.innerHTML += '<li>Continue with daily wisdom practices</li>';
+            recommendations.innerHTML += '<li>Join a philosophy discussion group or book club</li>';
+            
+            // Save results
+            saveQuizResults(results);
+        }
+
+        // Save quiz results
+        function saveQuizResults(results) {
+            const quizHistory = JSON.parse(localStorage.getItem('wisdomQuizHistory') || '[]');
+            
+            quizHistory.push({
+                date: new Date().toISOString(),
+                score: results.percentage,
+                timeSpent: results.timeSpent,
+                categoryScores: results.categoryScores
+            });
+            
+            // Keep only last 10 attempts
+            if (quizHistory.length > 10) {
+                quizHistory.shift();
+            }
+            
+            localStorage.setItem('wisdomQuizHistory', JSON.stringify(quizHistory));
+        }
+
+        // Retake quiz
+        function retakeQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            startTime = Date.now();
+            
+            // Hide results
+            document.getElementById('results-section').style.display = 'none';
+            
+            // Show quiz
+            document.getElementById('quiz-section').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            
+            // Reset UI
+            document.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            document.querySelectorAll('.explanation').forEach(exp => {
+                exp.classList.remove('show');
+            });
+            
+            // Restart
+            initializeQuiz();
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+// ============================================
+// WisdomOS - Prisma Schema
+// ============================================
+// Multi-Tenant Architecture with Schema Isolation
+// Each tenant gets a dedicated PostgreSQL schema
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// SYSTEM LAYER (public schema)
+// User and tenant management
+// ============================================
+
+model Tenant {
+  id            String        @id @default(cuid())
+  schemaName    String        @unique  // e.g., "tenant_abc123"
+  name          String                 // Workspace display name
+  ownerId       String                 // References User.id
+  status        TenantStatus  @default(ACTIVE)
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  users         UserTenant[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@map("tenants")
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  passwordHash  String
+  firstName     String?
+  lastName      String?
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  lastLoginAt   DateTime?
+
+  tenants       UserTenant[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model UserTenant {
+  id          String      @id @default(cuid())
+  userId      String
+  tenantId    String
+  role        TenantRole  @default(MEMBER)
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+
+  @@unique([userId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+  @@map("user_tenants")
+}
+
+enum TenantRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+// ============================================
+// TENANT-SPECIFIC MODELS
+// These are created in each tenant's schema
+// ============================================
+
+model LifeArea {
+  id              String           @id @default(cuid())
+  slug            String           @unique  // e.g., "work", "romantic-intimacy"
+  name            String
+  description     String?          @db.Text
+  cluster         LifeAreaCluster
+  sortOrder       Int              @default(0)
+  isActive        Boolean          @default(true)
+
+  // Current fulfillment state
+  currentScore    Float            @default(50.0)  // 0-100 scale
+  status          AreaStatus       @default(BALANCED)
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  events          Event[]
+  commitments     Commitment[]
+  boundaries      Boundary[]
+  metrics         MetricSnapshot[]
+
+  @@index([cluster])
+  @@index([status])
+  @@index([sortOrder])
+  @@map("life_areas")
+}
+
+enum LifeAreaCluster {
+  SYSTEMIC_STRUCTURAL      // work, finance, living-environment, legal-civic, time-energy
+  RELATIONAL_HUMAN         // romantic-intimacy, family, friendships, professional-network, community
+  INNER_PERSONAL           // physical-health, mental-health, emotional-wellbeing, personal-growth, spirituality
+  CREATIVE_EXPRESSIVE      // creative-expression, hobbies-play, style-aesthetics, humor-levity, sensuality
+  EXPLORATORY_EXPANSIVE    // travel-adventure, learning-education, innovation, nature, curiosity
+  INTEGRATIVE_LEGACY       // purpose-mission, values-integrity, legacy-impact, contribution, wisdom
+}
+
+enum AreaStatus {
+  CRISIS          // Score < 20
+  STRUGGLING      // Score 20-39
+  BALANCED        // Score 40-69
+  THRIVING        // Score 70-89
+  FLOURISHING     // Score 90-100
+}
+
+model Event {
+  id              String        @id @default(cuid())
+  lifeAreaId      String
+
+  type            EventType
+  category        EventCategory
+  tone            EventTone
+
+  title           String
+  description     String        @db.Text
+  narrative       String?       @db.Text  // Full story
+
+  occurredAt      DateTime
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Emotional and transformational data
+  emotionalCharge Int           // -5 to +5
+  tags            String[]
+
+  // Relationships
+  lifeArea        LifeArea      @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  insights        Insight[]
+  commitments     Commitment[]
+
+  @@index([lifeAreaId])
+  @@index([type])
+  @@index([occurredAt])
+  @@index([createdAt])
+  @@map("events")
+}
+
+enum EventType {
+  BREAKTHROUGH     // Major positive shift
+  PROGRESS         // Incremental improvement
+  SETBACK          // Temporary regression
+  UPSET            // Triggering event requiring inquiry
+  MILESTONE        // Significant achievement
+  PATTERN          // Recurring theme identified
+  LEARNING         // Insight or wisdom gained
+}
+
+enum EventCategory {
+  PERSONAL
+  RELATIONAL
+  PROFESSIONAL
+  HEALTH
+  SPIRITUAL
+  FINANCIAL
+  CREATIVE
+  OTHER
+}
+
+enum EventTone {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+  TRANSFORMATIONAL
+  COMPLEX
+}
+
+model Insight {
+  id              String       @id @default(cuid())
+  eventId         String?
+
+  type            InsightType
+  title           String
+  description     String       @db.Text
+
+  // Pattern recognition
+  isRecurring     Boolean      @default(false)
+  frequency       Int          @default(1)
+  relatedEvents   String[]     // Event IDs
+
+  // Integration
+  applied         Boolean      @default(false)
+  appliedAt       DateTime?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  event           Event?       @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  commitments     Commitment[]
+
+  @@index([type])
+  @@index([isRecurring])
+  @@index([applied])
+  @@map("insights")
+}
+
+enum InsightType {
+  TRUTH_REVEALED       // Core belief or pattern exposed
+  LIMITING_BELIEF      // Self-imposed constraint identified
+  STRENGTH_DISCOVERED  // New capability recognized
+  VALUE_CLARIFIED      // Core value articulated
+  PATTERN_RECOGNIZED   // Recurring behavior identified
+  WISDOM_INTEGRATED    // Deep learning embodied
+}
+
+model Commitment {
+  id              String            @id @default(cuid())
+  lifeAreaId      String?
+  eventId         String?
+  insightId       String?
+
+  statement       String            @db.Text
+  intention       String            @db.Text
+  measurable      String?           @db.Text
+
+  status          CommitmentStatus  @default(ACTIVE)
+
+  // Tracking
+  createdAt       DateTime          @default(now())
+  completedAt     DateTime?
+  reviewedAt      DateTime?
+
+  // Relationships
+  lifeArea        LifeArea?         @relation(fields: [lifeAreaId], references: [id], onDelete: SetNull)
+  event           Event?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  insight         Insight?          @relation(fields: [insightId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([lifeAreaId])
+  @@index([createdAt])
+  @@map("commitments")
+}
+
+enum CommitmentStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  ABANDONED
+  INTEGRATED  // Fully embodied, no longer needs tracking
+}
+
+model Boundary {
+  id              String          @id @default(cuid())
+  lifeAreaId      String
+
+  statement       String          @db.Text
+  reason          String          @db.Text
+  consequence     String?         @db.Text
+
+  status          BoundaryStatus  @default(ACTIVE)
+
+  // Violation tracking
+  lastViolatedAt  DateTime?
+  violationCount  Int             @default(0)
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  lifeArea        LifeArea        @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+
+  @@index([lifeAreaId])
+  @@index([status])
+  @@map("boundaries")
+}
+
+enum BoundaryStatus {
+  ACTIVE
+  SUSPENDED
+  DISSOLVED
+  INTEGRATED
+}
+
+model MetricSnapshot {
+  id                  String      @id @default(cuid())
+  lifeAreaId          String
+
+  date                DateTime    @default(now())
+  score               Float       // 0-100
+  status              AreaStatus
+
+  // Aggregate counts
+  eventCount          Int         @default(0)
+  upsetCount          Int         @default(0)
+  breakthroughCount   Int         @default(0)
+
+  notes               String?     @db.Text
+
+  lifeArea            LifeArea    @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([lifeAreaId, date])
+  @@index([lifeAreaId])
+  @@index([date])
+  @@map("metric_snapshots")
+}
+
+model AutobiographyEntry {
+  id              String      @id @default(cuid())
+
+  eraId           String      // References era (1975-2025, 2025-2050, etc.)
+  year            Int
+  month           Int?
+
+  title           String
+  narrative       String      @db.Text
+
+  // Cross-references
+  eventIds        String[]
+  lifeAreaIds     String[]
+
+  isPublic        Boolean     @default(false)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([eraId])
+  @@index([year])
+  @@map("autobiography_entries")
+}
+
+// ============================================
+// COACH FACTORY INTEGRATION
+// (Already implemented - extends the schema)
+// ============================================
+
+model CoachFactoryConfig {
+  id                String   @id @default(cuid())
+  lifeAreaId        String   @unique
+
+  coachName         String
+  restorationPrompt String   @db.Text
+  playPrompt        String   @db.Text
+  dialoguePolicies  Json
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([lifeAreaId])
+  @@map("coach_factory_config")
+}
+
+model CoachSessionExtended {
+  id                String   @id @default(cuid())
+  sessionId         String   @unique
+
+  lifeAreaId        String
+  areaScore         Float
+  coachMode         String   // restoration, play, unknown
+
+  relationshipId    String?
+  relationshipName  String?
+  weScore           Int?
+
+  createdAt         DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([lifeAreaId])
+  @@map("coach_sessions_extended")
+}
+
+model FulfillmentSignal {
+  id                String   @id @default(cuid())
+  sessionId         String?
+
+  lifeAreaId        String
+  signalType        String   // breakthrough, setback, progress, milestone
+  emotionalCharge   Float
+
+  areaScoreBefore   Float?
+  areaScoreAfter    Float?
+  description       String?  @db.Text
+
+  occurredAt        DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@index([lifeAreaId])
+  @@index([occurredAt])
+  @@map("fulfillment_signals")
+}
+
+model WeAssessmentTrigger {
+  id                String   @id @default(cuid())
+  sessionId         String
+
+  relationshipName  String
+  triggerReason     String   @db.Text
+
+  completed         Boolean  @default(false)
+  completedAt       DateTime?
+
+  createdAt         DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([completed])
+  @@map("we_assessment_triggers")
+}

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Wisdom Course</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .resources-hero {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .resource-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #3498db;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        
+        .download-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            transition: background 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: #229954;
+        }
+        
+        .book-list {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .book-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .book-info h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .book-info p {
+            color: #666;
+            margin: 0;
+        }
+        
+        .wisdom-quotes {
+            background: #f8f9fa;
+            padding: 3rem 2rem;
+        }
+        
+        .quote-card {
+            background: white;
+            padding: 2rem;
+            border-left: 4px solid #3498db;
+            margin-bottom: 1.5rem;
+            border-radius: 5px;
+        }
+        
+        .quote-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        
+        .quote-author {
+            text-align: right;
+            color: #666;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Wisdom Course</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#modules">Modules</a></li>
+                <li><a href="#" class="active">Resources</a></li>
+                <li><a href="journal.html">Journal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="resources-hero">
+            <h1>Wisdom Resources</h1>
+            <p>Downloadable guides, templates, and tools to support your wisdom journey</p>
+        </section>
+
+        <section class="resource-grid">
+            <div class="resource-card">
+                <span class="resource-type">PDF Guide</span>
+                <h3>Daily Wisdom Practices</h3>
+                <p>A comprehensive guide to 30 daily practices from various wisdom traditions.</p>
+                <ul>
+                    <li>Morning routines</li>
+                    <li>Evening reflections</li>
+                    <li>Mindfulness exercises</li>
+                    <li>Journaling prompts</li>
+                </ul>
+                <button class="download-btn" onclick="downloadResource('daily-practices')">Download PDF</button>
+            </div>
+
+            <div class="resource-card">
+                <span class="resource-type">Worksheet</span>
+                <h3>Values Assessment Tool</h3>
+                <p>Identify and prioritize your core values with this interactive worksheet.</p>
+                <ul>
+                    <li>Values inventory</li>
+                    <li>Priority ranking</li>
+                    <li>Action alignment check</li>
+                    <li>Goal setting guide</li>
+                </ul>
+                <button class="download-btn" onclick="downloadResource('values-assessment')">Download Worksheet</button>
+            </div>
+
+            <div class="resource-card">
+                <span class="resource-type">Template</span>
+                <h3>Decision-Making Matrix</h3>
+                <p>A structured template for making complex decisions using philosophical frameworks.</p>
+                <ul>
+                    <li>Multi-criteria analysis</li>
+                    <li>Pros and cons framework</li>
+                    <li>Values alignment check</li>
+                    <li>Long-term impact assessment</li>
+                </ul>
+                <button class="download-btn" onclick="downloadResource('decision-matrix')">Download Template</button>
+            </div>
+
+            <div class="resource-card">
+                <span class="resource-type">Audio Guide</span>
+                <h3>Guided Meditations</h3>
+                <p>10 guided meditation recordings for different purposes and skill levels.</p>
+                <ul>
+                    <li>Breath awareness (10 min)</li>
+                    <li>Body scan (15 min)</li>
+                    <li>Loving-kindness (20 min)</li>
+                    <li>Walking meditation (15 min)</li>
+                </ul>
+                <button class="download-btn" onclick="downloadResource('meditations')">Access Meditations</button>
+            </div>
+
+            <div class="resource-card">
+                <span class="resource-type">Checklist</span>
+                <h3>Stoic Week Challenge</h3>
+                <p>A 7-day practical Stoicism challenge with daily tasks and reflections.</p>
+                <ul>
+                    <li>Daily practices</li>
+                    <li>Evening reflections</li>
+                    <li>Reading assignments</li>
+                    <li>Progress tracker</li>
+                </ul>
+                <button class="download-btn" onclick="downloadResource('stoic-week')">Start Challenge</button>
+            </div>
+
+            <div class="resource-card">
+                <span class="resource-type">Journal</span>
+                <h3>Wisdom Journal Template</h3>
+                <p>A structured journal template for daily wisdom practice and reflection.</p>
+                <ul>
+                    <li>Morning intentions</li>
+                    <li>Gratitude practice</li>
+                    <li>Evening review</li>
+                    <li>Weekly insights</li>
+                </ul>
+                <button class="download-btn" onclick="downloadResource('journal-template')">Download Journal</button>
+            </div>
+        </section>
+
+        <section class="book-list">
+            <h2>Essential Reading List</h2>
+            <div class="book-item">
+                <div class="book-info">
+                    <h4>Meditations - Marcus Aurelius</h4>
+                    <p>Personal reflections of a Roman Emperor on Stoic philosophy</p>
+                </div>
+                <span class="resource-type">Stoicism</span>
+            </div>
+            
+            <div class="book-item">
+                <div class="book-info">
+                    <h4>The Analects - Confucius</h4>
+                    <p>Foundational text of Confucian wisdom and ethics</p>
+                </div>
+                <span class="resource-type">Eastern Philosophy</span>
+            </div>
+            
+            <div class="book-item">
+                <div class="book-info">
+                    <h4>Letters from a Stoic - Seneca</h4>
+                    <p>Practical wisdom for daily life from a Roman philosopher</p>
+                </div>
+                <span class="resource-type">Stoicism</span>
+            </div>
+            
+            <div class="book-item">
+                <div class="book-info">
+                    <h4>The Dhammapada</h4>
+                    <p>Collection of sayings of the Buddha in verse form</p>
+                </div>
+                <span class="resource-type">Buddhism</span>
+            </div>
+            
+            <div class="book-item">
+                <div class="book-info">
+                    <h4>Nicomachean Ethics - Aristotle</h4>
+                    <p>Exploration of virtue, happiness, and the good life</p>
+                </div>
+                <span class="resource-type">Greek Philosophy</span>
+            </div>
+            
+            <div class="book-item">
+                <div class="book-info">
+                    <h4>Tao Te Ching - Lao Tzu</h4>
+                    <p>Ancient Chinese text on the nature of existence and wisdom</p>
+                </div>
+                <span class="resource-type">Taoism</span>
+            </div>
+        </section>
+
+        <section class="wisdom-quotes">
+            <h2>Daily Wisdom Quotes</h2>
+            <div class="quote-card">
+                <div class="quote-text">"The only true wisdom is in knowing you know nothing."</div>
+                <div class="quote-author">— Socrates</div>
+            </div>
+            
+            <div class="quote-card">
+                <div class="quote-text">"Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself."</div>
+                <div class="quote-author">— Rumi</div>
+            </div>
+            
+            <div class="quote-card">
+                <div class="quote-text">"The mind is everything. What you think you become."</div>
+                <div class="quote-author">— Buddha</div>
+            </div>
+            
+            <div class="quote-card">
+                <div class="quote-text">"It is not death that a man should fear, but he should fear never beginning to live."</div>
+                <div class="quote-author">— Marcus Aurelius</div>
+            </div>
+            
+            <div class="quote-card">
+                <div class="quote-text">"Knowing others is intelligence; knowing yourself is true wisdom."</div>
+                <div class="quote-author">— Lao Tzu</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Wisdom Course. Knowledge shared is wisdom multiplied.</p>
+        </div>
+    </footer>
+
+    <script>
+        function downloadResource(type) {
+            // Create content based on resource type
+            let content = '';
+            let filename = '';
+            
+            switch(type) {
+                case 'daily-practices':
+                    filename = 'daily-wisdom-practices.txt';
+                    content = `DAILY WISDOM PRACTICES GUIDE
+=====================================
+
+MORNING PRACTICES
+-----------------
+1. Gratitude Practice (5 minutes)
+   - List 3 things you're grateful for
+   - Feel the emotion of gratitude
+   - Set an intention for the day
+
+2. Meditation (10-20 minutes)
+   - Find a quiet space
+   - Focus on your breath
+   - When thoughts arise, gently return to breath
+
+3. Morning Reflection
+   - What challenges might I face today?
+   - How can I respond with wisdom?
+   - What virtues will I practice?
+
+EVENING PRACTICES
+-----------------
+1. Daily Review (10 minutes)
+   - What went well today?
+   - What could I have done better?
+   - What did I learn?
+
+2. Forgiveness Practice
+   - Forgive yourself for mistakes
+   - Forgive others who may have wronged you
+   - Release the day's tensions
+
+3. Tomorrow's Preparation
+   - Set priorities for tomorrow
+   - Visualize success
+   - Prepare for potential challenges
+
+WEEKLY PRACTICES
+----------------
+- Values check-in
+- Progress review
+- Gratitude letter
+- Digital detox period`;
+                    break;
+                    
+                case 'values-assessment':
+                    filename = 'values-assessment-worksheet.txt';
+                    content = `VALUES ASSESSMENT WORKSHEET
+=====================================
+
+STEP 1: VALUE IDENTIFICATION
+Circle your top 10 values from this list:
+
+Adventure       Growth          Security
+Authenticity    Health          Service
+Balance         Honesty         Spirituality
+Challenge       Independence    Stability
+Community       Innovation      Success
+Compassion      Integrity       Tradition
+Creativity      Knowledge       Trust
+Excellence      Leadership      Wealth
+Family          Love            Wisdom
+Freedom         Peace           Work-Life Balance
+
+STEP 2: PRIORITIZATION
+Rank your top 5 values:
+1. _______________
+2. _______________
+3. _______________
+4. _______________
+5. _______________
+
+STEP 3: ALIGNMENT CHECK
+For each top value, rate how well your life aligns (1-10):
+Value 1: ___ /10
+Value 2: ___ /10
+Value 3: ___ /10
+Value 4: ___ /10
+Value 5: ___ /10
+
+STEP 4: ACTION PLANNING
+What changes could better align your life with your values?
+_________________________________
+_________________________________
+_________________________________`;
+                    break;
+                    
+                case 'decision-matrix':
+                    filename = 'decision-making-matrix.txt';
+                    content = `DECISION-MAKING MATRIX TEMPLATE
+=====================================
+
+DECISION TO MAKE: _______________________
+
+OPTIONS:
+1. _____________________
+2. _____________________
+3. _____________________
+
+CRITERIA (Rate each option 1-10):
+                    Option 1    Option 2    Option 3
+Values Alignment    ___        ___         ___
+Long-term Impact    ___        ___         ___
+Risk Level          ___        ___         ___
+Resources Required  ___        ___         ___
+Potential Growth    ___        ___         ___
+Impact on Others    ___        ___         ___
+
+TOTAL SCORE:        ___        ___         ___
+
+PHILOSOPHICAL CHECKS:
+Categorical Imperative: Can this be a universal law? Y/N
+Utilitarian: Does this create the most good? Y/N
+Virtue Ethics: Does this build character? Y/N
+
+FINAL DECISION: _______________________
+REASONING: ____________________________`;
+                    break;
+                    
+                default:
+                    alert('Resource download initiated. Full content would be available in production.');
+                    return;
+            }
+            
+            // Create and trigger download
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: #27ae60;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 5px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease;
+                z-index: 1000;
+            `;
+            message.textContent = `✓ ${filename} downloaded successfully!`;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+        
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

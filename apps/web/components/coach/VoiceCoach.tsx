@@ -19,6 +19,7 @@ export function VoiceCoach({ userId }: VoiceCoachProps) {
   const [coachResponse, setCoachResponse] = useState('')
   const [error, setError] = useState('')
   const [recordingTime, setRecordingTime] = useState(0)
+  const [routing, setRouting] = useState<any>(null)
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
@@ -98,6 +99,7 @@ export function VoiceCoach({ userId }: VoiceCoachProps) {
       setTranscript(data.transcript)
       setTags(data.tags || [])
       setCoachResponse(data.coachResponse || '')
+      setRouting(data.routing || null)
 
     } catch (err: any) {
       setError(err.message || 'Failed to process recording')
@@ -215,6 +217,83 @@ export function VoiceCoach({ userId }: VoiceCoachProps) {
                     {tag}
                   </PhoenixBadge>
                 ))}
+              </div>
+            )}
+
+            {/* Coach Factory Routing Info */}
+            {routing && (
+              <div className="mt-4 p-4 bg-gradient-to-r from-phoenix-orange/10 to-phoenix-gold/10 rounded-lg border border-phoenix-orange/20">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-gray-700">Life Area:</span>
+                    <PhoenixBadge variant="default" className="capitalize">
+                      {routing.lifeArea?.replace(/-/g, ' ')}
+                    </PhoenixBadge>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-gray-700">Coach:</span>
+                    <span className="text-sm text-gray-900">{routing.coachName}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-gray-700">Mode:</span>
+                    <PhoenixBadge
+                      variant={routing.coachMode === 'restoration' ? 'ash' : routing.coachMode === 'play' ? 'gold' : 'default'}
+                      className="capitalize"
+                    >
+                      {routing.coachMode}
+                    </PhoenixBadge>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-gray-700">Area Score:</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all ${
+                            routing.areaScore < 30 ? 'bg-red-500' :
+                            routing.areaScore < 40 ? 'bg-yellow-500' :
+                            routing.areaScore < 70 ? 'bg-blue-500' :
+                            'bg-green-500'
+                          }`}
+                          style={{ width: `${routing.areaScore}%` }}
+                        />
+                      </div>
+                      <span className="text-sm font-mono text-gray-900">{routing.areaScore}/100</span>
+                    </div>
+                  </div>
+
+                  {routing.relationshipContext && (
+                    <div className="pt-2 border-t border-phoenix-orange/20">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-gray-700">Relationship:</span>
+                        <span className="text-sm text-gray-900">{routing.relationshipContext.relationshipName}</span>
+                      </div>
+                      {routing.relationshipContext.shouldTriggerAssessment && (
+                        <p className="text-xs text-phoenix-orange mt-1">
+                          💡 Consider completing a WE assessment for this relationship
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {routing.fulfillmentSignal && (
+                    <div className="pt-2 border-t border-phoenix-orange/20">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-700">
+                          {routing.fulfillmentSignal.signalType === 'breakthrough' ? '🎉' :
+                           routing.fulfillmentSignal.signalType === 'progress' ? '📈' :
+                           routing.fulfillmentSignal.signalType === 'setback' ? '📉' : '🎯'}
+                        </span>
+                        <span className="text-sm text-gray-900 capitalize">
+                          {routing.fulfillmentSignal.signalType} detected
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">{routing.fulfillmentSignal.description}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </PhoenixCardContent>

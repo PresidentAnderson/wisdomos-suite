@@ -43,6 +43,14 @@ model User {
   mirrorRules   MirrorRule[]
   autobiographyEntries AutobiographyEntry[]
 
+  // Marketplace relations
+  providerProfile ProviderProfile?
+  bookings        Booking[] @relation("BuyerBookings")
+  reviews         Review[]  @relation("UserReviews")
+  transactions    Transaction[] @relation("BuyerTransactions")
+  wishlist        Wishlist?
+  notifications   Notification[] @relation("UserNotifications")
+
   @@map("users")
 }
 
@@ -329,4 +337,389 @@ model AutobiographyChapterProgress {
 
   @@unique([userId, chapter])
   @@map("autobiography_chapter_progress")
+}
+
+// ============================================================================
+// WISEPLAY MARKETPLACE SCHEMA
+// ============================================================================
+
+enum ServiceType {
+  CONSULTATION
+  COACHING
+  COURSE
+  DIGITAL_PRODUCT
+  WORKSHOP
+  MEMBERSHIP
+}
+
+enum ServiceStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum TransactionType {
+  SERVICE_PAYMENT
+  PLATFORM_FEE
+  PAYOUT
+  REFUND
+}
+
+// Provider Profiles
+model ProviderProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  businessName      String?
+  displayName       String
+  bio               String?  @db.Text
+  tagline           String?
+  website           String?
+
+  isVerified        Boolean  @default(false)
+  verifiedAt        DateTime?
+
+  stripeAccountId   String?  @unique
+  stripeOnboarded   Boolean  @default(false)
+  stripeOnboardedAt DateTime?
+  payoutsEnabled    Boolean  @default(false)
+  chargesEnabled    Boolean  @default(false)
+
+  avatarUrl         String?
+  coverImageUrl     String?
+
+  totalSales        Int      @default(0)
+  totalRevenue      Float    @default(0)
+  averageRating     Float?
+  totalReviews      Int      @default(0)
+
+  acceptsBookings   Boolean  @default(true)
+  autoConfirm       Boolean  @default(false)
+
+  services          Service[]
+  bookingsReceived  Booking[]
+  reviews           Review[]  @relation("ProviderReviews")
+  transactions      Transaction[] @relation("ProviderTransactions")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+  @@index([stripeAccountId])
+  @@index([isVerified])
+  @@map("provider_profiles")
+}
+
+// Services
+model Service {
+  id                String        @id @default(cuid())
+  providerId        String
+  provider          ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  title             String
+  slug              String        @unique
+  description       String        @db.Text
+  shortDescription  String?
+
+  type              ServiceType
+  categoryId        String
+  category          ServiceCategory @relation(fields: [categoryId], references: [id])
+  tags              ServiceTag[]
+
+  price             Float
+  currency          String        @default("usd")
+  isFree            Boolean       @default(false)
+  compareAtPrice    Float?
+
+  status            ServiceStatus @default(DRAFT)
+  availableSlots    Int?
+  duration          Int?
+  maxParticipants   Int?
+
+  imageUrl          String?
+  images            Json?
+  videoUrl          String?
+
+  requiresScheduling Boolean      @default(false)
+  availability      Json?
+  timeZone          String?
+
+  deliveryMethod    String?
+  deliveryDetails   String?       @db.Text
+
+  requirements      Json?
+  includes          Json?
+
+  metaTitle         String?
+  metaDescription   String?
+  featured          Boolean       @default(false)
+
+  viewCount         Int           @default(0)
+  bookingCount      Int           @default(0)
+  averageRating     Float?
+  reviewCount       Int           @default(0)
+
+  bookings          Booking[]
+  reviews           Review[]
+  wishlists         WishlistItem[]
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  publishedAt       DateTime?
+
+  @@index([providerId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([type])
+  @@index([featured])
+  @@index([createdAt])
+  @@map("services")
+}
+
+// Service Categories
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  parentId    String?
+  parent      ServiceCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    ServiceCategory[] @relation("CategoryHierarchy")
+
+  services    Service[]
+
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("service_categories")
+}
+
+// Service Tags
+model ServiceTag {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+
+  services    Service[]
+
+  createdAt   DateTime  @default(now())
+
+  @@index([slug])
+  @@map("service_tags")
+}
+
+// Bookings
+model Booking {
+  id                String        @id @default(cuid())
+  bookingNumber     String        @unique @default(cuid())
+
+  serviceId         String
+  service           Service       @relation(fields: [serviceId], references: [id])
+  providerId        String
+  provider          ProviderProfile @relation(fields: [providerId], references: [id])
+  buyerId           String
+  buyer             User          @relation("BuyerBookings", fields: [buyerId], references: [id])
+
+  status            BookingStatus @default(PENDING)
+  scheduledAt       DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  cancellationReason String?      @db.Text
+
+  participantCount  Int           @default(1)
+  participantDetails Json?
+
+  servicePriceAtBooking Float
+  platformFee       Float
+  totalAmount       Float
+  currency          String        @default("usd")
+
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentIntentId   String?       @unique
+  paymentMethodId   String?
+
+  buyerNotes        String?       @db.Text
+  providerNotes     String?       @db.Text
+
+  meetingUrl        String?
+  accessDetails     Json?
+
+  transaction       Transaction?
+  review            Review?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([serviceId])
+  @@index([providerId])
+  @@index([buyerId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([createdAt])
+  @@map("bookings")
+}
+
+// Transactions
+model Transaction {
+  id                String          @id @default(cuid())
+  transactionNumber String          @unique @default(cuid())
+
+  bookingId         String?         @unique
+  booking           Booking?        @relation(fields: [bookingId], references: [id])
+
+  type              TransactionType
+  status            PaymentStatus   @default(PENDING)
+
+  amount            Float
+  platformFee       Float
+  providerAmount    Float
+  currency          String          @default("usd")
+
+  stripePaymentIntentId String?     @unique
+  stripeTransferId      String?     @unique
+  stripeRefundId        String?     @unique
+
+  buyerId           String?
+  buyer             User?           @relation("BuyerTransactions", fields: [buyerId], references: [id])
+  providerId        String?
+  provider          ProviderProfile? @relation("ProviderTransactions", fields: [providerId], references: [id])
+
+  metadata          Json?
+  failureReason     String?
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  processedAt       DateTime?
+
+  @@index([bookingId])
+  @@index([buyerId])
+  @@index([providerId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// Reviews
+model Review {
+  id          String   @id @default(cuid())
+
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id])
+  providerId  String
+  provider    ProviderProfile @relation("ProviderReviews", fields: [providerId], references: [id])
+  reviewerId  String
+  reviewer    User     @relation("UserReviews", fields: [reviewerId], references: [id])
+
+  rating      Int
+
+  title       String?
+  comment     String   @db.Text
+
+  communicationRating Int?
+  qualityRating       Int?
+  valueRating         Int?
+
+  response    String?  @db.Text
+  respondedAt DateTime?
+
+  isPublished Boolean  @default(true)
+  isFlagged   Boolean  @default(false)
+  flagReason  String?
+
+  helpfulCount Int     @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([serviceId])
+  @@index([providerId])
+  @@index([reviewerId])
+  @@index([rating])
+  @@index([createdAt])
+  @@map("reviews")
+}
+
+// Wishlist
+model Wishlist {
+  id          String         @id @default(cuid())
+  userId      String         @unique
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items       WishlistItem[]
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([userId])
+  @@map("wishlists")
+}
+
+model WishlistItem {
+  id          String    @id @default(cuid())
+
+  wishlistId  String
+  wishlist    Wishlist  @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  serviceId   String
+  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  addedAt     DateTime  @default(now())
+
+  @@unique([wishlistId, serviceId])
+  @@index([wishlistId])
+  @@index([serviceId])
+  @@map("wishlist_items")
+}
+
+// Notifications
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  type        String
+  title       String
+  message     String   @db.Text
+
+  relatedId   String?
+  relatedType String?
+
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+
+  actionUrl   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
 }

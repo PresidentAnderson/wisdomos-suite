@@ -1,0 +1,89 @@
+{
+  "id": "org",
+  "name": "WisdomOS — Organization Edition",
+  "version": "1.0.0",
+  "description": "Enterprise platform for organizational transformation and team development",
+  "branding": {
+    "primaryColor": "#10B981",
+    "secondaryColor": "#059669",
+    "logo": "logo-org.svg",
+    "favicon": "favicon-org.ico",
+    "appName": "WisdomOS Enterprise"
+  },
+  "features": {
+    "core": {
+      "autobiography": true,
+      "fulfillmentDisplay": true,
+      "journaling": true,
+      "wisdomCoach": true,
+      "lifeAreas": true,
+      "commitments": true
+    },
+    "assessments": {
+      "relationshipAssessment": true,
+      "selfReflection": true,
+      "dailyPrompts": true,
+      "teamAssessments": true,
+      "cultureSurveys": true
+    },
+    "social": {
+      "collaboration": true,
+      "sharing": true,
+      "publicProfiles": false,
+      "teamSpaces": true
+    },
+    "coaching": {
+      "clientDashboard": true,
+      "coachTools": true,
+      "sessionNotes": true,
+      "clientExports": true,
+      "progressTracking": true,
+      "goalManagement": true,
+      "coachFactory": true,
+      "areaSpecificCoaching": true,
+      "fulfillmentSignals": true,
+      "relationshipAssessmentTriggers": true
+    },
+    "organization": {
+      "multiUser": true,
+      "sso": true,
+      "orgAdmin": true,
+      "teamAnalytics": true,
+      "compliance": true,
+      "billing": true,
+      "audit": true,
+      "rbac": true,
+      "customBranding": true
+    },
+    "integrations": {
+      "calendar": true,
+      "webhooks": true,
+      "api": true,
+      "zapier": true,
+      "slack": true,
+      "teams": true,
+      "ldap": true,
+      "scim": true
+    }
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "copySet": "org",
+  "theme": {
+    "mode": "light",
+    "customization": true,
+    "whiteLabel": true
+  },
+  "limits": {
+    "maxJournalEntries": -1,
+    "maxLifeAreas": 30,
+    "maxCommitments": -1,
+    "maxCoachSessions": -1,
+    "maxUsers": -1,
+    "storageGB": -1
+  },
+  "pricing": {
+    "tier": "enterprise",
+    "model": "custom",
+    "contactSales": true
+  }
+}

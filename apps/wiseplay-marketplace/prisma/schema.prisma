@@ -1,0 +1,565 @@
+// WisePlay Marketplace Database Schema
+// Multi-tenant marketplace for wisdom services with Stripe integration
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Marketplace fields
+  bio              String?
+  phone            String?
+  location         String?
+  timezone         String?
+  preferredLanguage String?  @default("en")
+
+  // Roles
+  isProvider       Boolean  @default(false)
+  isAdmin          Boolean  @default(false)
+
+  // Relationships
+  accounts         Account[]
+  sessions         Session[]
+  providerProfile  ProviderProfile?
+  bookingsAsBuyer  Booking[] @relation("BuyerBookings")
+  bookingsAsProvider Booking[] @relation("ProviderBookings")
+  reviews          Review[]
+  reviewsReceived  Review[] @relation("ProviderReviews")
+  messages         Message[]
+  conversations    ConversationParticipant[]
+  wishlists        Wishlist[]
+  notifications    Notification[]
+  transactions     Transaction[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// PROVIDER PROFILE & SERVICES
+// ============================================
+
+model ProviderProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Provider information
+  displayName String
+  tagline     String?
+  description String?
+  expertise   String[] // Array of expertise areas
+  yearsExperience Int?
+
+  // Verification & Trust
+  isVerified  Boolean  @default(false)
+  verifiedAt  DateTime?
+
+  // Business information
+  businessName    String?
+  businessWebsite String?
+  businessEmail   String?
+  businessPhone   String?
+
+  // Stripe Connect integration (6% platform fee)
+  stripeAccountId       String?  @unique
+  stripeOnboardingComplete Boolean @default(false)
+  stripeChargesEnabled  Boolean  @default(false)
+  stripePayoutsEnabled  Boolean  @default(false)
+  stripeBankConnected   Boolean  @default(false)
+
+  // Availability
+  availability Json? // Flexible JSON for weekly schedule
+
+  // Stats
+  totalBookings    Int     @default(0)
+  totalEarnings    Decimal @default(0) @db.Decimal(10, 2)
+  averageRating    Decimal @default(0) @db.Decimal(3, 2)
+  responseTime     Int?    // Average response time in minutes
+
+  // Settings
+  autoAcceptBookings Boolean @default(false)
+  instantBooking     Boolean @default(false)
+  requiresApproval   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  services  Service[]
+
+  @@index([userId])
+  @@index([stripeAccountId])
+  @@map("provider_profiles")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  providerId  String
+  provider    ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  // Service details
+  title       String
+  slug        String   @unique
+  description String
+  shortDescription String?
+
+  // Pricing
+  basePrice   Decimal  @db.Decimal(10, 2)
+  currency    String   @default("USD")
+  priceType   PriceType @default(FIXED) // FIXED, HOURLY, PACKAGE
+
+  // Duration
+  duration    Int      // Duration in minutes
+  bufferTime  Int?     // Buffer time in minutes between bookings
+
+  // Categorization
+  categories  ServiceCategory[]
+  tags        ServiceTag[]
+
+  // Availability
+  isActive    Boolean  @default(true)
+  isPublished Boolean  @default(false)
+
+  // Booking settings
+  maxAdvanceBooking Int? // Maximum days in advance for booking
+  minAdvanceBooking Int? // Minimum hours in advance for booking
+  maxBookingsPerDay Int? @default(10)
+
+  // Media
+  images      String[] // Array of image URLs
+  videoUrl    String?
+
+  // Requirements
+  requirements String? // What buyers need to provide
+  deliverables String? // What's included
+
+  // Stats
+  totalBookings Int     @default(0)
+  totalRevenue  Decimal @default(0) @db.Decimal(10, 2)
+  averageRating Decimal @default(0) @db.Decimal(3, 2)
+  viewCount     Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  bookings    Booking[]
+  reviews     Review[]
+  wishlists   Wishlist[]
+
+  @@index([providerId])
+  @@index([slug])
+  @@index([isActive, isPublished])
+  @@map("services")
+}
+
+model ServiceCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  icon        String?
+  parentId    String?
+  parent      ServiceCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    ServiceCategory[] @relation("CategoryHierarchy")
+
+  services    Service[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("service_categories")
+}
+
+model ServiceTag {
+  id       String   @id @default(cuid())
+  name     String   @unique
+  slug     String   @unique
+  services Service[]
+
+  createdAt DateTime @default(now())
+
+  @@index([slug])
+  @@map("service_tags")
+}
+
+// ============================================
+// BOOKINGS & SCHEDULING
+// ============================================
+
+model Booking {
+  id         String   @id @default(cuid())
+
+  // Parties
+  buyerId    String
+  buyer      User     @relation("BuyerBookings", fields: [buyerId], references: [id])
+  providerId String
+  provider   User     @relation("ProviderBookings", fields: [providerId], references: [id])
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id])
+
+  // Scheduling
+  scheduledAt    DateTime
+  duration       Int      // Duration in minutes
+  timezone       String
+  endTime        DateTime
+
+  // Status
+  status         BookingStatus @default(PENDING)
+  cancellationReason String?
+  cancelledBy    String?
+  cancelledAt    DateTime?
+
+  // Pricing
+  basePrice      Decimal  @db.Decimal(10, 2)
+  platformFee    Decimal  @db.Decimal(10, 2) // 6% platform fee
+  totalPrice     Decimal  @db.Decimal(10, 2)
+  currency       String   @default("USD")
+
+  // Payment tracking
+  paymentStatus  PaymentStatus @default(PENDING)
+  paymentIntentId String? @unique
+  paidAt         DateTime?
+
+  // Meeting details
+  meetingUrl     String?
+  meetingId      String?
+  location       String?
+  notes          String?
+
+  // Completion
+  completedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  transaction Transaction?
+  review      Review?
+
+  @@index([buyerId])
+  @@index([providerId])
+  @@index([serviceId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@map("bookings")
+}
+
+// ============================================
+// PAYMENTS & TRANSACTIONS
+// ============================================
+
+model Transaction {
+  id          String   @id @default(cuid())
+
+  // Parties
+  buyerId     String
+  buyer       User     @relation(fields: [buyerId], references: [id])
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+
+  // Amounts (in cents for precision)
+  amount              Int      // Total amount in cents
+  platformFeeAmount   Int      // 6% platform fee in cents
+  providerAmount      Int      // Amount provider receives in cents
+  currency            String   @default("USD")
+
+  // Stripe details
+  stripePaymentIntentId String? @unique
+  stripeChargeId        String? @unique
+  stripeTransferId      String? @unique // Transfer to provider
+  stripeRefundId        String? @unique
+
+  // Status
+  status              TransactionStatus @default(PENDING)
+
+  // Metadata
+  metadata            Json?
+
+  // Refund information
+  refundAmount        Int?
+  refundReason        String?
+  refundedAt          DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([buyerId])
+  @@index([bookingId])
+  @@index([stripePaymentIntentId])
+  @@index([status])
+  @@map("transactions")
+}
+
+// ============================================
+// REVIEWS & RATINGS
+// ============================================
+
+model Review {
+  id          String   @id @default(cuid())
+
+  // Parties
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  reviewerId  String
+  reviewer    User     @relation(fields: [reviewerId], references: [id])
+  providerId  String
+  provider    User     @relation("ProviderReviews", fields: [providerId], references: [id])
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id])
+
+  // Rating & Content
+  rating      Int      // 1-5 stars
+  title       String?
+  comment     String
+
+  // Detailed ratings
+  communication Int?   // 1-5
+  quality       Int?   // 1-5
+  value         Int?   // 1-5
+  punctuality   Int?   // 1-5
+
+  // Provider response
+  response    String?
+  respondedAt DateTime?
+
+  // Moderation
+  isPublished Boolean  @default(true)
+  isFlagged   Boolean  @default(false)
+  flagReason  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reviewerId])
+  @@index([providerId])
+  @@index([serviceId])
+  @@index([rating])
+  @@map("reviews")
+}
+
+// ============================================
+// MESSAGING
+// ============================================
+
+model Conversation {
+  id              String   @id @default(cuid())
+  bookingId       String?  @unique
+  lastMessageAt   DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@index([lastMessageAt])
+  @@map("conversations")
+}
+
+model ConversationParticipant {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Status
+  lastReadAt     DateTime?
+  unreadCount    Int       @default(0)
+  isMuted        Boolean   @default(false)
+
+  joinedAt  DateTime @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User     @relation(fields: [senderId], references: [id])
+
+  // Content
+  content        String
+  attachments    String[] // URLs to attachments
+
+  // Status
+  isRead         Boolean  @default(false)
+  readAt         DateTime?
+  isEdited       Boolean  @default(false)
+  editedAt       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+// ============================================
+// WISHLIST & FAVORITES
+// ============================================
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, serviceId])
+  @@index([userId])
+  @@index([serviceId])
+  @@map("wishlists")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Content
+  type      NotificationType
+  title     String
+  message   String
+  actionUrl String?
+
+  // Status
+  isRead    Boolean  @default(false)
+  readAt    DateTime?
+
+  // Metadata
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum PriceType {
+  FIXED
+  HOURLY
+  PACKAGE
+}
+
+enum BookingStatus {
+  PENDING        // Awaiting provider approval
+  CONFIRMED      // Confirmed by provider
+  PAID           // Payment received
+  IN_PROGRESS    // Service is being delivered
+  COMPLETED      // Service completed
+  CANCELLED      // Cancelled by buyer or provider
+  REFUNDED       // Payment refunded
+  DISPUTED       // In dispute
+}
+
+enum PaymentStatus {
+  PENDING        // Awaiting payment
+  PROCESSING     // Payment processing
+  SUCCEEDED      // Payment succeeded
+  FAILED         // Payment failed
+  REFUNDED       // Payment refunded
+  CANCELLED      // Payment cancelled
+}
+
+enum TransactionStatus {
+  PENDING        // Transaction pending
+  PROCESSING     // Processing payment
+  COMPLETED      // Transaction completed
+  FAILED         // Transaction failed
+  REFUNDED       // Transaction refunded
+  DISPUTED       // Transaction disputed
+}
+
+enum NotificationType {
+  BOOKING_REQUEST
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  BOOKING_REMINDER
+  PAYMENT_RECEIVED
+  PAYMENT_FAILED
+  REVIEW_RECEIVED
+  MESSAGE_RECEIVED
+  PAYOUT_PROCESSED
+  SYSTEM
+}
