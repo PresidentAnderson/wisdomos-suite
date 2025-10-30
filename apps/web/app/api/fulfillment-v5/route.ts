@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
+import { getUserFromRequest } from '@/lib/auth'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    // TODO: Get userId and tenantId from auth
-    const userId = 'demo-user-001' // Placeholder
-    const tenantId = 'demo-tenant-001' // Placeholder
+    // Get authenticated user and tenant
+    const authResult = await getUserFromRequest(request)
+
+    if ('error' in authResult) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { user } = authResult
+    const userId = user.id
+    const tenantId = user.tenantId
 
     const lifeAreas = await prisma.lifeArea.findMany({
       where: { userId, tenantId },
