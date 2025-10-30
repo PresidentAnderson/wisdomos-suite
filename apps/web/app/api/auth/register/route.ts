@@ -22,7 +22,7 @@ import { hashPassword } from '@/lib/password-utils'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, name, tenantName } = body
+    const { email, password, name, tenantName, dateOfBirth } = body
 
     // Validation
     if (!email || !password || !name) {
@@ -37,6 +37,33 @@ export async function POST(request: NextRequest) {
         { error: 'Password must be at least 8 characters long' },
         { status: 400 }
       )
+    }
+
+    // Validate date of birth if provided
+    let parsedDateOfBirth: Date | null = null
+    if (dateOfBirth) {
+      parsedDateOfBirth = new Date(dateOfBirth)
+      if (isNaN(parsedDateOfBirth.getTime())) {
+        return NextResponse.json(
+          { error: 'Invalid date of birth format' },
+          { status: 400 }
+        )
+      }
+      // Check if date is in the future
+      if (parsedDateOfBirth > new Date()) {
+        return NextResponse.json(
+          { error: 'Date of birth cannot be in the future' },
+          { status: 400 }
+        )
+      }
+      // Check if age is reasonable (e.g., not more than 125 years old)
+      const age = new Date().getFullYear() - parsedDateOfBirth.getFullYear()
+      if (age > 125) {
+        return NextResponse.json(
+          { error: 'Date of birth indicates an invalid age' },
+          { status: 400 }
+        )
+      }
     }
 
     const prisma = getTenantPrismaClient()
@@ -84,6 +111,7 @@ export async function POST(request: NextRequest) {
           role: 'OWNER',
           isOwner: true,
           passwordHash: hashedPassword,
+          dateOfBirth: parsedDateOfBirth,
           createdAt: new Date()
         }
       })

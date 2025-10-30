@@ -7,6 +7,7 @@ import { FulfillmentDisplay as FulfillmentType, LifeArea, Commitment, Relationsh
 import { useLifeAreas } from '@/contexts/LifeAreasContext'
 import ExportDataModal from '@/components/fulfillment/ExportDataModal'
 import { ExportData } from '@/lib/fulfillment-export'
+import ClusteredAreasDisplay from '@/components/fulfillment/ClusteredAreasDisplay'
 
 interface FulfillmentDisplayProps {
   data?: FulfillmentType
@@ -16,7 +17,7 @@ interface FulfillmentDisplayProps {
 export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDisplayProps) {
   const { lifeAreas } = useLifeAreas()
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<'overview' | 'map' | 'list' | 'audit'>('overview')
+  const [viewMode, setViewMode] = useState<'overview' | 'map' | 'list' | 'audit' | 'clusters'>('overview')
   const [showRelationships, setShowRelationships] = useState(true)
   const [showAddCommitment, setShowAddCommitment] = useState(false)
   const [showAcceptable, setShowAcceptable] = useState(true)
@@ -279,6 +280,12 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => setViewMode('clusters')}
+            className={`px-3 py-1 rounded text-sm ${viewMode === 'clusters' ? 'bg-phoenix-gold text-black' : 'bg-gray-100 hover:bg-gray-200'}`}
+          >
+            Clusters
+          </button>
+          <button
             onClick={() => setViewMode('overview')}
             className={`px-3 py-1 rounded text-sm ${viewMode === 'overview' ? 'bg-phoenix-gold text-black' : 'bg-gray-100 hover:bg-gray-200'}`}
           >
@@ -335,6 +342,24 @@ export default function FulfillmentDisplay({ data, onUpdate }: FulfillmentDispla
           </span>
         </div>
       </div>
+
+      {/* Clusters View (v5.4 Ontology) */}
+      {viewMode === 'clusters' && (
+        <ClusteredAreasDisplay
+          areas={lifeAreas.map(area => ({
+            key: area.id,
+            nameEn: area.name,
+            nameFr: area.phoenixName || area.name,
+            cluster: (area as any).cluster || 'systemic_structural',
+            primaryDimensions: (area as any).primaryDimensions || [],
+            secondaryDimensions: (area as any).secondaryDimensions || [],
+            score: area.score,
+            status: area.status as any
+          }))}
+          onAreaClick={(areaKey) => setSelectedArea(areaKey)}
+          showDimensions={true}
+        />
+      )}
 
       {/* Overview Table View */}
       {viewMode === 'overview' && (

@@ -15,6 +15,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
     name: '',
+    dateOfBirth: '',
     tenantName: '',
   })
   const [showPassword, setShowPassword] = useState(false)
@@ -54,12 +55,30 @@ export default function RegisterPage() {
     setError('')
 
     try {
-      await register(
-        formData.email,
-        formData.password,
-        formData.name,
-        formData.tenantName || undefined
-      )
+      // Call the API directly since we need to pass dateOfBirth
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          dateOfBirth: formData.dateOfBirth,
+          tenantName: formData.tenantName || undefined
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed')
+      }
+
+      // Store auth data manually since we're not using the context register function
+      localStorage.setItem('wisdomos_auth_token', data.token)
+      localStorage.setItem(`wisdomos_user_${data.user.id}`, JSON.stringify(data.user))
+      localStorage.setItem(`wisdomos_tenant_${data.tenant.id}`, JSON.stringify(data.tenant))
+
       router.push('/')
     } catch (error: any) {
       setError(error.message || 'Registration failed')
@@ -155,6 +174,24 @@ export default function RegisterPage() {
                   placeholder="Enter your email"
                   required
                 />
+              </div>
+
+              {/* Date of Birth */}
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent text-black"
+                  required
+                />
+                <p className="text-xs text-black mt-1">
+                  Used to initialize your 120-year life calendar
+                </p>
               </div>
 
               {/* Password */}

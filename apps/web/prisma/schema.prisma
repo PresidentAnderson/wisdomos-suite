@@ -104,6 +104,7 @@ model User {
   email         String
   name          String?
   passwordHash  String?
+  dateOfBirth   DateTime?      // For age-based life calendar initialization
   role          UserRole       @default(MEMBER)
   isOwner       Boolean        @default(false)
   lastLoginAt   DateTime?
