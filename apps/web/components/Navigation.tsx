@@ -72,45 +72,21 @@ const menuItems: MenuItem[] = [
     label: 'Phoenix Tools',
     icon: Sparkles,
     subItems: [
-      {
-        label: 'Autobiography',
-        href: '/autobiography',
-        icon: Book,
-        description: '120 years of life story mapping'
+      { 
+        label: 'Journal', 
+        href: '/journal', 
+        icon: PenTool,
+        description: 'Capture thoughts and reflections'
       },
-      {
-        label: 'Badges',
-        href: '/badges',
-        icon: Award,
-        description: 'Track achievements and progress'
+      { 
+        label: 'Reset Ritual', 
+        href: '/reset', 
+        icon: RefreshCw,
+        description: '5-step boundary reset process'
       },
-      {
-        label: 'Community',
-        href: '/community',
-        icon: Users,
-        description: 'Manage your connections and relationships'
-      },
-      {
-        label: 'Contribution Display',
-        href: '/contribution',
-        icon: Star,
-        description: 'Who you are as contribution'
-      },
-      {
-        label: 'Difficult Conversations',
-        href: '/difficult-conversations',
-        icon: MessageCircle,
-        description: 'Scripts for boundary-setting talks'
-      },
-      {
-        label: 'Fulfillment Analytics',
-        href: '/fulfillment-analytics',
-        icon: BarChart3,
-        description: 'Analyze trends and patterns'
-      },
-      {
-        label: 'Fulfillment Display',
-        href: '/fulfillment',
+      { 
+        label: 'Fulfillment Display', 
+        href: '/fulfillment', 
         icon: Map,
         description: 'Visualize life areas and relationships'
       },
@@ -121,10 +97,34 @@ const menuItems: MenuItem[] = [
         description: 'Track your journey over time'
       },
       {
-        label: 'Journal',
-        href: '/journal',
-        icon: PenTool,
-        description: 'Capture thoughts and reflections'
+        label: 'Fulfillment Analytics',
+        href: '/fulfillment-analytics',
+        icon: BarChart3,
+        description: 'Analyze trends and patterns'
+      },
+      { 
+        label: 'Badges', 
+        href: '/badges', 
+        icon: Award,
+        description: 'Track achievements and progress'
+      },
+      {
+        label: 'Community',
+        href: '/community',
+        icon: Users,
+        description: 'Manage your connections and relationships'
+      },
+      {
+        label: 'Difficult Conversations',
+        href: '/difficult-conversations',
+        icon: MessageCircle,
+        description: 'Scripts for boundary-setting talks'
+      },
+      {
+        label: 'Autobiography',
+        href: '/autobiography',
+        icon: Book,
+        description: '120 years of life story mapping'
       },
       {
         label: 'Priority Matrix',
@@ -133,16 +133,16 @@ const menuItems: MenuItem[] = [
         description: 'Focus on what matters most'
       },
       {
-        label: 'Reset Ritual',
-        href: '/reset',
-        icon: RefreshCw,
-        description: '5-step boundary reset process'
+        label: 'Contribution Display',
+        href: '/contribution',
+        icon: Star,
+        description: 'Who you are as contribution'
       },
       {
         label: 'Upset Inquiry',
         href: '/upset-inquiry',
         icon: AlertTriangle,
-        description: 'Investigate emotional triggers'
+        description: 'Pattern recognition from upsets'
       },
       {
         label: 'Visual Tracker',
@@ -223,6 +223,11 @@ const menuItems: MenuItem[] = [
         description: 'Acknowledgments & contributors'
       }
     ]
+  },
+  {
+    label: 'Settings',
+    href: '/settings',
+    icon: Settings
   }
 ]
 
@@ -279,7 +284,78 @@ export default function Navigation() {
 
             {/* Desktop Menu */}
             <div className="flex items-center gap-1" ref={dropdownRef}>
-              {/* System Navigation & Engagement Tools */}
+              {/* Authentication Status */}
+              {!isLoading && !user && (
+                <div className="flex items-center gap-2 mr-4">
+                  <Link href="/auth/login">
+                    <button className="px-4 py-2 text-sm font-medium text-black hover:text-black transition-colors">
+                      Sign In
+                    </button>
+                  </Link>
+                  <Link href="/auth/register">
+                    <button className="px-4 py-2 text-sm font-medium bg-phoenix-orange text-black rounded-lg hover:bg-phoenix-red transition-colors">
+                      Get Started
+                    </button>
+                  </Link>
+                </div>
+              )}
+              
+              {!isLoading && user && (
+                <div className="flex items-center gap-3 mr-4">
+                  {/* User Info */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-phoenix-gold/10 rounded-lg">
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span className="text-sm font-medium text-black">{user.name}</span>
+                  </div>
+                  
+                  {/* User Menu */}
+                  <div className="relative">
+                    <button
+                      onClick={() => toggleDropdown('user-menu')}
+                      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-black hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <User className="w-4 h-4" />
+                      <span>{user.name}</span>
+                      <ChevronDown className={`w-3 h-3 transition-transform ${
+                        activeDropdown === 'user-menu' ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {activeDropdown === 'user-menu' && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-phoenix-gold/20 overflow-hidden"
+                        >
+                          <div className="py-2">
+                            <div className="px-4 py-2 border-b border-gray-100">
+                              <p className="text-sm font-medium text-black">{user.name}</p>
+                              <p className="text-xs text-black">{user.email}</p>
+                            </div>
+                            <Link
+                              href="/settings"
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 transition-colors"
+                            >
+                              <Settings className="w-4 h-4" />
+                              Settings
+                            </Link>
+                            <button
+                              onClick={logout}
+                              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors"
+                            >
+                              <LogOut className="w-4 h-4" />
+                              Sign Out
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              )}
               {menuItems.map((item) => (
                 <div key={item.label} className="relative">
                   {item.subItems ? (
@@ -350,106 +426,6 @@ export default function Navigation() {
                   )}
                 </div>
               ))}
-
-              {/* Account Zone - Functional Grouping */}
-              <div className="flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
-                {/* Get Started - Call to Action */}
-                {!isLoading && !user && (
-                  <Link href="/auth/register">
-                    <button className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-phoenix-orange to-phoenix-red text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 animate-pulse-subtle">
-                      Get Started
-                    </button>
-                  </Link>
-                )}
-
-                {/* Settings (always visible) */}
-                {!isLoading && user && (
-                  <Link href="/settings">
-                    <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                      <Settings className="w-4 h-4" />
-                      <span className="hidden lg:inline">Settings</span>
-                    </button>
-                  </Link>
-                )}
-
-                {/* User Account */}
-                {!isLoading && user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => toggleDropdown('user-menu')}
-                      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      <div className="w-2 h-2 bg-green-500 rounded-full" />
-                      <User className="w-4 h-4" />
-                      <span className="hidden lg:inline">{user.name}</span>
-                      <ChevronDown className={`w-3 h-3 transition-transform ${
-                        activeDropdown === 'user-menu' ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-
-                    <AnimatePresence>
-                      {activeDropdown === 'user-menu' && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
-                        >
-                          <div className="py-2">
-                            {/* User Info Header */}
-                            <div className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-phoenix-gold/10 to-phoenix-orange/10">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-phoenix-red to-phoenix-orange flex items-center justify-center text-white font-bold">
-                                  {user.name.charAt(0).toUpperCase()}
-                                </div>
-                                <div>
-                                  <p className="text-sm font-semibold text-gray-800">{user.name}</p>
-                                  <p className="text-xs text-gray-600">{user.email}</p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* User Menu Items */}
-                            <Link
-                              href="/settings"
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                            >
-                              <Settings className="w-4 h-4" />
-                              <span>Account Settings</span>
-                            </Link>
-
-                            <Link
-                              href="/settings/profile"
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                            >
-                              <User className="w-4 h-4" />
-                              <span>Edit Profile</span>
-                            </Link>
-
-                            <div className="border-t border-gray-100 my-1" />
-
-                            <button
-                              onClick={logout}
-                              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                            >
-                              <LogOut className="w-4 h-4" />
-                              <span>Sign Out</span>
-                            </button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <Link href="/auth/login">
-                    <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                      <User className="w-4 h-4" />
-                      <span>Sign In</span>
-                    </button>
-                  </Link>
-                )}
-              </div>
             </div>
           </div>
         </div>

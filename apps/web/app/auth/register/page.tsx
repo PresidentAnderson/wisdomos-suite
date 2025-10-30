@@ -55,30 +55,13 @@ export default function RegisterPage() {
     setError('')
 
     try {
-      // Call the API directly since we need to pass dateOfBirth
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          name: formData.name,
-          dateOfBirth: formData.dateOfBirth,
-          tenantName: formData.tenantName || undefined
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
-      }
-
-      // Store auth data manually since we're not using the context register function
-      localStorage.setItem('wisdomos_auth_token', data.token)
-      localStorage.setItem(`wisdomos_user_${data.user.id}`, JSON.stringify(data.user))
-      localStorage.setItem(`wisdomos_tenant_${data.tenant.id}`, JSON.stringify(data.tenant))
-
+      await register(
+        formData.email,
+        formData.password,
+        formData.name,
+        formData.dateOfBirth || undefined,
+        formData.tenantName || undefined
+      )
       router.push('/')
     } catch (error: any) {
       setError(error.message || 'Registration failed')
@@ -161,21 +144,6 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-black mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent text-black"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
               {/* Date of Birth */}
               <div>
                 <label className="block text-sm font-medium text-black mb-2">
@@ -189,9 +157,24 @@ export default function RegisterPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent text-black"
                   required
                 />
-                <p className="text-xs text-black mt-1">
-                  Used to initialize your 120-year life calendar
+                <p className="text-xs text-gray-500 mt-1">
+                  Used to personalize your Life Calendar and insights
                 </p>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent text-black"
+                  placeholder="Enter your email"
+                  required
+                />
               </div>
 
               {/* Password */}

@@ -17,6 +17,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  dateOfBirth?: string; // YYYY-MM-DD format for Life Calendar initialization
   avatar?: string;
   tenantId: string;
   role: 'owner' | 'admin' | 'member' | 'viewer';
@@ -480,7 +481,8 @@ export function getAllTenantsFromLocalStorage(): Tenant[] {
 
 export function getUserByEmailFromLocalStorage(email: string): User | null {
   const users = getAllUsersFromLocalStorage();
-  return users.find(u => u.email === email) || null;
+  // Case-insensitive email comparison
+  return users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
 }
 
 export function getTenantBySlugFromLocalStorage(slug: string): Tenant | null {

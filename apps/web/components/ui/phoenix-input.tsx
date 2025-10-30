@@ -128,7 +128,7 @@ export const PhoenixSearchInput = React.forwardRef<HTMLInputElement, PhoenixInpu
   (props, ref) => (
     <PhoenixInput
       ref={ref}
-      variant="default"
+      variant="glass"
       glow="medium"
       phoenixEffect
       placeholder="Search through Phoenix wisdom..."

@@ -1,393 +1,226 @@
-import { NextResponse } from 'next/server'
-import { getTenantPrismaClient, withTenant } from '@/lib/tenant/prisma-tenant-client'
-import { getUserFromRequest } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 
-// Types for trend analysis
-type TrendDirection = 'rising' | 'falling' | 'flat'
-type TrendStrength = 'weak' | 'moderate' | 'strong'
-
-interface TrendAnalysis {
-  direction: TrendDirection
-  consecutiveDays: number
-  strength: TrendStrength
-  isSignificant: boolean
+interface PatternData {
+  date: string;
+  energy: number;
+  focus: number;
+  fulfillment: number;
+  journalCount: number;
+  commitmentProgress: number;
+  dayOfWeek: string;
 }
 
-/**
- * Detects consecutive rising or falling trends in a metric over time
- * @param values - Array of metric values (e.g., energy scores for each day)
- * @returns TrendAnalysis object with direction, consecutive days, and strength
- */
-function detectConsecutiveTrend(values: number[]): TrendAnalysis {
-  if (values.length < 2) {
-    return {
-      direction: 'flat',
-      consecutiveDays: 0,
-      strength: 'weak',
-      isSignificant: false
-    }
-  }
+// Calculate energy score based on journal sentiment and activity
+async function calculateEnergyScore(supabase: any, userId: string, date: Date): Promise<number> {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
 
-  // Track the longest consecutive trend ending at the most recent day
-  let currentConsecutiveDays = 0
-  let currentDirection: TrendDirection = 'flat'
+  // Get journal entries for the day
+  const { data: journals } = await supabase
+    .from('journal_entries')
+    .select('mood, energy_level')
+    .eq('user_id', userId)
+    .gte('created_at', startOfDay.toISOString())
+    .lte('created_at', endOfDay.toISOString());
 
-  // Start from the end (most recent) and work backwards
-  for (let i = values.length - 1; i > 0; i--) {
-    const currentValue = values[i]
-    const previousValue = values[i - 1]
-    const difference = currentValue - previousValue
+  if (!journals || journals.length === 0) return 50; // Default neutral score
 
-    // Determine direction (with small threshold to handle noise)
-    let dayDirection: TrendDirection
-    if (Math.abs(difference) < 0.5) {
-      dayDirection = 'flat'
-    } else if (difference > 0) {
-      dayDirection = 'rising'
-    } else {
-      dayDirection = 'falling'
-    }
+  // Calculate average from mood and energy_level
+  const avgEnergy = journals.reduce((sum: number, j: any) => {
+    const energyValue = j.energy_level || (j.mood === 'positive' ? 80 : j.mood === 'negative' ? 30 : 50);
+    return sum + energyValue;
+  }, 0) / journals.length;
 
-    // Initialize on first comparison
-    if (i === values.length - 1) {
-      currentDirection = dayDirection
-      currentConsecutiveDays = dayDirection === 'flat' ? 0 : 1
-      continue
-    }
-
-    // Check if trend continues
-    if (dayDirection === currentDirection && dayDirection !== 'flat') {
-      currentConsecutiveDays++
-    } else {
-      // Trend broke, stop counting
-      break
-    }
-  }
-
-  // Calculate trend strength based on consecutive days
-  let strength: TrendStrength
-  if (currentConsecutiveDays <= 2) {
-    strength = 'weak'
-  } else if (currentConsecutiveDays <= 4) {
-    strength = 'moderate'
-  } else {
-    strength = 'strong'
-  }
-
-  // Flag as significant if 3+ consecutive days
-  const isSignificant = currentConsecutiveDays >= 3
-
-  return {
-    direction: currentDirection,
-    consecutiveDays: currentConsecutiveDays,
-    strength,
-    isSignificant
-  }
+  return Math.round(avgEnergy);
 }
 
-// Mock data fallback for unauthenticated users or when no data exists
-function generateMockPatternData() {
-  const patterns = [
-    { date: 'Mon', energy: 72, focus: 68, fulfillment: 75 },
-    { date: 'Tue', energy: 78, focus: 70, fulfillment: 80 },
-    { date: 'Wed', energy: 65, focus: 63, fulfillment: 70 },
-    { date: 'Thu', energy: 80, focus: 75, fulfillment: 82 },
-    { date: 'Fri', energy: 85, focus: 81, fulfillment: 88 },
-    { date: 'Sat', energy: 90, focus: 88, fulfillment: 92 },
-    { date: 'Sun', energy: 76, focus: 70, fulfillment: 78 }
-  ]
+// Calculate focus score based on commitment completion and check-ins
+async function calculateFocusScore(supabase: any, userId: string, date: Date): Promise<number> {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
 
-  const insights = [
-    {
-      title: 'Peak Performance Window',
-      description: 'Your focus peaks between Thursday and Saturday. Schedule high-impact work during these days.',
-      icon: 'trending-up'
-    },
-    {
-      title: 'Mid-Week Dip',
-      description: 'Energy consistently drops on Wednesdays. Consider lighter tasks or self-care activities.',
-      icon: 'activity'
-    },
-    {
-      title: 'Weekend Recovery',
-      description: 'Fulfillment scores rise sharply on weekends, indicating effective rest and restoration.',
-      icon: 'brain'
-    }
-  ]
+  // Get check-ins for the day
+  const { data: checkIns } = await supabase
+    .from('checkins')
+    .select('focus_level, productivity_score')
+    .eq('user_id', userId)
+    .gte('created_at', startOfDay.toISOString())
+    .lte('created_at', endOfDay.toISOString());
 
-  const avgEnergy = patterns.reduce((sum, d) => sum + d.energy, 0) / patterns.length
-  const avgFocus = patterns.reduce((sum, d) => sum + d.focus, 0) / patterns.length
-  const avgFulfillment = patterns.reduce((sum, d) => sum + d.fulfillment, 0) / patterns.length
+  // Get commitments completed
+  const { data: commitments } = await supabase
+    .from('commitments')
+    .select('status, progress')
+    .eq('user_id', userId)
+    .gte('updated_at', startOfDay.toISOString())
+    .lte('updated_at', endOfDay.toISOString());
 
-  // Extract metric values for trend analysis
-  const energyValues = patterns.map(p => p.energy)
-  const focusValues = patterns.map(p => p.focus)
-  const fulfillmentValues = patterns.map(p => p.fulfillment)
+  let focusScore = 50; // Default
 
-  // Analyze consecutive trends for each metric
-  const energyTrendAnalysis = detectConsecutiveTrend(energyValues)
-  const focusTrendAnalysis = detectConsecutiveTrend(focusValues)
-  const fulfillmentTrendAnalysis = detectConsecutiveTrend(fulfillmentValues)
-
-  // Calculate overall change (first to last day)
-  const energyChange = patterns[patterns.length - 1].energy - patterns[0].energy
-  const focusChange = patterns[patterns.length - 1].focus - patterns[0].focus
-  const fulfillmentChange = patterns[patterns.length - 1].fulfillment - patterns[0].fulfillment
-
-  // Identify significant trends for recommendations engine
-  const significantTrends = []
-  if (energyTrendAnalysis.isSignificant) {
-    significantTrends.push({
-      metric: 'energy',
-      direction: energyTrendAnalysis.direction,
-      consecutiveDays: energyTrendAnalysis.consecutiveDays,
-      strength: energyTrendAnalysis.strength
-    })
-  }
-  if (focusTrendAnalysis.isSignificant) {
-    significantTrends.push({
-      metric: 'focus',
-      direction: focusTrendAnalysis.direction,
-      consecutiveDays: focusTrendAnalysis.consecutiveDays,
-      strength: focusTrendAnalysis.strength
-    })
-  }
-  if (fulfillmentTrendAnalysis.isSignificant) {
-    significantTrends.push({
-      metric: 'fulfillment',
-      direction: fulfillmentTrendAnalysis.direction,
-      consecutiveDays: fulfillmentTrendAnalysis.consecutiveDays,
-      strength: fulfillmentTrendAnalysis.strength
-    })
+  if (checkIns && checkIns.length > 0) {
+    const avgFocus = checkIns.reduce((sum: number, c: any) => {
+      return sum + (c.focus_level || c.productivity_score || 50);
+    }, 0) / checkIns.length;
+    focusScore = avgFocus;
   }
 
-  return {
-    patterns,
-    insights,
-    averages: {
-      energy: Math.round(avgEnergy),
-      focus: Math.round(avgFocus),
-      fulfillment: Math.round(avgFulfillment)
-    },
-    trends: {
-      energy: {
-        direction: energyTrendAnalysis.direction,
-        change: energyChange,
-        consecutiveDays: energyTrendAnalysis.consecutiveDays,
-        trendStrength: energyTrendAnalysis.strength,
-        isSignificant: energyTrendAnalysis.isSignificant
-      },
-      focus: {
-        direction: focusTrendAnalysis.direction,
-        change: focusChange,
-        consecutiveDays: focusTrendAnalysis.consecutiveDays,
-        trendStrength: focusTrendAnalysis.strength,
-        isSignificant: focusTrendAnalysis.isSignificant
-      },
-      fulfillment: {
-        direction: fulfillmentTrendAnalysis.direction,
-        change: fulfillmentChange,
-        consecutiveDays: fulfillmentTrendAnalysis.consecutiveDays,
-        trendStrength: fulfillmentTrendAnalysis.strength,
-        isSignificant: fulfillmentTrendAnalysis.isSignificant
-      }
-    },
-    significantTrends,
-    aiInsight: 'Your patterns indicate stronger alignment when structured routines precede creative work. Try scheduling your highest-impact activities between 9–11am on high-energy days (Thu-Sat).'
+  // Boost score if commitments were progressed
+  if (commitments && commitments.length > 0) {
+    const completedCount = commitments.filter((c: any) => c.status === 'completed').length;
+    const completionBoost = (completedCount / commitments.length) * 20;
+    focusScore = Math.min(100, focusScore + completionBoost);
   }
+
+  return Math.round(focusScore);
 }
 
-// Generate insights from pattern data
-function generateInsights(patterns: any[]) {
-  const insights: any[] = []
+// Calculate fulfillment score from life area scores
+async function calculateFulfillmentScore(supabase: any, userId: string, date: Date): Promise<number> {
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
 
-  // Find peak days
-  const peakDays = patterns
-    .filter(p => p.focus > 75 && p.energy > 75)
-    .map(p => p.date)
+  // Get latest fulfillment scores
+  const { data: scores } = await supabase
+    .from('life_area_scores')
+    .select('score')
+    .eq('user_id', userId)
+    .lte('created_at', startOfDay.toISOString())
+    .order('created_at', { ascending: false })
+    .limit(12); // 12 life areas
 
-  if (peakDays.length > 0) {
-    insights.push({
-      title: 'Peak Performance Window',
-      description: `Your focus peaks on ${peakDays.join(', ')}. Schedule high-impact work during these days.`,
-      icon: 'trending-up'
-    })
-  }
+  if (!scores || scores.length === 0) return 50; // Default
 
-  // Find low energy days
-  const lowDays = patterns.filter(p => p.energy < 70)
-  if (lowDays.length > 0) {
-    const days = lowDays.map(p => p.date).join(', ')
-    insights.push({
-      title: 'Energy Dips',
-      description: `Energy drops on ${days}. Consider lighter tasks or self-care activities.`,
-      icon: 'activity'
-    })
-  }
-
-  // Check fulfillment trend
-  const avgFulfillment = patterns.reduce((sum, p) => sum + p.fulfillment, 0) / patterns.length
-  if (avgFulfillment > 80) {
-    insights.push({
-      title: 'High Fulfillment',
-      description: 'Your fulfillment scores are strong, indicating good alignment with your values.',
-      icon: 'brain'
-    })
-  }
-
-  return insights.length > 0 ? insights : [
-    {
-      title: 'Building Your Pattern',
-      description: 'Keep tracking your energy, focus, and fulfillment to discover your personal patterns.',
-      icon: 'trending-up'
-    }
-  ]
+  const avgScore = scores.reduce((sum: number, s: any) => sum + s.score, 0) / scores.length;
+  return Math.round(avgScore);
 }
 
-async function getUserPatternData(userId: string, tenantId: string) {
-  const prisma = getTenantPrismaClient()
-
-  // Fetch last 7 days of pattern data
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-
-  const patternData = await withTenant(tenantId, async () => {
-    return await prisma.patternData.findMany({
-      where: {
-        userId,
-        date: {
-          gte: sevenDaysAgo
-        }
-      },
-      orderBy: {
-        date: 'asc'
-      }
-    })
-  })
-
-  // If no data, return mock data
-  if (patternData.length === 0) {
-    return generateMockPatternData()
-  }
-
-  // Format data for frontend
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const patterns = patternData.map(d => ({
-    date: dayNames[d.date.getDay()],
-    energy: d.energy,
-    focus: d.focus,
-    fulfillment: d.fulfillment
-  }))
-
-  const insights = generateInsights(patterns)
-
-  const avgEnergy = patterns.reduce((sum, d) => sum + d.energy, 0) / patterns.length
-  const avgFocus = patterns.reduce((sum, d) => sum + d.focus, 0) / patterns.length
-  const avgFulfillment = patterns.reduce((sum, d) => sum + d.fulfillment, 0) / patterns.length
-
-  // Extract metric values for trend analysis
-  const energyValues = patterns.map(p => p.energy)
-  const focusValues = patterns.map(p => p.focus)
-  const fulfillmentValues = patterns.map(p => p.fulfillment)
-
-  // Analyze consecutive trends for each metric
-  const energyTrendAnalysis = detectConsecutiveTrend(energyValues)
-  const focusTrendAnalysis = detectConsecutiveTrend(focusValues)
-  const fulfillmentTrendAnalysis = detectConsecutiveTrend(fulfillmentValues)
-
-  // Calculate overall change (first to last day)
-  const energyChange = patterns[patterns.length - 1].energy - patterns[0].energy
-  const focusChange = patterns[patterns.length - 1].focus - patterns[0].focus
-  const fulfillmentChange = patterns[patterns.length - 1].fulfillment - patterns[0].fulfillment
-
-  // Identify significant trends for recommendations engine
-  const significantTrends = []
-  if (energyTrendAnalysis.isSignificant) {
-    significantTrends.push({
-      metric: 'energy',
-      direction: energyTrendAnalysis.direction,
-      consecutiveDays: energyTrendAnalysis.consecutiveDays,
-      strength: energyTrendAnalysis.strength
-    })
-  }
-  if (focusTrendAnalysis.isSignificant) {
-    significantTrends.push({
-      metric: 'focus',
-      direction: focusTrendAnalysis.direction,
-      consecutiveDays: focusTrendAnalysis.consecutiveDays,
-      strength: focusTrendAnalysis.strength
-    })
-  }
-  if (fulfillmentTrendAnalysis.isSignificant) {
-    significantTrends.push({
-      metric: 'fulfillment',
-      direction: fulfillmentTrendAnalysis.direction,
-      consecutiveDays: fulfillmentTrendAnalysis.consecutiveDays,
-      strength: fulfillmentTrendAnalysis.strength
-    })
-  }
-
-  return {
-    patterns,
-    insights,
-    averages: {
-      energy: Math.round(avgEnergy),
-      focus: Math.round(avgFocus),
-      fulfillment: Math.round(avgFulfillment)
-    },
-    trends: {
-      energy: {
-        direction: energyTrendAnalysis.direction,
-        change: energyChange,
-        consecutiveDays: energyTrendAnalysis.consecutiveDays,
-        trendStrength: energyTrendAnalysis.strength,
-        isSignificant: energyTrendAnalysis.isSignificant
-      },
-      focus: {
-        direction: focusTrendAnalysis.direction,
-        change: focusChange,
-        consecutiveDays: focusTrendAnalysis.consecutiveDays,
-        trendStrength: focusTrendAnalysis.strength,
-        isSignificant: focusTrendAnalysis.isSignificant
-      },
-      fulfillment: {
-        direction: fulfillmentTrendAnalysis.direction,
-        change: fulfillmentChange,
-        consecutiveDays: fulfillmentTrendAnalysis.consecutiveDays,
-        trendStrength: fulfillmentTrendAnalysis.strength,
-        isSignificant: fulfillmentTrendAnalysis.isSignificant
-      }
-    },
-    significantTrends,
-    aiInsight: 'Your patterns indicate stronger alignment when structured routines precede creative work. Try scheduling your highest-impact activities between 9–11am on high-energy days.'
-  }
-}
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    // TODO: Wire up authentication with NextAuth or your auth system
-    // For now, check for authorization header
-    const authResult = await getUserFromRequest(request as any)
+    const supabase = createClient();
 
-    // If no auth or error, return mock data for demo purposes
-    if ('error' in authResult) {
-      console.log('No authenticated user, returning mock data')
-      const data = generateMockPatternData()
-      return NextResponse.json(data)
+    // Get current user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { user } = authResult
-    const userId = user.id
-    const tenantId = user.tenantId
+    // Get time range from query params
+    const searchParams = request.nextUrl.searchParams;
+    const days = parseInt(searchParams.get('days') || '7', 10);
 
-    // Fetch real user data from database
-    const data = await getUserPatternData(userId, tenantId)
+    // Generate pattern data for the last N days
+    const patterns: PatternData[] = [];
+    const today = new Date();
 
-    return NextResponse.json(data)
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+
+      const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const dateStr = date.toISOString().split('T')[0];
+
+      // Calculate scores for this day
+      const [energy, focus, fulfillment] = await Promise.all([
+        calculateEnergyScore(supabase, user.id, date),
+        calculateFocusScore(supabase, user.id, date),
+        calculateFulfillmentScore(supabase, user.id, date),
+      ]);
+
+      // Get journal count for the day
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const { count: journalCount } = await supabase
+        .from('journal_entries')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gte('created_at', startOfDay.toISOString())
+        .lte('created_at', endOfDay.toISOString());
+
+      // Get commitment progress
+      const { data: commitments } = await supabase
+        .from('commitments')
+        .select('progress')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+
+      const avgProgress = commitments && commitments.length > 0
+        ? commitments.reduce((sum: number, c: any) => sum + (c.progress || 0), 0) / commitments.length
+        : 0;
+
+      patterns.push({
+        date: dateStr,
+        energy,
+        focus,
+        fulfillment,
+        journalCount: journalCount || 0,
+        commitmentProgress: Math.round(avgProgress),
+        dayOfWeek,
+      });
+    }
+
+    // Calculate overall trends
+    const recentPatterns = patterns.slice(-3); // Last 3 days
+    const olderPatterns = patterns.slice(0, -3); // Previous days
+
+    const avgRecent = (key: 'energy' | 'focus' | 'fulfillment') =>
+      recentPatterns.reduce((sum, p) => sum + p[key], 0) / recentPatterns.length;
+
+    const avgOlder = (key: 'energy' | 'focus' | 'fulfillment') =>
+      olderPatterns.length > 0
+        ? olderPatterns.reduce((sum, p) => sum + p[key], 0) / olderPatterns.length
+        : avgRecent(key);
+
+    const trends = {
+      energy: avgRecent('energy') - avgOlder('energy'),
+      focus: avgRecent('focus') - avgOlder('focus'),
+      fulfillment: avgRecent('fulfillment') - avgOlder('fulfillment'),
+    };
+
+    return NextResponse.json({
+      patterns,
+      trends,
+      summary: {
+        avgEnergy: Math.round(patterns.reduce((sum, p) => sum + p.energy, 0) / patterns.length),
+        avgFocus: Math.round(patterns.reduce((sum, p) => sum + p.focus, 0) / patterns.length),
+        avgFulfillment: Math.round(patterns.reduce((sum, p) => sum + p.fulfillment, 0) / patterns.length),
+        totalJournals: patterns.reduce((sum, p) => sum + p.journalCount, 0),
+        mostActiveDay: patterns.reduce((max, p) => p.journalCount > max.journalCount ? p : max, patterns[0]),
+      },
+    });
+
   } catch (error) {
-    console.error('Error fetching patterns:', error)
-    // Fall back to mock data on error
-    const data = generateMockPatternData()
-    return NextResponse.json(data)
+    console.error('Pattern analytics error:', error);
+
+    // Return mock data for development
+    const mockPatterns: PatternData[] = [
+      { date: 'Mon', energy: 72, focus: 68, fulfillment: 65, journalCount: 2, commitmentProgress: 60, dayOfWeek: 'Mon' },
+      { date: 'Tue', energy: 78, focus: 70, fulfillment: 68, journalCount: 3, commitmentProgress: 65, dayOfWeek: 'Tue' },
+      { date: 'Wed', energy: 65, focus: 63, fulfillment: 62, journalCount: 1, commitmentProgress: 62, dayOfWeek: 'Wed' },
+      { date: 'Thu', energy: 80, focus: 75, fulfillment: 72, journalCount: 2, commitmentProgress: 70, dayOfWeek: 'Thu' },
+      { date: 'Fri', energy: 85, focus: 81, fulfillment: 78, journalCount: 3, commitmentProgress: 75, dayOfWeek: 'Fri' },
+      { date: 'Sat', energy: 90, focus: 88, fulfillment: 85, journalCount: 4, commitmentProgress: 80, dayOfWeek: 'Sat' },
+      { date: 'Sun', energy: 76, focus: 70, fulfillment: 73, journalCount: 2, commitmentProgress: 72, dayOfWeek: 'Sun' },
+    ];
+
+    return NextResponse.json({
+      patterns: mockPatterns,
+      trends: { energy: 4, focus: 2, fulfillment: 8 },
+      summary: {
+        avgEnergy: 78,
+        avgFocus: 74,
+        avgFulfillment: 72,
+        totalJournals: 17,
+        mostActiveDay: mockPatterns[5],
+      },
+      _note: 'Using mock data - database connection failed'
+    });
   }
 }

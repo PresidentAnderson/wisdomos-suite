@@ -1,0 +1,190 @@
+### WisdomOS API Tests
+### Run with REST Client extension in VS Code or use curl commands
+
+@baseUrl = http://localhost:4000
+@token = YOUR_TOKEN_HERE
+
+### 1. Login/Register
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@wisdomos.app",
+  "name": "Demo User"
+}
+
+### 2. Get current user
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### 3. Get life areas catalog
+GET {{baseUrl}}/api/fulfillment/life-areas
+Authorization: Bearer {{token}}
+
+### 4. Create a contact
+POST {{baseUrl}}/api/contacts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phoneE164": "+14155551234",
+  "notes": "Met at conference",
+  "tags": ["professional", "mentor"],
+  "lifeAreaLinks": [
+    {
+      "lifeAreaId": 1,
+      "roleLabel": "mentor",
+      "frequency": "monthly",
+      "weight": 0.7,
+      "outcomes": "Career guidance and feedback"
+    }
+  ]
+}
+
+### 5. Get all contacts
+GET {{baseUrl}}/api/contacts
+Authorization: Bearer {{token}}
+
+### 6. Create a contribution
+POST {{baseUrl}}/api/contributions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "type": "strength",
+  "title": "Systems Thinking",
+  "content": "Ability to see patterns and connections across complex systems",
+  "tags": ["cognitive", "strategic"]
+}
+
+### 7. Get contributions
+GET {{baseUrl}}/api/contributions
+Authorization: Bearer {{token}}
+
+### 8. Create autobiography entry
+POST {{baseUrl}}/api/autobiography
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "year": 2025,
+  "title": "Building WisdomOS",
+  "narrative": "The year I created a comprehensive personal growth system",
+  "earliest": "Always been drawn to organizing and systematizing",
+  "insight": "Systems create freedom through structure",
+  "commitment": "Build tools that empower authentic self-expression",
+  "lifeAreas": [1, 7, 9],
+  "tags": ["creation", "systems", "growth"]
+}
+
+### 9. Get autobiography entries
+GET {{baseUrl}}/api/autobiography
+Authorization: Bearer {{token}}
+
+### 10. Create fulfillment area
+POST {{baseUrl}}/api/fulfillment/areas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "lifeAreaId": 1,
+  "status": "thriving",
+  "attention": 85,
+  "notes": "Focused on WisdomOS and system building"
+}
+
+### 11. Get fulfillment areas
+GET {{baseUrl}}/api/fulfillment/areas
+Authorization: Bearer {{token}}
+
+### 12. Create an assessment
+POST {{baseUrl}}/api/assessments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "contactId": "CONTACT_ID_HERE",
+  "lifeAreaId": 4,
+  "trustScore": 4.5,
+  "communication": 4.0,
+  "reliability": 4.5,
+  "openness": 4.5,
+  "growth": 5.0,
+  "reciprocity": 4.0,
+  "alignment": 4.5,
+  "notes": "Strong, growing relationship"
+}
+
+### 13. Get assessment summary
+GET {{baseUrl}}/api/assessments/summary
+Authorization: Bearer {{token}}
+
+### 14. Log an interaction
+POST {{baseUrl}}/api/interactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "contactId": "CONTACT_ID_HERE",
+  "lifeAreaId": 1,
+  "channel": "meeting",
+  "direction": "internal",
+  "subject": "Weekly sync",
+  "bodyText": "Discussed project progress and next steps",
+  "sentiment": "positive",
+  "sentimentScore": 0.8,
+  "topics": ["planning", "progress", "collaboration"],
+  "syncToHubSpot": false
+}
+
+### 15. Get interaction statistics
+GET {{baseUrl}}/api/interactions/stats?days=30
+Authorization: Bearer {{token}}
+
+### 16. Create boundary audit
+POST {{baseUrl}}/api/boundary-audits
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "lifeAreaId": 5,
+  "incident": "Meeting ran over scheduled time",
+  "response": "Politely ended the call and rescheduled remainder",
+  "learning": "Set clear time boundaries upfront"
+}
+
+### 17. Sync contacts to HubSpot (requires HubSpot config)
+POST {{baseUrl}}/api/hubspot/sync-contacts
+Authorization: Bearer {{token}}
+
+### 18. Bulk import interactions
+POST {{baseUrl}}/api/interactions/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "syncToHubSpot": false,
+  "interactions": [
+    {
+      "contactId": "CONTACT_ID_HERE",
+      "lifeAreaId": 1,
+      "channel": "email",
+      "direction": "outbound",
+      "subject": "Project update",
+      "bodyText": "Here's the latest on our project...",
+      "occurredAt": "2025-08-20T10:00:00Z"
+    },
+    {
+      "contactId": "CONTACT_ID_HERE",
+      "lifeAreaId": 8,
+      "channel": "whatsapp",
+      "direction": "inbound",
+      "subject": "Check-in",
+      "bodyText": "Hey, how are things going?",
+      "occurredAt": "2025-08-20T15:30:00Z"
+    }
+  ]
+}

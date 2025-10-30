@@ -32,20 +32,6 @@
     animation: phoenixRise 3s ease-in-out infinite;
   }
 
-  /* Subtle Pulse Animation for CTA */
-  .animate-pulse-subtle {
-    animation: pulseSubtle 3s ease-in-out infinite;
-  }
-
-  @keyframes pulseSubtle {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(255, 145, 77, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 0 8px rgba(255, 145, 77, 0);
-    }
-  }
-
   /* Ember Particle Effect */
   .ember-particle {
     position: absolute;
