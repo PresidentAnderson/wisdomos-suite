@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
-import { 
-  Menu, 
-  X, 
+import {
+  Menu,
+  X,
   ChevronDown,
   PenTool,
   RefreshCw,
@@ -39,7 +39,8 @@ import {
   LogOut,
   User,
   Crown,
-  Layers
+  Layers,
+  MessageSquare
 } from 'lucide-react'
 import PhoenixLogo from './PhoenixLogo'
 
@@ -149,6 +150,12 @@ const menuItems: MenuItem[] = [
         href: '/tracker',
         icon: BarChart3,
         description: 'Color-coded monthly progress tracker'
+      },
+      {
+        label: 'Reflective Feedback',
+        href: '/reflective-feedback',
+        icon: MessageSquare,
+        description: 'Multi-dimensional growth tracking'
       }
     ]
   },

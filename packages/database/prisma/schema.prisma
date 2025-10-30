@@ -51,6 +51,9 @@ model User {
   wishlist        Wishlist?
   notifications   Notification[] @relation("UserNotifications")
 
+  // Reflective feedback
+  reflectiveFeedback ReflectiveFeedback[] @relation("UserReflectiveFeedback")
+
   @@map("users")
 }
 
@@ -722,4 +725,28 @@ model Notification {
   @@index([userId, isRead])
   @@index([createdAt])
   @@map("notifications")
+}
+
+// Reflective Feedback
+model ReflectiveFeedback {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation("UserReflectiveFeedback", fields: [userId], references: [id], onDelete: Cascade)
+
+  dimensionName   String   // e.g., "Being", "Thinking", "Feeling", "Doing", "Relating", etc.
+  dimensionCategory String // e.g., "Creative", "Emotional", "Physical", "Social", "Performance", "Strategic"
+
+  feedbackText    String   @db.Text
+  vote            String?  // "yes", "no", "maybe"
+  noFeedbackReason String? @db.Text
+
+  metadata        Json?    // Additional context like practices, reflection prompts, etc.
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, dimensionName])
+  @@index([userId, createdAt])
+  @@index([dimensionName])
+  @@map("reflective_feedback")
 }
