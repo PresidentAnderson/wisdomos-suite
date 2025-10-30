@@ -113,306 +113,372 @@ export default function JournalPage() {
   const stats = getStats()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-phoenix-smoke via-white to-phoenix-gold/10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50 dark:from-slate-950 dark:via-amber-950/20 dark:to-orange-950/20">
       {/* Header */}
-      <header className="border-b border-phoenix-gold/20 bg-white/80 backdrop-blur-lg sticky top-0 z-40">
+      <header className="border-b border-amber-200/50 dark:border-amber-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <PhoenixButton variant="ghost" size="sm">
-                  <ChevronLeft className="w-4 h-4 mr-1" />
-                  Back
-                </PhoenixButton>
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center gap-6">
+              <Link href="/dashboard" className="text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors text-sm flex items-center gap-2">
+                <ChevronLeft className="w-4 h-4" />
+                Back to Dashboard
               </Link>
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-phoenix-gold" />
-                <h1 className="text-xl font-semibold text-black">Journal</h1>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
+                  <BookOpen className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Journal</h1>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Capture your wisdom and growth</p>
+                </div>
               </div>
             </div>
-            <PhoenixButton onClick={handleNewEntry}>
-              <Plus className="w-4 h-4 mr-1" />
+            <button
+              onClick={handleNewEntry}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-medium"
+            >
+              <Plus className="w-5 h-5" />
               New Entry
-            </PhoenixButton>
+            </button>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Total Entries</p>
-                  <p className="text-2xl font-bold">{stats.total}</p>
-                </div>
-                <BookOpen className="w-8 h-8 text-blue-500" />
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+        >
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-amber-200 dark:border-amber-800 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <BookOpen className="w-10 h-10 text-amber-600 dark:text-amber-400" />
+              <div className="text-right">
+                <div className="text-3xl font-bold text-slate-900 dark:text-white">{stats.total}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Total Entries</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="w-full bg-amber-200 dark:bg-amber-800 rounded-full h-1.5">
+              <div className="bg-gradient-to-r from-amber-500 to-orange-600 h-1.5 rounded-full" style={{width: '75%'}} />
+            </div>
+          </motion.div>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">This Week</p>
-                  <p className="text-2xl font-bold">{stats.thisWeek}</p>
-                </div>
-                <Calendar className="w-8 h-8 text-green-500" />
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-green-200 dark:border-green-800 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <Calendar className="w-10 h-10 text-green-600 dark:text-green-400" />
+              <div className="text-right">
+                <div className="text-3xl font-bold text-slate-900 dark:text-white">{stats.thisWeek}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">This Week</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="w-full bg-green-200 dark:bg-green-800 rounded-full h-1.5">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 h-1.5 rounded-full" style={{width: stats.total > 0 ? `${(stats.thisWeek / stats.total) * 100}%` : '0%'}} />
+            </div>
+          </motion.div>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">This Month</p>
-                  <p className="text-2xl font-bold">{stats.thisMonth}</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-purple-500" />
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <TrendingUp className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+              <div className="text-right">
+                <div className="text-3xl font-bold text-slate-900 dark:text-white">{stats.thisMonth}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">This Month</div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="w-full bg-purple-200 dark:bg-purple-800 rounded-full h-1.5">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-600 h-1.5 rounded-full" style={{width: stats.total > 0 ? `${(stats.thisMonth / stats.total) * 100}%` : '0%'}} />
+            </div>
+          </motion.div>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">With Rituals</p>
-                  <p className="text-2xl font-bold">{stats.withRitual}</p>
-                </div>
-                <Heart className="w-8 h-8 text-red-500" />
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-gradient-to-br from-rose-50 to-red-50 dark:from-rose-900/20 dark:to-red-900/20 rounded-xl p-6 border border-rose-200 dark:border-rose-800 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <Heart className="w-10 h-10 text-rose-600 dark:text-rose-400" />
+              <div className="text-right">
+                <div className="text-3xl font-bold text-slate-900 dark:text-white">{stats.withRitual}</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">With Rituals</div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+            <div className="w-full bg-rose-200 dark:bg-rose-800 rounded-full h-1.5">
+              <div className="bg-gradient-to-r from-rose-500 to-red-600 h-1.5 rounded-full" style={{width: stats.total > 0 ? `${(stats.withRitual / stats.total) * 100}%` : '0%'}} />
+            </div>
+          </motion.div>
+        </motion.div>
 
         {/* Filters */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="w-5 h-5" />
-              Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              {/* Search */}
-              <div className="flex-1 min-w-[200px]">
-                <div className="relative">
-                  <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search entries..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent"
-                  />
-                </div>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-xl mb-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
+              <Filter className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Filters & Search</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Search */}
+            <div className="lg:col-span-2">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search titles, content, tags..."
+                  className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-slate-900 dark:text-white placeholder:text-slate-400 transition-all"
+                />
               </div>
-
-              {/* Type Filter */}
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value as any)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent"
-              >
-                <option value="all">All Types</option>
-                <option value="journal">Journal</option>
-                <option value="voice">Voice</option>
-                <option value="reflection">Reflection</option>
-              </select>
-
-              {/* Mood Filter */}
-              <select
-                value={selectedMood}
-                onChange={(e) => setSelectedMood(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent"
-              >
-                <option value="">All Moods</option>
-                {Object.entries(MOOD_EMOJIS).map(([key, emoji]) => (
-                  <option key={key} value={key}>
-                    {emoji} {key}
-                  </option>
-                ))}
-              </select>
-
-              {/* Life Area Filter */}
-              <select
-                value={selectedLifeArea}
-                onChange={(e) => setSelectedLifeArea(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-phoenix-orange focus:border-transparent"
-              >
-                <option value="">All Life Areas</option>
-                {lifeAreas.map((area) => (
-                  <option key={area.id} value={area.id}>
-                    {area.icon} {area.name}
-                  </option>
-                ))}
-              </select>
             </div>
 
-            {/* Active Filters */}
-            {(searchQuery || selectedMood || selectedLifeArea || selectedType !== 'all') && (
-              <div className="flex items-center gap-2 mt-4">
-                <span className="text-sm text-gray-500">Active filters:</span>
-                {searchQuery && (
-                  <Badge variant="secondary">
-                    Search: {searchQuery}
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="ml-1 text-xs hover:text-red-500"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                {selectedMood && (
-                  <Badge variant="secondary">
-                    {MOOD_EMOJIS[selectedMood as keyof typeof MOOD_EMOJIS]} {selectedMood}
-                    <button
-                      onClick={() => setSelectedMood('')}
-                      className="ml-1 text-xs hover:text-red-500"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                {selectedLifeArea && (
-                  <Badge variant="secondary">
-                    {lifeAreas.find(a => a.id === selectedLifeArea)?.name}
-                    <button
-                      onClick={() => setSelectedLifeArea('')}
-                      className="ml-1 text-xs hover:text-red-500"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-                {selectedType !== 'all' && (
-                  <Badge variant="secondary">
-                    Type: {selectedType}
-                    <button
-                      onClick={() => setSelectedType('all')}
-                      className="ml-1 text-xs hover:text-red-500"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            {/* Type Filter */}
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value as any)}
+              className="px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-slate-900 dark:text-white transition-all"
+            >
+              <option value="all">All Types</option>
+              <option value="journal">📝 Journal</option>
+              <option value="voice">🎤 Voice</option>
+              <option value="reflection">💭 Reflection</option>
+            </select>
+
+            {/* Mood Filter */}
+            <select
+              value={selectedMood}
+              onChange={(e) => setSelectedMood(e.target.value)}
+              className="px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-slate-900 dark:text-white transition-all"
+            >
+              <option value="">All Moods</option>
+              {Object.entries(MOOD_EMOJIS).map(([key, emoji]) => (
+                <option key={key} value={key}>
+                  {emoji} {key.charAt(0).toUpperCase() + key.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Life Area Filter - Full Width */}
+          <div className="mt-4">
+            <select
+              value={selectedLifeArea}
+              onChange={(e) => setSelectedLifeArea(e.target.value)}
+              className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-slate-900 dark:text-white transition-all"
+            >
+              <option value="">All Life Areas</option>
+              {lifeAreas.map((area) => (
+                <option key={area.id} value={area.id}>
+                  {area.icon} {area.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Active Filters */}
+          {(searchQuery || selectedMood || selectedLifeArea || selectedType !== 'all') && (
+            <div className="flex flex-wrap items-center gap-2 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Active filters:</span>
+              {searchQuery && (
+                <span className="px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-lg text-sm font-medium flex items-center gap-2">
+                  Search: {searchQuery}
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="hover:text-amber-900 dark:hover:text-amber-200 transition-colors"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {selectedMood && (
+                <span className="px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium flex items-center gap-2">
+                  {MOOD_EMOJIS[selectedMood as keyof typeof MOOD_EMOJIS]} {selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1)}
+                  <button
+                    onClick={() => setSelectedMood('')}
+                    className="hover:text-blue-900 dark:hover:text-blue-200 transition-colors"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {selectedLifeArea && (
+                <span className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg text-sm font-medium flex items-center gap-2">
+                  {lifeAreas.find(a => a.id === selectedLifeArea)?.icon} {lifeAreas.find(a => a.id === selectedLifeArea)?.name}
+                  <button
+                    onClick={() => setSelectedLifeArea('')}
+                    className="hover:text-purple-900 dark:hover:text-purple-200 transition-colors"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {selectedType !== 'all' && (
+                <span className="px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-sm font-medium flex items-center gap-2">
+                  Type: {selectedType}
+                  <button
+                    onClick={() => setSelectedType('all')}
+                    className="hover:text-green-900 dark:hover:text-green-200 transition-colors"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              <button
+                onClick={() => {
+                  setSearchQuery('')
+                  setSelectedMood('')
+                  setSelectedLifeArea('')
+                  setSelectedType('all')
+                }}
+                className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </motion.div>
 
         {/* Entries List */}
         <div className="space-y-4">
           {filteredEntries.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">
-                  {entries.length === 0 
-                    ? 'No journal entries yet. Start writing!' 
-                    : 'No entries match your filters.'}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-12 border border-amber-200/50 dark:border-amber-800/50 shadow-xl text-center"
+            >
+              <div className="max-w-md mx-auto">
+                <div className="inline-flex p-6 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 rounded-full mb-6">
+                  <BookOpen className="w-16 h-16 text-amber-600 dark:text-amber-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+                  {entries.length === 0
+                    ? 'No journal entries yet'
+                    : 'No entries match your filters'}
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 mb-8">
+                  {entries.length === 0
+                    ? 'Your story starts here — each reflection builds your WisdomOS. Begin your transformation journey today.'
+                    : 'Try adjusting your filters to see more entries, or create a new one to continue your journey.'}
                 </p>
-                <PhoenixButton
+                <button
                   onClick={handleNewEntry}
-                  className="mt-4"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl hover:shadow-xl hover:scale-105 transition-all duration-200 font-medium text-lg"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Create Your First Entry
-                </PhoenixButton>
-              </CardContent>
-            </Card>
+                  <Plus className="w-5 h-5" />
+                  {entries.length === 0 ? 'Create Your First Entry' : 'New Entry'}
+                </button>
+              </div>
+            </motion.div>
           ) : (
-            filteredEntries.map((entry) => (
+            filteredEntries.map((entry, index) => (
               <motion.div
                 key={entry.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.01 }}
+                transition={{ delay: 0.6 + (index * 0.05) }}
+                whileHover={{ scale: 1.01, y: -2 }}
+                className="cursor-pointer"
+                onClick={() => handleEditEntry(entry)}
               >
-                <Card 
-                  className="cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => handleEditEntry(entry)}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {entry.title}
-                          </h3>
-                          {entry.mood && (
-                            <span className="text-2xl" title={entry.mood}>
-                              {MOOD_EMOJIS[entry.mood as keyof typeof MOOD_EMOJIS]}
-                            </span>
-                          )}
-                          {entry.resetRitualApplied && (
-                            <Badge variant="secondary" className="bg-green-100 text-green-700">
-                              <Heart className="w-3 h-3 mr-1" />
-                              Ritual Applied
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-500">
-                          {new Date(entry.createdAt).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
-                        </p>
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-lg hover:shadow-2xl transition-all duration-200">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                          {entry.title}
+                        </h3>
+                        {entry.mood && (
+                          <span className="text-2xl" title={entry.mood}>
+                            {MOOD_EMOJIS[entry.mood as keyof typeof MOOD_EMOJIS]}
+                          </span>
+                        )}
+                        {entry.resetRitualApplied && (
+                          <span className="px-2.5 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                            <Heart className="w-3.5 h-3.5" />
+                            Ritual
+                          </span>
+                        )}
                       </div>
-                      <Badge variant="outline">
-                        {entry.type}
-                      </Badge>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(entry.createdAt).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit'
+                        })}
+                      </p>
                     </div>
+                    <span className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                      entry.type === 'journal' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' :
+                      entry.type === 'voice' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' :
+                      'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                    }`}>
+                      {entry.type === 'journal' ? '📝' : entry.type === 'voice' ? '🎤' : '💭'} {entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}
+                    </span>
+                  </div>
 
-                    <p className="text-gray-700 mb-4 line-clamp-3">
-                      {entry.body}
-                    </p>
+                  <p className="text-slate-700 dark:text-slate-300 mb-4 line-clamp-3 leading-relaxed">
+                    {entry.body}
+                  </p>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      {/* Tags */}
-                      {entry.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">
-                          #{tag}
-                        </Badge>
-                      ))}
-                      
-                      {/* Life Areas */}
-                      {entry.linkedLifeAreas?.map((areaId) => {
-                        const area = lifeAreas.find(a => a.id === areaId)
-                        return area ? (
-                          <Badge key={areaId} variant="outline">
-                            {area.icon} {area.name}
-                          </Badge>
-                        ) : null
-                      })}
-                      
-                      {/* People */}
-                      {entry.linkedPeople?.map((person) => (
-                        <Badge key={person} variant="outline">
-                          @{person}
-                        </Badge>
-                      ))}
-                      
-                      {/* Autobiography Year */}
-                      {entry.autobiographyYear && (
-                        <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          📅 {entry.autobiographyYear}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Tags */}
+                    {entry.tags.map((tag) => (
+                      <span key={tag} className="px-2.5 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-lg text-xs font-medium">
+                        #{tag}
+                      </span>
+                    ))}
+
+                    {/* Life Areas */}
+                    {entry.linkedLifeAreas?.map((areaId) => {
+                      const area = lifeAreas.find(a => a.id === areaId)
+                      return area ? (
+                        <span key={areaId} className="px-2.5 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 rounded-lg text-xs font-medium flex items-center gap-1">
+                          {area.icon} {area.name}
+                        </span>
+                      ) : null
+                    })}
+
+                    {/* People */}
+                    {entry.linkedPeople?.map((person) => (
+                      <span key={person} className="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg text-xs font-medium">
+                        @{person}
+                      </span>
+                    ))}
+
+                    {/* Autobiography Year */}
+                    {entry.autobiographyYear && (
+                      <span className="px-2.5 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 rounded-lg text-xs font-medium">
+                        📅 {entry.autobiographyYear}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             ))
           )}
@@ -420,34 +486,55 @@ export default function JournalPage() {
 
         {/* Mood Distribution */}
         {Object.keys(stats.moodCounts).length > 0 && (
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="w-5 h-5" />
-                Mood Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-3">
-                {Object.entries(stats.moodCounts)
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([mood, count]) => (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mt-8 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-xl"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Mood Distribution</h3>
+              <span className="ml-auto text-sm text-slate-600 dark:text-slate-400">
+                {Object.keys(stats.moodCounts).length} different moods tracked
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {Object.entries(stats.moodCounts)
+                .sort((a, b) => b[1] - a[1])
+                .map(([mood, count]) => {
+                  const percentage = ((count / stats.total) * 100).toFixed(1)
+                  return (
                     <div
                       key={mood}
-                      className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg"
+                      className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow"
                     >
-                      <span className="text-2xl">
-                        {MOOD_EMOJIS[mood as keyof typeof MOOD_EMOJIS]}
-                      </span>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{mood}</p>
-                        <p className="text-xs text-gray-500">{count} entries</p>
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-3xl">
+                          {MOOD_EMOJIS[mood as keyof typeof MOOD_EMOJIS]}
+                        </span>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white capitalize">{mood}</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">{count} entries</p>
+                        </div>
                       </div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-amber-500 to-orange-600 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 text-right">
+                        {percentage}%
+                      </p>
                     </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
+                  )
+                })}
+            </div>
+          </motion.div>
         )}
       </main>
 

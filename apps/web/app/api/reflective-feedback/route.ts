@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { getUserFromRequest } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // Get authenticated user
+    const authResult = await getUserFromRequest(request);
 
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if ("error" in authResult) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { user } = authResult;
+    const userId = user.id;
 
     const body = await request.json();
     const {
@@ -36,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Create reflective feedback entry
     const feedback = await prisma.reflectiveFeedback.create({
       data: {
-        userId: session.user.id,
+        userId,
         dimensionName,
         dimensionCategory: dimensionCategory || getDimensionCategory(dimensionName),
         feedbackText: feedbackText || "",
@@ -61,21 +59,22 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // Get authenticated user
+    const authResult = await getUserFromRequest(request);
 
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if ("error" in authResult) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const { user } = authResult;
+    const userId = user.id;
 
     const { searchParams } = new URL(request.url);
     const dimensionName = searchParams.get("dimensionName");
     const limit = parseInt(searchParams.get("limit") || "50");
 
     const where: any = {
-      userId: session.user.id,
+      userId,
     };
 
     if (dimensionName) {
