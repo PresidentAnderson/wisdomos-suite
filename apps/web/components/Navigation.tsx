@@ -42,7 +42,8 @@ import {
   Layers,
   MessageSquare,
   Mic,
-  History
+  History,
+  Network
 } from 'lucide-react'
 import PhoenixLogo from './PhoenixLogo'
 
@@ -176,6 +177,24 @@ const menuItems: MenuItem[] = [
         href: '/coach/sessions',
         icon: History,
         description: 'Browse past coaching sessions'
+      }
+    ]
+  },
+  {
+    label: 'Knowledge Graph',
+    icon: Network,
+    subItems: [
+      {
+        label: 'Autobiography Graph',
+        href: '/knowledge-graph/autobiography',
+        icon: Book,
+        description: '3D visualization of life themes and patterns'
+      },
+      {
+        label: 'Coach Sessions Graph',
+        href: '/knowledge-graph/coach',
+        icon: Brain,
+        description: 'Interactive map of coaching insights'
       }
     ]
   },

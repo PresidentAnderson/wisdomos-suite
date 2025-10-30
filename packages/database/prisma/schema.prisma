@@ -57,6 +57,9 @@ model User {
   // Coach sessions
   coachSessions CoachSession[] @relation("UserCoachSessions")
 
+  // Knowledge graph
+  tagClusters TagCluster[] @relation("UserTagClusters")
+
   @@map("users")
 }
 
@@ -780,4 +783,175 @@ model CoachSession {
   @@index([userId, sessionType])
   @@index([createdAt])
   @@map("coach_sessions")
+}
+
+// ============================================================================
+// KNOWLEDGE GRAPH SYSTEM
+// ============================================================================
+
+// Tag clustering for knowledge graph
+model TagCluster {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserTagClusters", fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String   // Human-readable cluster name
+  summary     String   @db.Text // AI-generated theme summary
+  color       String   // Hex color for visualization
+  tags        String[] // Array of tags in this cluster
+
+  sourceType  String   // "autobiography" or "coach"
+  confidence  Float    @default(0) // AI confidence score 0-1
+
+  // Temporal tracking
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  eventCount  Int      @default(0) // Number of events with these tags
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, sourceType])
+  @@index([userId, lastSeenAt])
+  @@map("tag_clusters")
+}
+
+// Relationships between tags in the graph
+model TagRelationship {
+  id              String   @id @default(cuid())
+  userId          String
+
+  sourceTag       String   // Tag name
+  targetTag       String   // Related tag name
+  strength        Float    // Relationship strength 0-1
+  relationshipType String  // "similar", "hierarchical", "temporal", "causal"
+
+  sourceType      String   // "autobiography" or "coach"
+  cooccurrenceCount Int    @default(0) // How often these tags appear together
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, sourceTag])
+  @@index([userId, targetTag])
+  @@index([sourceType])
+  @@map("tag_relationships")
+}
+
+// Group meeting transcripts
+model MeetingTranscript {
+  id            String   @id @default(cuid())
+  userId        String   // Session owner
+
+  title         String
+  participants  String[] // Array of participant names/IDs
+  audioUrl      String?  // URL to full recording
+  transcript    String   @db.Text
+  summary       String   @db.Text // AI-generated summary
+
+  tags          String[] @default([])
+  duration      Int?     // Duration in seconds
+  clustersGenerated Json? // Cluster IDs generated from this transcript
+
+  // Audio highlights (10-second clips)
+  highlights    Json?    // Array of {timestamp, audioUrl, description}
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@map("meeting_transcripts")
+}
+
+// Collaborative annotations on graph nodes
+model GraphAnnotation {
+  id          String   @id @default(cuid())
+  userId      String
+
+  nodeId      String   // ID of the tag/cluster/event node
+  nodeType    String   // "tag", "cluster", "event"
+  graphType   String   // "autobiography" or "coach"
+
+  content     String   @db.Text // Markdown content
+  position    Json?    // {x, y, z} 3D coordinates
+
+  // Media attachments
+  attachments Json?    // Array of {type, url, caption}
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, graphType])
+  @@index([nodeId])
+  @@map("graph_annotations")
+}
+
+// Active collaboration sessions
+model CollaborationSession {
+  id            String   @id @default(cuid())
+  graphType     String   // "autobiography" or "coach"
+  sessionToken  String   @unique
+
+  participants  Json     // Array of {userId, username, color, cursorPosition}
+
+  // Session metadata
+  ownerUserId   String
+  isActive      Boolean  @default(true)
+
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime // Auto-cleanup after expiry
+
+  @@index([sessionToken])
+  @@index([ownerUserId])
+  @@map("collaboration_sessions")
+}
+
+// Share tokens for public/private graph sharing
+model ShareToken {
+  id          String   @id @default(cuid())
+  userId      String
+
+  graphType   String   // "autobiography" or "coach"
+  token       String   @unique
+
+  accessLevel String   // "view" or "edit"
+
+  // Optional restrictions
+  allowedEmails String[] @default([])
+  maxUses       Int?     // Null = unlimited
+  currentUses   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+
+  @@index([token])
+  @@index([userId])
+  @@map("share_tokens")
+}
+
+// Session replay keyframes
+model ReplayKeyframe {
+  id          String   @id @default(cuid())
+  userId      String
+
+  replayId    String   // Groups keyframes into replay sessions
+  graphType   String   // "autobiography" or "coach"
+
+  timestamp   Float    // Seconds from start
+  cameraPosition Json  // {x, y, z}
+  cameraTarget Json    // {x, y, z}
+
+  // Audio sync
+  audioUrl    String?
+  audioStart  Float?   // Seconds into audio file
+
+  // Visual state
+  visibleNodes Json?   // Array of node IDs to highlight
+  clusterState Json?   // Cluster sizes/colors at this point
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, replayId])
+  @@index([replayId, timestamp])
+  @@map("replay_keyframes")
 }
