@@ -355,7 +355,7 @@ export default function AuthProvidersAdmin() {
           <PhoenixButton
             onClick={saveProviderConfig}
             disabled={saving}
-            variant="primary"
+            variant="default"
           >
             {saving ? 'Saving...' : 'Save Configuration'}
           </PhoenixButton>

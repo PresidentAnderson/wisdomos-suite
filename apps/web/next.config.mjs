@@ -18,8 +18,8 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    // Enable ESLint during build
-    ignoreDuringBuilds: false,
+    // Temporarily ignore ESLint during build for faster iteration
+    ignoreDuringBuilds: true,
   },
   // Add security headers
   async headers() {

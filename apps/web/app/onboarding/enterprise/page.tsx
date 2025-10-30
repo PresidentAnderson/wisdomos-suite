@@ -66,7 +66,7 @@ const STEPS: OnboardingStep[] = [
   },
   {
     id: 'complete',
-    title: 'You\\'re All Set!',
+    title: "You're All Set!",
     description: 'Welcome to the Phoenix Rising journey',
     icon: Zap
   }
@@ -162,7 +162,7 @@ export default function EnterpriseOnboarding() {
               Welcome to Phoenix Rising WisdomOS
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We\\'re excited to have you here. This quick setup will help you configure your enterprise workspace and get your team started on their wisdom journey.
+              We're excited to have you here. This quick setup will help you configure your enterprise workspace and get your team started on their wisdom journey.
             </p>
             <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto mt-8">
               <div className="p-4 bg-white rounded-lg border border-gray-200">
@@ -248,7 +248,7 @@ export default function EnterpriseOnboarding() {
           <div className="space-y-6 max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold text-black">Invite Your Team</h2>
             <p className="text-gray-600">
-              Add team members by email. They\\'ll receive an invitation to join your workspace.
+              Add team members by email. They'll receive an invitation to join your workspace.
             </p>
 
             <div className="space-y-3">
@@ -413,7 +413,7 @@ export default function EnterpriseOnboarding() {
               <Check className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-black">
-              You\\'re All Set!
+              You're All Set!
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Your enterprise workspace is ready. Welcome to Phoenix Rising WisdomOS — where transformation begins.
