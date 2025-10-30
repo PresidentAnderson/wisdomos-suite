@@ -25,7 +25,10 @@ import {
   Calendar,
   Sparkles,
   Wifi,
-  WifiOff
+  WifiOff,
+  LayoutGrid,
+  List,
+  Orbit
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -261,6 +264,28 @@ export default function FulfillmentV5Page() {
               </h1>
             </div>
             <div className="flex items-center gap-2">
+              {/* View Toggle */}
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <Link href="/fulfillment-v5">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md shadow-sm font-medium text-sm transition-all">
+                    <LayoutGrid className="w-4 h-4" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </button>
+                </Link>
+                <Link href="/fulfillment-hierarchy">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-900/50 rounded-md font-medium text-sm transition-all">
+                    <List className="w-4 h-4" />
+                    <span className="hidden sm:inline">Hierarchy</span>
+                  </button>
+                </Link>
+                <Link href="/fulfillment-orbital">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-900/50 rounded-md font-medium text-sm transition-all">
+                    <Orbit className="w-4 h-4" />
+                    <span className="hidden sm:inline">Orbital</span>
+                  </button>
+                </Link>
+              </div>
+
               {/* Real-time connection indicator */}
               <div
                 className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs ${
@@ -320,7 +345,7 @@ export default function FulfillmentV5Page() {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link href="/journal">
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -352,6 +377,18 @@ export default function FulfillmentV5Page() {
             <h3 className="font-semibold text-gray-900">Log Ritual</h3>
             <p className="text-sm text-gray-600 mt-1">Track your practice</p>
           </motion.div>
+
+          <Link href="/fulfillment-hierarchy">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-amber-200 hover:border-amber-400 transition-all cursor-pointer shadow-sm hover:shadow-md"
+            >
+              <List className="w-8 h-8 text-amber-600 mb-3" />
+              <h3 className="font-semibold text-gray-900">Hierarchy View</h3>
+              <p className="text-sm text-gray-600 mt-1">Structured breakdown</p>
+            </motion.div>
+          </Link>
         </div>
 
         {/* Life Areas Grid */}
