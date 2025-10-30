@@ -1,8 +1,8 @@
-import dynamic from 'next/dynamic'
+import dynamicImport from 'next/dynamic'
 
 // Dynamically import the client component with no SSR
 // This prevents Next.js from trying to pre-render a page that uses React Query
-const FulfillmentClient = dynamic(() => import('./FulfillmentClient'), {
+const FulfillmentClient = dynamicImport(() => import('./FulfillmentClient'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center min-h-screen">

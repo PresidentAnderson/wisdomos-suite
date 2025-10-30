@@ -1,6 +1,0 @@
-{
-  "framework": "nextjs",
-  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @wisdomos/web build",
-  "installCommand": "echo 'Skipping separate install - using buildCommand'",
-  "outputDirectory": ".next"
-}
