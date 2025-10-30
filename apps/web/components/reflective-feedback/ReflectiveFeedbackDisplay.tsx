@@ -142,9 +142,21 @@ export default function ReflectiveFeedbackDisplay() {
   const submitFeedbackToAPI = async (dimensionName: string, vote: string, reason?: string) => {
     try {
       const feedback = feedbackByDimension[dimensionName];
-      await fetch("/api/reflective-feedback", {
+
+      // Get auth token from localStorage
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const response = await fetch("/api/reflective-feedback", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           dimensionName,
           feedbackText: feedback?.feedbackText || "",
@@ -153,6 +165,11 @@ export default function ReflectiveFeedbackDisplay() {
           timestamp: new Date().toISOString(),
         }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("API Error:", error);
+      }
     } catch (error) {
       console.error("Failed to submit feedback:", error);
     }
