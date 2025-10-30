@@ -1,8 +1,8 @@
 {
-  "buildCommand": "cd ../.. && pnpm install && cd packages/database && pnpm db:generate && cd ../../apps/wiseplay-marketplace && pnpm build",
-  "installCommand": "cd ../.. && pnpm install",
+  "installCommand": "npm install",
+  "buildCommand": "npx prisma generate && npm run build",
   "outputDirectory": ".next",
-  "devCommand": "pnpm dev",
+  "devCommand": "npm run dev",
   "framework": "nextjs",
   "regions": ["iad1"]
 }

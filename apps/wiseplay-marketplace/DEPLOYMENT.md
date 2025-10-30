@@ -99,9 +99,14 @@ node_modules/
 2. Select your GitHub repository
 3. Configure project:
    - **Framework Preset**: Next.js
-   - **Root Directory**: `apps/wiseplay-marketplace`
-   - **Build Command**: `pnpm build`
-   - **Output Directory**: `.next`
+   - **Root Directory**: `apps/wiseplay-marketplace` (CRITICAL - Must be set!)
+   - **Build Command**: Leave empty (uses vercel.json)
+   - **Output Directory**: Leave empty (uses vercel.json)
+
+**IMPORTANT**: Setting the Root Directory to `apps/wiseplay-marketplace` is essential. This ensures:
+- Vercel finds Next.js in the correct package.json
+- pnpm install runs with proper workspace context
+- Framework detection works correctly
 
 ### 2. Configure Environment Variables
 
@@ -244,6 +249,17 @@ vercel logs
 ## Troubleshooting
 
 ### Build Failures
+
+**Error: No Next.js version detected**
+```
+Solution:
+1. Go to Vercel Project Settings → General
+2. Set Root Directory to: apps/wiseplay-marketplace
+3. Save and redeploy
+
+This error occurs when Vercel looks for Next.js in the monorepo root
+instead of the app directory. Setting the Root Directory fixes this.
+```
 
 **Error: Prisma Client not generated**
 ```bash
