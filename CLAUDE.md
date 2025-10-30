@@ -233,6 +233,13 @@ When the user indicates they want to end a session (phrases like "close this ses
    - Git commit hashes and messages
    - Deployment timestamps
 
+5. **TODO.md Update** (in project root)
+   - Add all pending tasks from session to TODO.md
+   - Include session date and context
+   - Organize by priority (High/Medium/Low)
+   - Link to session archive for full context
+   - Remove completed tasks from TODO.md
+
 ### Archive Structure
 ```
 SESSION_ARCHIVES/
@@ -243,6 +250,7 @@ SESSION_ARCHIVES/
 [PROJECT_ROOT]/
 ├── AUTOBIOGRAPHY_SESSION_SUMMARY.md
 ├── [NEXT_FEATURE]_SESSION_SUMMARY.md
+├── TODO.md  # Pending tasks from all sessions
 └── CLAUDE.md
 ```
 
