@@ -194,6 +194,30 @@ model NewModel {
 
 ---
 
+## Deployment Failures & Bug Reports
+
+**Note**: If any deployment failures occurred, detailed bug reports are created in separate files.
+
+### Deployment Failure 1: [Brief Description]
+**Severity**: 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
+**Status**: 🚨 Open / 🔍 Investigating / 🔧 In Progress / ✅ Resolved
+**Bug Report**: [BUG_REPORT_YYYY-MM-DD_Description.md](./BUG_REPORT_YYYY-MM-DD_Description.md)
+
+**Quick Summary**:
+- Platform: Vercel / Netlify / etc.
+- Error: Brief error description
+- Impact: Production blocked / Feature broken / etc.
+- Status: How it was resolved or current state
+
+### Deployment Failure 2: [Brief Description]
+[Continue pattern...]
+
+**All Bug Reports from This Session**:
+- [BUG_REPORT_2025-10-30_Vercel_Build_Failure.md](./BUG_REPORT_2025-10-30_Vercel_Build_Failure.md)
+- [BUG_REPORT_2025-10-30_Database_Migration_Error.md](./BUG_REPORT_2025-10-30_Database_Migration_Error.md)
+
+---
+
 ## Testing & Validation
 
 ### Manual Testing Completed

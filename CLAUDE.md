@@ -240,11 +240,44 @@ When the user indicates they want to end a session (phrases like "close this ses
    - Link to session archive for full context
    - Remove completed tasks from TODO.md
 
+### Deployment Failure Bug Reporting
+
+When a deployment failure occurs during a session, Claude Code MUST automatically create a bug report:
+
+**Bug Report File**: `SESSION_ARCHIVES/BUG_REPORT_YYYY-MM-DD_[Description].md`
+
+**Required Contents**:
+- Bug ID and severity level
+- Timestamp of failure
+- Deployment target (Vercel, Netlify, etc.)
+- Full error output and stack trace
+- Environment details (Node version, platform, etc.)
+- Steps that led to the failure
+- Files/commits involved
+- Attempted solutions and results
+- Root cause analysis (if known)
+- Recommended fix
+- Link to related session archive
+
+**Triggers**:
+- Vercel build failures
+- Git push failures
+- Database migration failures
+- API deployment errors
+- Any deployment step with non-zero exit code
+
+**Integration**:
+- Bug report linked in session archive
+- Bug added to TODO.md as High Priority
+- Session summary includes bug reference
+
 ### Archive Structure
 ```
 SESSION_ARCHIVES/
 ├── 2025-10-29-30_Autobiography_Feature_Complete_Session.md
 ├── 2025-10-30_[Next_Feature]_Session.md
+├── BUG_REPORT_2025-10-30_Vercel_Build_Failure.md
+├── BUG_REPORT_2025-11-01_Database_Migration_Error.md
 └── README.md  # Index of all sessions
 
 [PROJECT_ROOT]/
