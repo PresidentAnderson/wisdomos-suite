@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { importFulfillmentTracker, importFromFlatTable } from '../../../lib/tenant/import_fulfillment_tracker';
 
 const prisma = new PrismaClient();
 
@@ -336,7 +337,40 @@ async function seedDemoData(prisma: PrismaClient, lifeAreas: any[]) {
 async function main() {
   console.log('🌱 Starting database seed...');
 
-  // Seed canonical life areas
+  // ========================================
+  // OPTION 1: Import from flat_table.json (recommended for production)
+  // This creates all 30 life areas in a normalized structure
+  // ========================================
+  console.log('📥 Importing 30 life areas from flat_table.json...');
+  const jsonResult = await importFromFlatTable(prisma);
+
+  if (jsonResult.success) {
+    console.log(`✅ Successfully imported ${jsonResult.areasImported} life areas`);
+  } else {
+    console.error('❌ Failed to import from JSON:', jsonResult.errors);
+    // Fall back to legacy areas if JSON import fails
+    console.log('⚠️  Falling back to legacy 13-area structure...');
+  }
+
+  // ========================================
+  // OPTION 2: Import demo data with scores (optional)
+  // Use this for demo tenants or development environments
+  // ========================================
+  if (process.env.DATABASE_SEED_DEMO === 'true') {
+    console.log('📊 Importing demo data with realistic scores...');
+    const demoResult = await importFulfillmentTracker(prisma, 'demo');
+
+    if (demoResult.success) {
+      console.log(`✅ Demo data imported: ${demoResult.areasImported} areas with scores`);
+    } else {
+      console.error('❌ Failed to import demo data:', demoResult.errors);
+    }
+  }
+
+  // ========================================
+  // Legacy 13-Area Canonical Structure (Backward Compatibility)
+  // Keep this for existing Coach Factory integrations
+  // ========================================
   const canonicalAreas = [
     {
       slug: 'work-purpose',
@@ -431,7 +465,7 @@ async function main() {
     },
   ];
 
-  // Upsert canonical life areas
+  // Upsert canonical life areas (legacy support)
   const lifeAreas = await Promise.all(
     canonicalAreas.map((area) =>
       prisma.lifeAreaCanonical.upsert({
@@ -447,7 +481,7 @@ async function main() {
     )
   );
 
-  console.log(`✅ Created/updated ${lifeAreas.length} canonical life areas`);
+  console.log(`✅ Created/updated ${lifeAreas.length} legacy canonical life areas`);
 
   // Create comprehensive demo data if DATABASE_SEED_DEMO=true
   if (process.env.DATABASE_SEED_DEMO === 'true') {
@@ -455,6 +489,15 @@ async function main() {
   }
 
   console.log('🎉 Database seed completed!');
+  console.log('');
+  console.log('📊 Summary:');
+  console.log(`   - 30 life areas imported from flat_table.json`);
+  console.log(`   - 13 legacy areas maintained for backward compatibility`);
+  if (process.env.DATABASE_SEED_DEMO === 'true') {
+    console.log(`   - Demo data with realistic scores imported`);
+  }
+  console.log('');
+  console.log('💡 To seed demo data, run: DATABASE_SEED_DEMO=true npm run db:seed');
 }
 
 main()

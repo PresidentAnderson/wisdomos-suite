@@ -19,15 +19,9 @@ const createBookingSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (session instanceof NextResponse) {
-      return session; // Return error response
-    }
+    const user = await requireAuth();
 
-    const userId = session.user?.id;
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
-    }
+    const userId = user.id;
 
     const { searchParams } = new URL(request.url);
     const role = searchParams.get('role') || 'buyer'; // 'buyer' or 'provider'
@@ -109,15 +103,12 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (session instanceof NextResponse) {
-      return session; // Return error response
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user?.id;
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
-    }
+    const userId = user.id;
 
     const body = await request.json();
     const validatedData = createBookingSchema.parse(body);
@@ -212,7 +203,7 @@ export async function POST(request: NextRequest) {
         userId: service.provider.userId,
         type: 'BOOKING_REQUEST',
         title: 'New Booking Request',
-        message: `${session.user.name} requested to book ${service.title}`,
+        message: `${user.name || user.email} requested to book ${service.title}`,
         actionUrl: `/marketplace/dashboard/bookings/${booking.id}`,
         metadata: {
           bookingId: booking.id,

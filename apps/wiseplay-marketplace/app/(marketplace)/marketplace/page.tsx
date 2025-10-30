@@ -1,12 +1,15 @@
-import { getFeaturedServices, getPopularCategories } from '@/lib/marketplace/search';
+import { getFeaturedServices, getCategories } from '@/lib/marketplace/search';
 import ServiceCard from '@/components/marketplace/ServiceCard';
 import Link from 'next/link';
 
 export default async function MarketplacePage() {
-  const [featuredServices, categories] = await Promise.all([
+  const [featuredServices, allCategories] = await Promise.all([
     getFeaturedServices(6),
-    getPopularCategories(8),
+    getCategories(),
   ]);
+
+  // Take first 8 categories
+  const categories = allCategories.slice(0, 8);
 
   return (
     <div className="min-h-screen bg-gray-50">

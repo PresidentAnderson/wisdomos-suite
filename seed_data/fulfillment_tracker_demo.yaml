@@ -1,0 +1,521 @@
+# WisdomOS Fulfillment Tracker - Demo Data
+# Sample tenant with realistic scores across all 30 life areas
+# Generated: 2025-10-30
+
+tenant:
+  id: demo_tenant_001
+  name: "Demo User Workspace"
+  created_at: "2025-01-01T00:00:00Z"
+  last_updated: "2025-10-30T12:00:00Z"
+
+overall_fulfillment:
+  score: 72
+  status: "THRIVING"
+  trend: "improving"
+  emoji: "🟢"
+
+domains:
+  # ========================================
+  # FOUNDATIONAL DOMAIN (Systems & Structure)
+  # ========================================
+  - id: 1
+    slug: "health-wellness"
+    name: "Health & Wellness"
+    phoenix_name: "Phoenix of Vitality"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: 78
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Morning workout completed"
+    last_event_date: "2025-10-29"
+    recent_insights:
+      - "Consistent 7-hour sleep pattern emerging"
+      - "Energy levels highest in morning"
+
+  - id: 2
+    slug: "financial-abundance"
+    name: "Financial Abundance"
+    phoenix_name: "Phoenix of Prosperity"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: 68
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Emergency fund reached 3 months"
+    last_event_date: "2025-10-15"
+    recent_insights:
+      - "Savings rate improved by 12% this quarter"
+      - "Need to address credit card debt"
+
+  - id: 3
+    slug: "work-purpose"
+    name: "Work & Purpose"
+    phoenix_name: "Phoenix of Mastery"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: 82
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Promoted to Senior Engineer"
+    last_event_date: "2025-10-20"
+    recent_insights:
+      - "Work-life balance improving"
+      - "Strong alignment between skills and role"
+
+  - id: 4
+    slug: "home-environment"
+    name: "Home & Environment"
+    phoenix_name: "Phoenix of Sanctuary"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: 65
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Deep cleaned living room"
+    last_event_date: "2025-10-28"
+    recent_insights:
+      - "Clutter accumulating in bedroom"
+      - "Home office ergonomics need improvement"
+
+  - id: 5
+    slug: "time-energy"
+    name: "Time & Energy Management"
+    phoenix_name: "Phoenix of Flow"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: 71
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Implemented time-blocking system"
+    last_event_date: "2025-10-25"
+    recent_insights:
+      - "Deep work sessions most effective 9-11 AM"
+      - "Too many meetings on Wednesdays"
+
+  - id: 6
+    slug: "learning-growth"
+    name: "Learning & Growth"
+    phoenix_name: "Phoenix of Wisdom"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: 85
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Completed React Advanced Patterns course"
+    last_event_date: "2025-10-27"
+    recent_insights:
+      - "Learning velocity increasing"
+      - "Strong momentum in technical growth"
+
+  # ========================================
+  # RELATIONAL DOMAIN (Connection & Love)
+  # ========================================
+  - id: 7
+    slug: "intimacy-love"
+    name: "Intimacy & Love"
+    phoenix_name: "Phoenix of Sacred Union"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: 88
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Weekend getaway with partner"
+    last_event_date: "2025-10-26"
+    recent_insights:
+      - "Communication quality improving"
+      - "Weekly date nights creating strong connection"
+
+  - id: 8
+    slug: "family"
+    name: "Family"
+    phoenix_name: "Phoenix of Lineage"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: 62
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Called parents on Sunday"
+    last_event_date: "2025-10-27"
+    recent_insights:
+      - "Need to visit family more often"
+      - "Sibling relationship needs attention"
+
+  - id: 9
+    slug: "friendship"
+    name: "Friendship"
+    phoenix_name: "Phoenix of Brotherhood/Sisterhood"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: 74
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Dinner with college friends"
+    last_event_date: "2025-10-24"
+    recent_insights:
+      - "Core friend group of 4 people thriving"
+      - "Lost touch with some old friends"
+
+  - id: 10
+    slug: "community-belonging"
+    name: "Community & Belonging"
+    phoenix_name: "Phoenix of Tribe"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: 58
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Joined local running club"
+    last_event_date: "2025-10-18"
+    recent_insights:
+      - "New to the neighborhood, still building connections"
+      - "Running club providing initial community"
+
+  - id: 11
+    slug: "communication-boundaries"
+    name: "Communication & Boundaries"
+    phoenix_name: "Phoenix of Clear Voice"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: 69
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Set boundary with demanding coworker"
+    last_event_date: "2025-10-22"
+    recent_insights:
+      - "Getting better at saying no"
+      - "Still struggle with confrontation"
+
+  - id: 12
+    slug: "collaboration-teamwork"
+    name: "Collaboration & Teamwork"
+    phoenix_name: "Phoenix of Synergy"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: 80
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Led successful team retro"
+    last_event_date: "2025-10-29"
+    recent_insights:
+      - "Team dynamics excellent"
+      - "Strong culture of psychological safety"
+
+  # ========================================
+  # CREATIVE DOMAIN (Expression & Innovation)
+  # ========================================
+  - id: 13
+    slug: "art-creativity"
+    name: "Art & Creativity"
+    phoenix_name: "Phoenix of Imagination"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: 55
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Started watercolor painting class"
+    last_event_date: "2025-10-12"
+    recent_insights:
+      - "Creative practice inconsistent"
+      - "Need dedicated creative time"
+
+  - id: 14
+    slug: "music-sound"
+    name: "Music & Sound"
+    phoenix_name: "Phoenix of Harmony"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: 72
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Attended live jazz concert"
+    last_event_date: "2025-10-19"
+    recent_insights:
+      - "Music listening habits strong"
+      - "Haven't played guitar in months"
+
+  - id: 15
+    slug: "writing-storytelling"
+    name: "Writing & Storytelling"
+    phoenix_name: "Phoenix of the Scribe"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: 67
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Journaled for 30 days straight"
+    last_event_date: "2025-10-30"
+    recent_insights:
+      - "Journaling streak building momentum"
+      - "Blog post drafts need finishing"
+
+  - id: 16
+    slug: "innovation-problem-solving"
+    name: "Innovation & Problem-Solving"
+    phoenix_name: "Phoenix of Breakthroughs"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: 83
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Solved complex architecture challenge"
+    last_event_date: "2025-10-28"
+    recent_insights:
+      - "Systems thinking skills improving"
+      - "Pattern recognition strong"
+
+  - id: 17
+    slug: "design-aesthetics"
+    name: "Design & Aesthetics"
+    phoenix_name: "Phoenix of Beauty"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: 61
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Redesigned personal website"
+    last_event_date: "2025-10-10"
+    recent_insights:
+      - "Good eye for design"
+      - "Technical skills need improvement"
+
+  - id: 18
+    slug: "play-experimentation"
+    name: "Play & Experimentation"
+    phoenix_name: "Phoenix of Wonder"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: 76
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Tried new hobby: pottery"
+    last_event_date: "2025-10-21"
+    recent_insights:
+      - "Playful approach to learning"
+      - "Not afraid to be beginner"
+
+  # ========================================
+  # EXPERIENTIAL DOMAIN (Adventure & Sensation)
+  # ========================================
+  - id: 19
+    slug: "adventure-exploration"
+    name: "Adventure & Exploration"
+    phoenix_name: "Phoenix of the Pathfinder"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: 64
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Weekend hiking trip"
+    last_event_date: "2025-10-13"
+    recent_insights:
+      - "Craving more travel"
+      - "Local exploration consistent"
+
+  - id: 20
+    slug: "movement-dance"
+    name: "Movement & Dance"
+    phoenix_name: "Phoenix of Embodiment"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: 79
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Dance class: salsa basics"
+    last_event_date: "2025-10-26"
+    recent_insights:
+      - "Movement practice diverse and consistent"
+      - "Body awareness improving"
+
+  - id: 21
+    slug: "nature-wilderness"
+    name: "Nature & Wilderness"
+    phoenix_name: "Phoenix of the Wild"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: 70
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Morning walk in park"
+    last_event_date: "2025-10-29"
+    recent_insights:
+      - "Daily nature exposure consistent"
+      - "Need deeper wilderness immersion"
+
+  - id: 22
+    slug: "pleasure-sensuality"
+    name: "Pleasure & Sensuality"
+    phoenix_name: "Phoenix of Eros"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: 81
+    status: "THRIVING"
+    emoji: "🟢"
+    last_event: "Massage and spa day"
+    last_event_date: "2025-10-23"
+    recent_insights:
+      - "Prioritizing pleasure without guilt"
+      - "Sensual connection with partner strong"
+
+  - id: 23
+    slug: "rest-recovery"
+    name: "Rest & Recovery"
+    phoenix_name: "Phoenix of Restoration"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: 73
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Full rest day Sunday"
+    last_event_date: "2025-10-27"
+    recent_insights:
+      - "Sleep quantity good, quality variable"
+      - "Guilt around rest decreasing"
+
+  - id: 24
+    slug: "celebration-joy"
+    name: "Celebration & Joy"
+    phoenix_name: "Phoenix of Radiance"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: 77
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Celebrated work promotion with friends"
+    last_event_date: "2025-10-21"
+    recent_insights:
+      - "Getting better at celebrating wins"
+      - "Gratitude practice consistent"
+
+  # ========================================
+  # LEGACY DOMAIN (Impact & Contribution)
+  # ========================================
+  - id: 25
+    slug: "purpose-calling"
+    name: "Purpose & Calling"
+    phoenix_name: "Phoenix of Destiny"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: 75
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Clarity session on life purpose"
+    last_event_date: "2025-10-17"
+    recent_insights:
+      - "Purpose emerging: help others grow"
+      - "Alignment between work and purpose increasing"
+
+  - id: 26
+    slug: "service-contribution"
+    name: "Service & Contribution"
+    phoenix_name: "Phoenix of the Servant Leader"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: 59
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Volunteered at food bank"
+    last_event_date: "2025-10-05"
+    recent_insights:
+      - "Service practice inconsistent"
+      - "Want to commit to regular volunteering"
+
+  - id: 27
+    slug: "legacy-heritage"
+    name: "Legacy & Heritage"
+    phoenix_name: "Phoenix of Ancestry"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: 52
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Started family history research"
+    last_event_date: "2025-09-28"
+    recent_insights:
+      - "Thinking about legacy for first time"
+      - "Not yet clear what to leave behind"
+
+  - id: 28
+    slug: "teaching-mentorship"
+    name: "Teaching & Mentorship"
+    phoenix_name: "Phoenix of the Elder"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: 71
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Mentored junior engineer on code review"
+    last_event_date: "2025-10-29"
+    recent_insights:
+      - "Natural teacher, people seek my advice"
+      - "Could formalize mentorship practice"
+
+  - id: 29
+    slug: "leadership-influence"
+    name: "Leadership & Influence"
+    phoenix_name: "Phoenix of the Visionary"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: 68
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Led team through difficult deadline"
+    last_event_date: "2025-10-25"
+    recent_insights:
+      - "Leadership skills developing"
+      - "Team trusts my judgment"
+
+  - id: 30
+    slug: "wealth-generosity"
+    name: "Wealth & Generosity"
+    phoenix_name: "Phoenix of Abundance"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: 63
+    status: "NEEDS_ATTENTION"
+    emoji: "🟡"
+    last_event: "Donated to favorite charity"
+    last_event_date: "2025-10-15"
+    recent_insights:
+      - "Generosity increasing as income grows"
+      - "Want to establish regular giving practice"
+
+# Aggregate Statistics
+statistics:
+  total_areas: 30
+  thriving: 8  # 🟢 (80+)
+  needs_attention: 22  # 🟡 (50-79)
+  breakdown: 0  # 🔴 (<50)
+  average_score: 72
+  highest_scoring:
+    - "Intimacy & Love (88)"
+    - "Learning & Growth (85)"
+    - "Innovation & Problem-Solving (83)"
+  lowest_scoring:
+    - "Legacy & Heritage (52)"
+    - "Art & Creativity (55)"
+    - "Community & Belonging (58)"
+  trend: "Overall improving trajectory"
+  insights:
+    - "Foundational and relational areas strong"
+    - "Legacy domain needs attention across the board"
+    - "Creative expression inconsistent"
+    - "Work-life integration solid"
+
+# Next Actions (Auto-Generated Recommendations)
+next_actions:
+  - area: "Legacy & Heritage"
+    action: "Schedule 1-hour session to clarify legacy vision"
+    priority: "high"
+  - area: "Art & Creativity"
+    action: "Block 2 hours weekly for creative practice"
+    priority: "high"
+  - area: "Service & Contribution"
+    action: "Commit to monthly volunteer schedule"
+    priority: "medium"
+  - area: "Family"
+    action: "Plan family visit for next month"
+    priority: "medium"
+  - area: "Financial Abundance"
+    action: "Create debt payoff plan"
+    priority: "medium"

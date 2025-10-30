@@ -15,12 +15,12 @@ const createPaymentIntentSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (session instanceof NextResponse) {
-      return session; // Return error response
+    const user = await requireAuth();
+    if (user instanceof NextResponse) {
+      return user; // Return error response
     }
 
-    const userId = session.user?.id;
+    const userId = user.id;
     if (!userId) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }

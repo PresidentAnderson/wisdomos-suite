@@ -100,15 +100,12 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (session instanceof NextResponse) {
-      return session; // Return error response
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user?.id;
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
-    }
+    const userId = user.id;
 
     const body = await request.json();
     const validatedData = createProviderSchema.parse(body);

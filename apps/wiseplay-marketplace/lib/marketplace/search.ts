@@ -1,9 +1,8 @@
-import { ServiceType, ServiceStatus, Prisma } from '@prisma/client';
+import { ServiceStatus, Prisma } from '@prisma/client';
 import { prisma } from './db';
 
 export interface SearchFilters {
   query?: string;
-  type?: ServiceType;
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -28,7 +27,6 @@ export async function searchServices(
 ) {
   const {
     query,
-    type,
     categoryId,
     minPrice,
     maxPrice,
@@ -56,7 +54,6 @@ export async function searchServices(
         { shortDescription: { contains: query, mode: 'insensitive' } },
       ],
     }),
-    ...(type && { type }),
     ...(categoryId && { categoryId }),
     ...(minPrice !== undefined && { price: { gte: minPrice } }),
     ...(maxPrice !== undefined && { price: { lte: maxPrice } }),

@@ -5,30 +5,30 @@ import Link from "next/link"
 import { Star, Heart, Clock } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Decimal } from "@prisma/client/runtime/library"
 
 interface ServiceCardProps {
   service: {
     id: string
     title: string
     description: string
-    price: number
+    averageRating: Decimal
+    totalBookings: number
     imageUrl?: string | null
     category?: {
       name: string
     } | null
     provider?: {
-      user: {
-        name?: string | null
-      }
+      displayName: string | null
+      isVerified: boolean
     } | null
-    avgRating?: number | null
-    totalReviews?: number
   }
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const rating = service.avgRating || 0
-  const reviewCount = service.totalReviews || 0
+  const rating = typeof service.averageRating === 'number'
+    ? service.averageRating
+    : Number(service.averageRating)
   const imageUrl = service.imageUrl || "/placeholder-service.jpg"
 
   return (
@@ -64,9 +64,10 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         <p className="text-sm text-gray-600 line-clamp-2 mb-3">
           {service.description}
         </p>
-        {service.provider?.user?.name && (
+        {service.provider?.displayName && (
           <p className="text-xs text-gray-500 mb-2">
-            by {service.provider.user.name}
+            by {service.provider.displayName}
+            {service.provider.isVerified && ' ✓'}
           </p>
         )}
         <div className="flex items-center gap-2 mb-3">
@@ -74,14 +75,14 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
             <span className="ml-1 text-sm font-medium">{rating.toFixed(1)}</span>
           </div>
-          {reviewCount > 0 && (
-            <span className="text-sm text-gray-500">({reviewCount})</span>
+          {service.totalBookings > 0 && (
+            <span className="text-sm text-gray-500">({service.totalBookings} bookings)</span>
           )}
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex items-center justify-between">
-        <div className="text-2xl font-bold text-gray-900">
-          ${service.price.toFixed(2)}
+        <div className="text-lg font-semibold text-gray-900">
+          View Details
         </div>
         <Button>Book Now</Button>
       </CardFooter>

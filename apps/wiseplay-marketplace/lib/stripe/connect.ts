@@ -109,7 +109,7 @@ export async function updateProviderStripeStatus(
         stripeChargesEnabled: account.charges_enabled || false,
         stripePayoutsEnabled: account.payouts_enabled || false,
         stripeOnboardingComplete: account.details_submitted || false,
-        stripeBankConnected: account.external_accounts?.data.length > 0,
+        stripeBankConnected: (account.external_accounts?.data?.length ?? 0) > 0,
       },
     });
 
