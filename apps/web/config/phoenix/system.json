@@ -1,0 +1,205 @@
+{
+  "version": "1.1.0",
+  "updated": "2025-10-31",
+  "system_name": "WisdomOS Phoenix Wisdom Levels",
+  "levels": [
+    {
+      "id": "seeker",
+      "title": "Seeker",
+      "symbol": "🌱",
+      "min_xp": 0,
+      "max_xp": 499,
+      "description": "Awakening — you've begun the journey of self-discovery.",
+      "theme": "Curiosity, awareness, first steps",
+      "level_up_message": "🌱 Welcome, Seeker. Your journey into fulfillment begins now."
+    },
+    {
+      "id": "initiate",
+      "title": "Initiate",
+      "symbol": "🪶",
+      "min_xp": 500,
+      "max_xp": 1499,
+      "description": "Commitment — the path is clearer now, and you're walking it with intention.",
+      "theme": "First steps, commitment, building foundation",
+      "level_up_message": "🪶 You rise to Initiate — the path is clearer now. Trust your first steps."
+    },
+    {
+      "id": "adept",
+      "title": "Adept",
+      "symbol": "🔥",
+      "min_xp": 1500,
+      "max_xp": 3999,
+      "description": "Skillful practice — your habits are becoming second nature.",
+      "theme": "Skill development, consistency, mastery emerging",
+      "level_up_message": "🔥 You rise to Adept — skillful practice becomes second nature. Keep the flame steady."
+    },
+    {
+      "id": "sage",
+      "title": "Sage",
+      "symbol": "🕯️",
+      "min_xp": 4000,
+      "max_xp": 7999,
+      "description": "Wisdom integration — your light guides others now.",
+      "theme": "Teaching, wisdom sharing, impact",
+      "level_up_message": "🕯️ You rise to Sage — your light guides others now. Honor the quiet that follows achievement."
+    },
+    {
+      "id": "master",
+      "title": "Master",
+      "symbol": "🜂",
+      "min_xp": 8000,
+      "max_xp": 14999,
+      "description": "Embodied mastery — you are becoming the Phoenix.",
+      "theme": "Embodiment, integration, transformation",
+      "level_up_message": "🜂 You rise to Master — embodiment is near. You are becoming the Phoenix."
+    },
+    {
+      "id": "phoenix_sovereign",
+      "title": "Phoenix Sovereign",
+      "symbol": "🕊️",
+      "min_xp": 15000,
+      "max_xp": null,
+      "description": "Complete transformation — you are the cycle itself.",
+      "theme": "Sovereignty, complete embodiment, teaching others",
+      "level_up_message": "🕊️ You rise to Phoenix Sovereign — the cycle is complete. You are transformation itself."
+    }
+  ],
+  "tiers": [
+    {
+      "id": "common",
+      "name": "Common",
+      "symbol": "🔹",
+      "base_xp": 50,
+      "color": "#A0AEC0",
+      "shape": "circle",
+      "animation": "subtle_pulse",
+      "description": "Awareness & initiation — recognizing the path."
+    },
+    {
+      "id": "rare",
+      "name": "Rare",
+      "symbol": "🔸",
+      "base_xp": 150,
+      "color": "#4299E1",
+      "shape": "triangle",
+      "animation": "shimmer",
+      "description": "Commitment & stability — walking the path with devotion."
+    },
+    {
+      "id": "epic",
+      "name": "Epic",
+      "symbol": "🔷",
+      "base_xp": 400,
+      "color": "#9F7AEA",
+      "shape": "diamond",
+      "animation": "glow_aura",
+      "description": "Integration & balance — embodying the wisdom."
+    },
+    {
+      "id": "legendary",
+      "name": "Legendary",
+      "symbol": "🔶",
+      "base_xp": 1000,
+      "color": "#FFD700",
+      "shape": "crest",
+      "animation": "radiant_morph",
+      "description": "Embodiment & mastery — complete transformation."
+    }
+  ],
+  "xp_formula": {
+    "description": "XP = Base XP × Dimension Multiplier × Completion Factor",
+    "parameters": {
+      "base_xp": "From badge tier (50, 150, 400, 1000)",
+      "dimension_multiplier": "emotional_growth: 1.2, leadership: 1.1, consistency: 1.0, integration: 1.5",
+      "completion_factor": "0.0 - 1.0 based on progress toward badge criteria"
+    },
+    "examples": [
+      {
+        "badge": "Ember Aware",
+        "tier": "Common",
+        "dimension": "emotional_growth",
+        "calculation": "50 × 1.2 × 1.0 = 60 XP"
+      },
+      {
+        "badge": "Flame Tender",
+        "tier": "Rare",
+        "dimension": "emotional_growth",
+        "calculation": "150 × 1.2 × 0.8 = 144 XP (80% complete)"
+      },
+      {
+        "badge": "Phoenix Ascendant",
+        "tier": "Legendary",
+        "dimension": "integration",
+        "calculation": "1000 × 1.5 × 1.0 = 1500 XP"
+      }
+    ]
+  },
+  "dimension_scoring": {
+    "description": "Dimension scores are calculated from 0.0 to 1.0 based on badge unlocks and ongoing activities",
+    "formula": "Weighted average of badge completion + activity consistency + quality metrics",
+    "thresholds": {
+      "beginner": 0.0,
+      "developing": 0.3,
+      "proficient": 0.5,
+      "advanced": 0.7,
+      "master": 0.9,
+      "sovereign": 1.0
+    }
+  },
+  "anti_gaming_rules": [
+    {
+      "rule": "minimum_quality",
+      "description": "Journal entries must meet minimum word count and depth requirements",
+      "enforcement": "Entries below 50 words don't count toward emotional growth badges"
+    },
+    {
+      "rule": "sentiment_variety",
+      "description": "Prevent identical emotion spam",
+      "enforcement": "Entries must show varied sentiment (not all same emotion tag)"
+    },
+    {
+      "rule": "time_distribution",
+      "description": "Prevent bulk-adding entries",
+      "enforcement": "Streak badges require entries on separate days (not all same day)"
+    },
+    {
+      "rule": "xp_audit_trail",
+      "description": "All XP changes must be logged",
+      "enforcement": "Event log required for every badge unlock and XP award"
+    },
+    {
+      "rule": "gatekeeper_validation",
+      "description": "Legendary badges require extra validation",
+      "enforcement": "Gatekeeper agent must approve all Legendary unlocks"
+    }
+  ],
+  "celebration_effects": {
+    "badge_unlock": {
+      "sound": "badge_unlock_528hz.mp3",
+      "confetti": true,
+      "toast_duration": 5000,
+      "animation": "badge_rise"
+    },
+    "level_up": {
+      "sound": "level_up_528hz.mp3",
+      "confetti": true,
+      "confetti_count": 200,
+      "toast_duration": 8000,
+      "animation": "phoenix_rise",
+      "fullscreen_modal": true
+    },
+    "dimension_milestone": {
+      "sound": "milestone_chime.mp3",
+      "confetti": false,
+      "toast_duration": 4000,
+      "animation": "dimension_glow"
+    }
+  },
+  "metadata": {
+    "created_by": "AXAI Innovations",
+    "developer": "Jonathan Anderson",
+    "motto": "Rise into Fulfillment",
+    "philosophy": "No hollow rewards. Every badge reflects truth earned through experience.",
+    "license": "Proprietary"
+  }
+}
