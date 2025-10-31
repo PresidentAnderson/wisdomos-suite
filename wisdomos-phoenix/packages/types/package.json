@@ -1,0 +1,19 @@
+{
+  "name": "@wisdomos/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for WisdomOS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
