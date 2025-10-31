@@ -1,0 +1,60 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Next.js build output
+.next
+out
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Development files
+README.md
+*.md
+.vscode
+.idea
+
+# Logs
+logs
+*.log
+
+# Coverage
+coverage
+
+# Temporary files
+.tmp
+.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+__tests__
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Documentation
+docs/
+documentation/
+
+# Examples
+examples/
+
+# Prisma generated files (will be regenerated)
+prisma/migrations/*

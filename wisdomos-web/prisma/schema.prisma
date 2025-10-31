@@ -1,0 +1,446 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  name         String?
+  emailVerified DateTime?
+  
+  auth                Auth?
+  contacts            Contact[]
+  contributions       Contribution[]
+  autobiographyEntries AutobiographyEntry[]
+  entries             Entry[]
+  journalEntries      JournalEntry[]
+  fulfillmentAreas    FulfillmentArea[]
+  commitments         Commitment[]
+  interactions        Interaction[]
+  assessments         RelationshipAssessment[]
+  boundaryAudits      BoundaryAudit[]
+  contactLinks        ContactLifeAreaLink[]
+  goals               Goal[]
+  habits              Habit[]
+  settings            UserSettings?
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Auth {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  hashedPassword    String
+  resetToken        String?  @unique
+  resetTokenExpiry  DateTime?
+  verifyToken       String?  @unique
+  verifyTokenExpiry DateTime?
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Contact {
+  id            String  @id @default(cuid())
+  userId        String
+  firstName     String
+  lastName      String
+  email         String?
+  phoneE164     String?
+  hubspotId     String?
+  salesforceId  String?
+  notes         String?
+  tags          String[]
+  
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeAreaLinks ContactLifeAreaLink[]
+  interactions  Interaction[]
+  assessments   RelationshipAssessment[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([userId, email])
+  @@index([userId])
+  @@index([lastName, firstName])
+}
+
+model LifeArea {
+  id          Int     @id
+  name        String  @unique
+  icon        String?
+  description String?
+  
+  contactLinks     ContactLifeAreaLink[]
+  fulfillmentAreas FulfillmentArea[]
+  interactions     Interaction[]
+  assessments      RelationshipAssessment[]
+  boundaryAudits   BoundaryAudit[]
+}
+
+model ContactLifeAreaLink {
+  id          String  @id @default(cuid())
+  userId      String
+  contactId   String
+  lifeAreaId  Int
+  roleLabel   String?
+  frequency   String?
+  weight      Float?
+  outcomes    String?
+  notes       String?
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  lifeArea    LifeArea @relation(fields: [lifeAreaId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([contactId, lifeAreaId])
+  @@index([userId])
+  @@index([contactId])
+  @@index([lifeAreaId])
+}
+
+model Contribution {
+  id        String  @id @default(cuid())
+  userId    String
+  type      ContributionType
+  title     String
+  content   String?
+  source    String?
+  tags      String[]
+  color     String?
+  
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+enum ContributionType {
+  strength
+  acknowledgment
+  natural
+  quote
+}
+
+model AutobiographyEntry {
+  id         String  @id @default(cuid())
+  userId     String
+  year       Int
+  title      String?
+  narrative  String?
+  earliest   String?  // earliest similar occurrence
+  insight    String?  // what I made it mean
+  commitment String?  // new way of being
+  lifeAreas  Int[]    // array of life area ids
+  tags       String[]
+  
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([userId, year])
+  @@index([userId, year])
+}
+
+model FulfillmentArea {
+  id         String  @id @default(cuid())
+  userId     String
+  lifeAreaId Int
+  status     FulfillmentStatus @default(thriving)
+  attention  Int?    @db.SmallInt
+  notes      String?
+  
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea   LifeArea    @relation(fields: [lifeAreaId], references: [id])
+  commitments Commitment[]
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([userId, lifeAreaId])
+  @@index([userId])
+}
+
+enum FulfillmentStatus {
+  thriving
+  attention
+  collapse
+}
+
+model Commitment {
+  id       String  @id @default(cuid())
+  userId   String
+  areaId   String
+  title    String
+  outcome  String?
+  
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  area     FulfillmentArea @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([areaId])
+}
+
+model Interaction {
+  id             String  @id @default(cuid())
+  userId         String
+  contactId      String
+  lifeAreaId     Int?
+  occurredAt     DateTime @default(now())
+  channel        InteractionChannel
+  direction      InteractionDirection @default(internal)
+  subject        String?
+  bodyText       String?
+  bodyHtml       String?
+  uri            String?
+  sentiment      Sentiment?
+  sentimentScore Float?
+  topics         String[]
+  entities       Json?
+  meta           Json @default("{}")
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  lifeArea  LifeArea? @relation(fields: [lifeAreaId], references: [id])
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([contactId, occurredAt])
+  @@index([lifeAreaId, occurredAt])
+}
+
+enum InteractionChannel {
+  call
+  sms
+  email
+  meeting
+  note
+  whatsapp
+  telegram
+  signal
+  messenger
+  other
+}
+
+enum InteractionDirection {
+  inbound
+  outbound
+  internal
+}
+
+enum Sentiment {
+  very_negative
+  negative
+  neutral
+  positive
+  very_positive
+}
+
+model RelationshipAssessment {
+  id            String   @id @default(cuid())
+  userId        String
+  contactId     String
+  lifeAreaId    Int
+  assessedOn    DateTime @default(now()) @db.Date
+  trustScore    Float?
+  communication Float?
+  reliability   Float?
+  openness      Float?
+  growth        Float?
+  reciprocity   Float?
+  alignment     Float?
+  overall       Float?
+  notes         String?
+  
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contact  Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  lifeArea LifeArea @relation(fields: [lifeAreaId], references: [id])
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, contactId, lifeAreaId, assessedOn])
+  @@index([userId])
+  @@index([contactId, lifeAreaId, assessedOn])
+}
+
+model BoundaryAudit {
+  id         String   @id @default(cuid())
+  userId     String
+  lifeAreaId Int?
+  timestamp  DateTime @default(now())
+  incident   String
+  response   String?
+  learning   String?
+  
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lifeArea LifeArea? @relation(fields: [lifeAreaId], references: [id])
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId, timestamp])
+}
+
+model Entry {
+  id           String   @id @default(cuid())
+  userId       String
+  type         EntryType
+  title        String?
+  body         String
+  year         Int?
+  
+  // Wisdom Course specific fields (for autobiography)
+  earliest     String?  // earliest similar occurrence
+  insight      String?  // what I made it mean
+  commitment   String?  // new way of being
+  
+  // Privacy controls
+  visibility   Visibility @default(private)
+  displayScope DisplayScope @default(ownerOnly)
+  exportScope  ExportScope @default(ownerOnly)
+  isSensitive  Boolean @default(false)
+  isArchived   Boolean @default(false)
+  
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@unique([userId, year, type])
+  @@index([userId, type])
+  @@index([visibility])
+  @@index([year])
+}
+
+enum EntryType {
+  journal
+  autobiography
+}
+
+enum Visibility {
+  private
+  cohort
+  coach
+  public
+  anonymous
+}
+
+enum DisplayScope {
+  ownerOnly
+  includeForMe
+  includeForShared
+}
+
+enum ExportScope {
+  ownerOnly
+  anonymized
+  exclude
+  include
+}
+
+model Goal {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  importance  String?  // Why is this goal important to you?
+  isSprint    Boolean  @default(false) // Sprint goals for priority
+  isCompleted Boolean  @default(false)
+  dueDate     DateTime?
+  tags        String[]
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([isSprint])
+  @@index([isCompleted])
+}
+
+model JournalEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String?
+  body        String
+  type        String   @default("journal") // journal, voice, reflection
+  mood        String?
+  tags        String[]
+  audioUrl    String?
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([type])
+  @@index([mood])
+}
+
+model Habit {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  description    String?
+  frequency      String   @default("daily") // daily, weekly, monthly
+  targetCount    Int      @default(1)
+  completedDates String[] // Array of date strings (YYYY-MM-DD)
+  currentStreak  Int      @default(0)
+  bestStreak     Int      @default(0)
+  icon           String   @default("🎯")
+  color          String   @default("blue")
+  isActive       Boolean  @default(true)
+  
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model UserSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  
+  // Feature toggles
+  goalsEnabled            Boolean @default(true)
+  contributionsEnabled    Boolean @default(true)
+  autobiographyEnabled    Boolean @default(true)
+  assessmentsEnabled      Boolean @default(true)
+  journalEnabled          Boolean @default(true)
+  
+  // Privacy settings
+  defaultVisibility       String  @default("private")
+  allowDataExport         Boolean @default(true)
+  allowAnonymousAnalytics Boolean @default(false)
+  
+  // Display preferences
+  theme                   String  @default("dark")
+  timezone               String  @default("UTC")
+  
+  user                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
