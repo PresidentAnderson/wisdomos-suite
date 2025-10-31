@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+import Header from './components/Header'
+import Footer from './components/Footer'
 import { AuthProvider } from '@/lib/auth-context'
 import DemoDataInitializer from '@/components/DemoDataInitializer'
 import { LifeAreasProvider } from '@/contexts/LifeAreasContext'
@@ -46,10 +46,10 @@ export default function RootLayout({
             <ToastProvider>
               <DemoDataInitializer />
               <div className="flex flex-col min-h-screen">
-                <Navigation />
-                <div className="phoenix-glow flex-1">
+                <Header />
+                <main className="flex-1">
                   {children}
-                </div>
+                </main>
                 <Footer />
               </div>
             </ToastProvider>
