@@ -19,14 +19,19 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./*"],
-      "@wisdom/*": ["../../packages/*/src"]
+      "@/*": [
+        "./*"
+      ],
+      "@wisdom/*": [
+        "../../packages/*/src"
+      ]
     },
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
