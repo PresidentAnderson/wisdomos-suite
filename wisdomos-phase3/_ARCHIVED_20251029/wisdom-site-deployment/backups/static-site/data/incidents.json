@@ -1,0 +1,38 @@
+[
+    {
+        "date": "2025-08-09",
+        "type": {
+            "en": "Food/Trust",
+            "fr": "Nourriture/Confiance"
+        },
+        "description": {
+            "en": "Boundary breach around food and trust",
+            "fr": "Violation de limites autour de la nourriture et de la confiance"
+        },
+        "status": "yellow"
+    },
+    {
+        "date": "2025-08-14",
+        "type": {
+            "en": "Jealousy",
+            "fr": "Jalousie"
+        },
+        "description": {
+            "en": "Jealousy outburst requiring reset",
+            "fr": "Accès de jalousie nécessitant une réinitialisation"
+        },
+        "status": "red"
+    },
+    {
+        "date": "2025-08-15",
+        "type": {
+            "en": "Dismissal",
+            "fr": "Rejet"
+        },
+        "description": {
+            "en": "Charger dismissal incident",
+            "fr": "Incident de rejet du chargeur"
+        },
+        "status": "green"
+    }
+]

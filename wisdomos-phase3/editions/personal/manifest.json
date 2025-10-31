@@ -1,0 +1,69 @@
+{
+  "id": "personal",
+  "name": "WisdomOS — Personal Edition",
+  "version": "1.0.0",
+  "description": "Personal growth and fulfillment tracking for individuals",
+  "branding": {
+    "primaryColor": "#FF6B35",
+    "secondaryColor": "#F7B801",
+    "logo": "logo-personal.svg",
+    "favicon": "favicon-personal.ico",
+    "appName": "WisdomOS Personal"
+  },
+  "features": {
+    "core": {
+      "autobiography": true,
+      "fulfillmentDisplay": true,
+      "journaling": true,
+      "wisdomCoach": true,
+      "lifeAreas": true,
+      "commitments": true
+    },
+    "assessments": {
+      "relationshipAssessment": true,
+      "selfReflection": true,
+      "dailyPrompts": true
+    },
+    "social": {
+      "collaboration": false,
+      "sharing": false,
+      "publicProfiles": false
+    },
+    "coaching": {
+      "clientDashboard": false,
+      "coachTools": false,
+      "sessionNotes": false,
+      "clientExports": false
+    },
+    "organization": {
+      "multiUser": false,
+      "sso": false,
+      "orgAdmin": false,
+      "teamAnalytics": false,
+      "compliance": false,
+      "billing": false
+    },
+    "integrations": {
+      "calendar": true,
+      "webhooks": false,
+      "api": false
+    }
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "copySet": "personal",
+  "theme": {
+    "mode": "light",
+    "customization": true
+  },
+  "limits": {
+    "maxJournalEntries": -1,
+    "maxLifeAreas": 30,
+    "maxCommitments": -1,
+    "maxCoachSessions": -1,
+    "storageGB": 5
+  },
+  "pricing": {
+    "tier": "free",
+    "model": "freemium"
+  }
+}

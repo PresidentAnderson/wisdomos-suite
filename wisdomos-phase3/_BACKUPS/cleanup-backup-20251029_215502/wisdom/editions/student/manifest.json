@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "student",
+  "name": "WisdomOS — Student",
+  "tier": "student",
+  "branding": {
+    "primaryColor": "#10B981",
+    "secondaryColor": "#059669",
+    "logoPath": "./assets/logo-student.svg",
+    "tagline": "Wisdom for learners"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": false,
+    "aiAnalysis": false,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": false,
+    "communityForums": false,
+    "classManagement": false,
+    "studentReports": false,
+    "customFields": false,
+    "advancedCharts": false,
+    "apiAccess": false,
+    "prioritySupport": false
+  },
+  "limits": {
+    "maxEntries": 500,
+    "maxAreas": 10,
+    "maxClients": 0,
+    "maxUsers": 1,
+    "storageGB": 5
+  },
+  "platforms": ["web", "mobile"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 4.99,
+    "annualPrice": 49.99,
+    "custom": false
+  }
+}

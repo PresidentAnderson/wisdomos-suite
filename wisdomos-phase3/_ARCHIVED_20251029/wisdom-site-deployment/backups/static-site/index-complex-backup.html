@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Course Integration - Jonathan Anderson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mr-3"></div>
+                        <span class="text-xl font-bold text-purple-600 dark:text-purple-400">WisdomOS</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <!-- Home -->
+                    <a href="index.html" class="nav-link-main">Home</a>
+                    
+                    <!-- Course Dropdown -->
+                    <div class="relative dropdown-container">
+                        <button class="nav-link-main dropdown-trigger flex items-center">
+                            Course
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="wisdom-evolution.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">🧠</span>
+                                    <div>
+                                        <div class="font-semibold">Wisdom Evolution</div>
+                                        <div class="text-sm text-gray-500">4-Module Transformation Course</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="dashboard.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">📊</span>
+                                    <div>
+                                        <div class="font-semibold">Personal Dashboard</div>
+                                        <div class="text-sm text-gray-500">Progress & Achievements</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="tracker.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">📈</span>
+                                    <div>
+                                        <div class="font-semibold">Progress Tracker</div>
+                                        <div class="text-sm text-gray-500">Daily Practices & Habits</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Personal Dropdown -->
+                    <div class="relative dropdown-container">
+                        <button class="nav-link-main dropdown-trigger flex items-center">
+                            Personal
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="autobiography.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">📖</span>
+                                    <div>
+                                        <div class="font-semibold">Life Story</div>
+                                        <div class="text-sm text-gray-500">Interactive Timeline</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="relationships.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">💝</span>
+                                    <div>
+                                        <div class="font-semibold">Relationships</div>
+                                        <div class="text-sm text-gray-500">Connections & Community</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="incident-form.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">📝</span>
+                                    <div>
+                                        <div class="font-semibold">Incident Log</div>
+                                        <div class="text-sm text-gray-500">Reflection & Learning</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Services Dropdown -->
+                    <div class="relative dropdown-container">
+                        <button class="nav-link-main dropdown-trigger flex items-center">
+                            Services
+                            <svg class="ml-1 h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="coaching.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">🎯</span>
+                                    <div>
+                                        <div class="font-semibold">Life Coaching</div>
+                                        <div class="text-sm text-gray-500">1-on-1 Transformation</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="workshops.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">🎭</span>
+                                    <div>
+                                        <div class="font-semibold">Workshops</div>
+                                        <div class="text-sm text-gray-500">Group Learning Events</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="consulting.html" class="dropdown-item">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-3">💼</span>
+                                    <div>
+                                        <div class="font-semibold">Consulting</div>
+                                        <div class="text-sm text-gray-500">Organizational Wisdom</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="flex items-center space-x-3 ml-6 border-l border-gray-200 dark:border-gray-600 pl-6">
+                        <!-- Language Switcher -->
+                        <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-sm">
+                            <option value="en">EN</option>
+                            <option value="fr">FR</option>
+                            <option value="ar">AR</option>
+                        </select>
+                        
+                        <!-- Dark Mode Toggle -->
+                        <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            🌓
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="mobile-menu-button p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                        <span class="sr-only">Open main menu</span>
+                        <div class="hamburger">
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600">
+                <a href="index.html" class="mobile-nav-item">🏠 Home</a>
+                
+                <!-- Course Section -->
+                <div class="mobile-section">
+                    <div class="mobile-section-title">📚 Course</div>
+                    <a href="wisdom-evolution.html" class="mobile-nav-subitem">🧠 Wisdom Evolution</a>
+                    <a href="dashboard.html" class="mobile-nav-subitem">📊 Dashboard</a>
+                    <a href="tracker.html" class="mobile-nav-subitem">📈 Progress Tracker</a>
+                </div>
+
+                <!-- Personal Section -->
+                <div class="mobile-section">
+                    <div class="mobile-section-title">👤 Personal</div>
+                    <a href="autobiography.html" class="mobile-nav-subitem">📖 Life Story</a>
+                    <a href="relationships.html" class="mobile-nav-subitem">💝 Relationships</a>
+                    <a href="incident-form.html" class="mobile-nav-subitem">📝 Incident Log</a>
+                </div>
+
+                <!-- Services Section -->
+                <div class="mobile-section">
+                    <div class="mobile-section-title">⚡ Services</div>
+                    <a href="coaching.html" class="mobile-nav-subitem">🎯 Life Coaching</a>
+                    <a href="workshops.html" class="mobile-nav-subitem">🎭 Workshops</a>
+                    <a href="consulting.html" class="mobile-nav-subitem">💼 Consulting</a>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="mobile-section border-t border-gray-200 dark:border-gray-600 pt-3 mt-3">
+                    <div class="flex items-center justify-between px-4 py-2">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Settings</span>
+                        <div class="flex items-center space-x-3">
+                            <select id="mobile-language-switcher" class="px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600">
+                                <option value="en">EN</option>
+                                <option value="fr">FR</option>
+                                <option value="ar">AR</option>
+                            </select>
+                            <button id="mobile-dark-mode-toggle" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                                🌓
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
+        <div class="text-center text-white px-4">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6" data-i18n="hero-title">
+                Wisdom Course Integration
+            </h1>
+            <p class="text-xl md:text-2xl mb-8" data-i18n="hero-subtitle">
+                Transforming insights into lived experience
+            </p>
+            <p class="text-lg italic opacity-90" data-i18n="hero-quote">
+                "Fulfillment is authored through clarity, conversation, and commitment."
+            </p>
+            <div class="mt-12 space-x-4">
+                <a href="dashboard.html" class="btn-primary" data-i18n="btn-explore">Open Dashboard</a>
+                <a href="wisdom-evolution.html" class="btn-secondary" data-i18n="btn-tracker">Start Course</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purpose Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12 dark:text-white" data-i18n="purpose-title">
+                Purpose
+            </h2>
+            <div class="prose prose-lg dark:prose-invert mx-auto">
+                <p data-i18n="purpose-text">
+                    This project documents my full participation in the Wisdom Unlimited Course, 
+                    integrating its tools with my real commitments in work, love, finance, and community. 
+                    It serves as both a personal transformation archive and a practical operating system for my life.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="py-20 bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12 dark:text-white" data-i18n="quick-links">
+                Quick Access
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <a href="dashboard.html" class="card hover:scale-105 transition-transform">
+                    <h3 class="text-xl font-bold mb-3">Personal Dashboard</h3>
+                    <p>Overview of progress, daily practices, and achievements</p>
+                </a>
+                <a href="wisdom-evolution.html" class="card hover:scale-105 transition-transform">
+                    <h3 class="text-xl font-bold mb-3">Wisdom Evolution Course</h3>
+                    <p>4 modules following Landmark Education methodology</p>
+                </a>
+                <a href="autobiography.html" class="card hover:scale-105 transition-transform">
+                    <h3 class="text-xl font-bold mb-3">Life Autobiography</h3>
+                    <p>Interactive timeline, milestones, and contribution display</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script src="assets/scripts.js"></script>
+</body>
+</html>

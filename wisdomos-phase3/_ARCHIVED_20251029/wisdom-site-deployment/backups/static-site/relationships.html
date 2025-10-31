@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationships Map - Wisdom Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+    <style>
+        .node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .node:hover {
+            transform: scale(1.1);
+        }
+        
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+        }
+        
+        .node-text {
+            font-size: 12px;
+            pointer-events: none;
+        }
+        
+        #relationship-viz {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+        }
+        
+        .dark #relationship-viz {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .relationship-detail {
+            position: fixed;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 300px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .dark .relationship-detail {
+            background: #374151;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16 items-center">
+                <span class="text-xl font-bold text-purple-600 dark:text-purple-400">Wisdom Course</span>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="tools.html" class="nav-link">Tools</a>
+                    <a href="life-areas.html" class="nav-link">Life Areas</a>
+                    <a href="tracker.html" class="nav-link">Tracker</a>
+                    <a href="relationships.html" class="nav-link">Relationships</a>
+                    <a href="legacy.html" class="nav-link">Legacy</a>
+                    
+                    <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                        <option value="en">EN</option>
+                        <option value="fr">FR</option>
+                        <option value="ar">AR</option>
+                    </select>
+                    
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        🌓
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <h1 class="text-4xl font-bold mb-8 dark:text-white">Relationship Ecosystem</h1>
+        
+        <!-- Interactive Visualization -->
+        <div class="card mb-8">
+            <h2 class="text-2xl font-bold mb-4">Interactive Relationship Map</h2>
+            <div id="relationship-viz"></div>
+        </div>
+
+        <!-- Relationship Categories -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-purple-600 dark:text-purple-400">Inner Circle</h3>
+                <div id="inner-circle" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-blue-600 dark:text-blue-400">Support Network</h3>
+                <div id="support-network" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-green-600 dark:text-green-400">Professional Circle</h3>
+                <div id="professional-circle" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-orange-600 dark:text-orange-400">Community</h3>
+                <div id="community" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-red-600 dark:text-red-400">Family</h3>
+                <div id="family" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-gray-600 dark:text-gray-400">Past Relationships</h3>
+                <div id="past-relationships" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-xl font-bold mb-4 text-teal-600 dark:text-teal-400">Institutions & Systems</h3>
+                <div id="institutions" class="space-y-3">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Relationship Insights -->
+        <div class="card">
+            <h2 class="text-2xl font-bold mb-4">Relationship Insights</h2>
+            <div class="prose dark:prose-invert max-w-none">
+                <h3>Key Learning: "When Others First Didn't Matter"</h3>
+                <p><strong>Before the split:</strong> Relationships were fluid and story-free. People just were.</p>
+                <p><strong>The split moment:</strong> When protection became more important than connection.</p>
+                <p><strong>Integration now:</strong> Re-including others through:</p>
+                <ul>
+                    <li>Curiosity before judgment</li>
+                    <li>Mutual mattering - everyone counts</li>
+                    <li>Present-time presence</li>
+                    <li>Balanced listening and speaking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relationship Detail Popup -->
+    <div id="relationship-detail" class="relationship-detail">
+        <h3 id="detail-name" class="font-bold text-lg mb-2"></h3>
+        <p id="detail-role" class="text-sm text-gray-600 dark:text-gray-400 mb-3"></p>
+        <div id="detail-qualities" class="space-y-2"></div>
+        <div id="detail-growth" class="mt-3 pt-3 border-t dark:border-gray-600"></div>
+    </div>
+
+    <script src="assets/scripts.js"></script>
+    <script src="data/relationships.js"></script>
+    <script>
+        // Relationship data structure
+        const relationshipData = {
+            nodes: [
+                // Center
+                { id: "self", name: "Me", group: 0, x: 400, y: 300, fixed: true },
+                
+                // Inner Circle
+                { id: "partner", name: "Djamel Boualem", group: 1, role: "Partner & PVT Team", 
+                  qualities: ["Reflective presence", "Reality check", "Love"], 
+                  growth: "Intimacy/love domain & business reflection" },
+                
+                // Support Network
+                { id: "therapist", name: "Guy Forest", group: 2, role: "Therapist",
+                  qualities: ["Safe space", "Guidance", "Healing"],
+                  growth: "Deep inner work" },
+                { id: "pierre", name: "Pierre Rancourt", group: 2, role: "Therapist",
+                  qualities: ["Insight", "Support", "Transformation"],
+                  growth: "Personal evolution" },
+                { id: "michael", name: "Michael", group: 2, role: "Task Support",
+                  qualities: ["Operational", "Reliable", "Structured"],
+                  growth: "Clear boundaries" },
+                { id: "zied", name: "Zied Zigg", group: 2, role: "Friend & PVT Design",
+                  qualities: ["Tactical insight", "Design", "Friendship"],
+                  growth: "Design innovation & friendship" },
+                { id: "michael_l", name: "Michael Laplante", group: 2, role: "Friend & PVT Team",
+                  qualities: ["Task support", "Operations", "Loyalty"],
+                  growth: "Operations reflection & friendship" },
+                { id: "abdelhafid", name: "Abdelhafid Mimouni", group: 2, role: "Friend",
+                  qualities: ["Wisdom", "Connection", "Trust"],
+                  growth: "Meaningful friendship" },
+                { id: "keena", name: "Keena Grandmaison", group: 2, role: "Friend",
+                  qualities: ["Joy", "Support", "Understanding"],
+                  growth: "Nurturing friendship" },
+                { id: "johanne", name: "Johanne Grandmaison", group: 2, role: "Friend",
+                  qualities: ["Care", "Presence", "Connection"],
+                  growth: "Deep connection" },
+                { id: "natasha", name: "Natasha Grandmaison", group: 2, role: "Friend",
+                  qualities: ["Energy", "Creativity", "Support"],
+                  growth: "Creative friendship" },
+                { id: "marjolaine", name: "Marjolaine Caya", group: 2, role: "Friend",
+                  qualities: ["Warmth", "Understanding", "Trust"],
+                  growth: "Supportive friendship" },
+                
+                // Professional - PVT Team
+                { id: "pvt_team", name: "📌 PVT Team", group: 3, role: "Business Core",
+                  qualities: ["Innovation", "Collaboration", "Impact"],
+                  growth: "Collective business growth" },
+                { id: "jas", name: "Jas Bassi", group: 3, role: "PVT Team Member",
+                  qualities: ["Strategy", "Leadership", "Vision"],
+                  growth: "Business development" },
+                { id: "mentor", name: "Solomon Shapiro", group: 3, role: "Mentor",
+                  qualities: ["Wisdom", "Experience", "Support"],
+                  growth: "Receiving wisdom" },
+                { id: "nattacha", name: "Nattacha Nikiyuri", group: 3, role: "Attorney",
+                  qualities: ["Protection", "Strategy", "Expertise"],
+                  growth: "Legal empowerment" },
+                { id: "mehdi", name: "Mehdi Thenouri", group: 3, role: "Attorney",
+                  qualities: ["Advocacy", "Knowledge", "Support"],
+                  growth: "Legal clarity" },
+                { id: "michel_b", name: "Michel Belanger", group: 3, role: "Attorney",
+                  qualities: ["Experience", "Wisdom", "Guidance"],
+                  growth: "Legal foundation" },
+                { id: "jeannick", name: "Jeannick Tessier", group: 3, role: "Attorney",
+                  qualities: ["Strategy", "Protection", "Trust"],
+                  growth: "Legal security" },
+                { id: "richard", name: "Richard Rougeau", group: 3, role: "Attorney",
+                  qualities: ["Expertise", "Reliability", "Support"],
+                  growth: "Legal confidence" },
+                { id: "julien", name: "Julien Berrad", group: 3, role: "Attorney",
+                  qualities: ["Innovation", "Strategy", "Protection"],
+                  growth: "Legal advancement" },
+                
+                // Family Members
+                { id: "manon", name: "Manon Whitman", group: 5, role: "Family",
+                  qualities: ["Love", "Support", "Connection"],
+                  growth: "Family bonds" },
+                { id: "dennis", name: "Dennis Whitman", group: 5, role: "Family",
+                  qualities: ["Strength", "Wisdom", "Care"],
+                  growth: "Family heritage" },
+                { id: "darc", name: "D'arc Whitman", group: 5, role: "Family",
+                  qualities: ["Joy", "Connection", "Understanding"],
+                  growth: "Family unity" },
+                { id: "skye", name: "Skye Whitman", group: 5, role: "Family",
+                  qualities: ["Light", "Energy", "Love"],
+                  growth: "Family connection" },
+                { id: "jennifer_w", name: "Jennifer Whitman", group: 5, role: "Family",
+                  qualities: ["Care", "Support", "Presence"],
+                  growth: "Family bonds" },
+                { id: "dennys", name: "Dennys Whitman", group: 5, role: "Family",
+                  qualities: ["Strength", "Protection", "Love"],
+                  growth: "Family support" },
+                { id: "rene", name: "Rene Filiatrault", group: 5, role: "Family",
+                  qualities: ["Wisdom", "Heritage", "Connection"],
+                  growth: "Family roots" },
+                { id: "michel", name: "Michel Filiatrault", group: 5, role: "Family",
+                  qualities: ["Support", "Understanding", "Care"],
+                  growth: "Family unity" },
+                { id: "jeanlouis", name: "Jean-Louis Gallant", group: 5, role: "Family",
+                  qualities: ["Strength", "Leadership", "Love"],
+                  growth: "Family legacy" },
+                { id: "marcel", name: "Marcel Gallant", group: 5, role: "Family",
+                  qualities: ["Joy", "Humor", "Connection"],
+                  growth: "Family bonds" },
+                { id: "john_g", name: "John Gallant", group: 5, role: "Family",
+                  qualities: ["Wisdom", "Support", "Presence"],
+                  growth: "Family connection" },
+                { id: "andre", name: "Andre Gallant (The Cat)", group: 5, role: "Family",
+                  qualities: ["Spirit", "Independence", "Love"],
+                  growth: "Family character" },
+                { id: "loretta", name: "Loretta England", group: 5, role: "Family",
+                  qualities: ["Grace", "Kindness", "Support"],
+                  growth: "Family bonds" },
+                { id: "camille", name: "Camille Gallant", group: 5, role: "Family",
+                  qualities: ["Light", "Joy", "Connection"],
+                  growth: "Family love" },
+                { id: "michael_g", name: "Micheal Gallant", group: 5, role: "Family",
+                  qualities: ["Strength", "Support", "Care"],
+                  growth: "Family unity" },
+                { id: "david_f", name: "David Filiatrault", group: 5, role: "Family",
+                  qualities: ["Understanding", "Connection", "Love"],
+                  growth: "Family bonds" },
+                { id: "vanessa", name: "Venessa Filiatrault", group: 5, role: "Family",
+                  qualities: ["Energy", "Joy", "Support"],
+                  growth: "Family connection" },
+                { id: "eric", name: "Eric Laroche", group: 5, role: "Extended Family",
+                  qualities: ["Support", "Understanding", "Care"],
+                  growth: "Extended family unity" },
+                { id: "pauline", name: "Pauline Belanger", group: 5, role: "Extended Family",
+                  qualities: ["Grace", "Love", "Presence"],
+                  growth: "Extended family connection" },
+                { id: "jeannine", name: "Jeannine Filiatrault", group: 5, role: "Family",
+                  qualities: ["Wisdom", "Heritage", "Love"],
+                  growth: "Family roots" },
+                { id: "beatrice", name: "Beatrice Perrazo", group: 5, role: "Extended Family",
+                  qualities: ["Joy", "Connection", "Support"],
+                  growth: "Extended family bonds" },
+                
+                // Past Relationships
+                { id: "manuel", name: "Manuel Morales-Soto", group: 6, role: "Past Relationship",
+                  qualities: ["Lessons", "Growth", "Understanding"],
+                  growth: "Self-discovery through relationship" },
+                { id: "gael", name: "Gael Larcheres", group: 6, role: "Past Relationship",
+                  qualities: ["Experience", "Learning", "Connection"],
+                  growth: "Understanding patterns" },
+                { id: "willy", name: "Willy Theriault", group: 6, role: "Past Relationship",
+                  qualities: ["Memory", "Growth", "Teaching"],
+                  growth: "Relationship wisdom" },
+                { id: "miguel", name: "Miguel Rivera", group: 6, role: "Past Relationship",
+                  qualities: ["Experience", "Understanding", "Evolution"],
+                  growth: "Personal evolution" },
+                { id: "rodolfo", name: "Rodolfo Cedeno", group: 6, role: "Past Relationship",
+                  qualities: ["Lessons", "Transformation", "Clarity"],
+                  growth: "Finding clarity through experience" },
+                
+                // Institutions & Systems
+                { id: "money", name: "Money", group: 7, role: "Institution",
+                  qualities: ["Resource", "Energy", "Flow"],
+                  growth: "Financial wisdom & abundance" },
+                { id: "banks", name: "Banks", group: 7, role: "Institution",
+                  qualities: ["Structure", "Security", "Growth"],
+                  growth: "Financial empowerment" },
+                { id: "justice", name: "Justice System", group: 7, role: "Institution",
+                  qualities: ["Fairness", "Protection", "Order"],
+                  growth: "Understanding rights & boundaries" },
+                { id: "government", name: "Government", group: 7, role: "Institution",
+                  qualities: ["Structure", "Service", "Community"],
+                  growth: "Civic engagement & contribution" },
+                { id: "authority", name: "Authority", group: 7, role: "Institution",
+                  qualities: ["Power", "Leadership", "Responsibility"],
+                  growth: "Healthy relationship with authority" },
+                
+                // Professional Connections
+                { id: "pierre_s", name: "Pierre Sormany", group: 3, role: "Professional",
+                  qualities: ["Expertise", "Connection", "Support"],
+                  growth: "Professional development" },
+                { id: "salvatore", name: "Salvatore Gagliardi", group: 3, role: "Professional",
+                  qualities: ["Business", "Strategy", "Partnership"],
+                  growth: "Business growth" },
+                { id: "alfred", name: "Alfred Dallair", group: 3, role: "Professional",
+                  qualities: ["Wisdom", "Experience", "Guidance"],
+                  growth: "Professional mentorship" },
+                
+                // Community - Zoom Session Participants
+                { id: "janique", name: "Janique Marion", group: 4, role: "Community",
+                  qualities: ["Connection", "Presence", "Wisdom"],
+                  growth: "Collective learning" },
+                { id: "carrie", name: "Carrie Williams", group: 4, role: "Community",
+                  qualities: ["Support", "Insight", "Growth"],
+                  growth: "Shared wisdom" },
+                { id: "kathy", name: "Kathy Branch", group: 4, role: "Community",
+                  qualities: ["Understanding", "Connection", "Trust"],
+                  growth: "Community building" },
+                { id: "doug", name: "Doug Long", group: 4, role: "Community",
+                  qualities: ["Perspective", "Support", "Growth"],
+                  growth: "Mutual support" },
+                { id: "jessica", name: "Jessica Sarrazin", group: 4, role: "Community",
+                  qualities: ["Joy", "Presence", "Connection"],
+                  growth: "Collective wisdom" },
+                { id: "babs", name: "Babs Maltenfort", group: 4, role: "Community",
+                  qualities: ["Insight", "Support", "Wisdom"],
+                  growth: "Shared growth" },
+                { id: "ronel", name: "Ronel Keimren", group: 4, role: "Community",
+                  qualities: ["Connection", "Understanding", "Growth"],
+                  growth: "Community support" },
+                { id: "greg", name: "Greg Harnett", group: 4, role: "Community",
+                  qualities: ["Perspective", "Presence", "Trust"],
+                  growth: "Collective learning" },
+                { id: "allysha", name: "Allysha Lavino", group: 4, role: "Community",
+                  qualities: ["Joy", "Support", "Connection"],
+                  growth: "Mutual growth" },
+                { id: "adrienne", name: "CM Adrienne Cunningham", group: 4, role: "Community Leader",
+                  qualities: ["Leadership", "Guidance", "Wisdom"],
+                  growth: "Community facilitation" },
+                { id: "niki", name: "Niki Margot Moffa", group: 4, role: "Community",
+                  qualities: ["Insight", "Connection", "Growth"],
+                  growth: "Shared wisdom" },
+                { id: "brian", name: "Brian McIntosh", group: 4, role: "Community",
+                  qualities: ["Support", "Perspective", "Trust"],
+                  growth: "Collective support" },
+                { id: "peter", name: "WCL Peter DeFreitas", group: 4, role: "Community Leader",
+                  qualities: ["Leadership", "Wisdom", "Support"],
+                  growth: "Community guidance" },
+                { id: "krishna", name: "CL Krishna Nair", group: 4, role: "Community Leader",
+                  qualities: ["Leadership", "Insight", "Connection"],
+                  growth: "Community building" },
+                { id: "kim", name: "LF Kim Stilwell", group: 4, role: "Community Facilitator",
+                  qualities: ["Facilitation", "Support", "Growth"],
+                  growth: "Group dynamics" },
+                { id: "karen", name: "Karen Nair", group: 4, role: "Community",
+                  qualities: ["Understanding", "Presence", "Trust"],
+                  growth: "Mutual support" },
+                { id: "della", name: "C Della Croteau", group: 4, role: "Community",
+                  qualities: ["Connection", "Wisdom", "Growth"],
+                  growth: "Shared learning" },
+                { id: "rosemary", name: "C Rosemary Erskine", group: 4, role: "Community",
+                  qualities: ["Insight", "Support", "Connection"],
+                  growth: "Collective wisdom" },
+                { id: "sandy", name: "Sandy Wong", group: 4, role: "Community",
+                  qualities: ["Joy", "Understanding", "Growth"],
+                  growth: "Community connection" },
+                { id: "kyle", name: "Kyle Niznik", group: 4, role: "Community",
+                  qualities: ["Perspective", "Support", "Trust"],
+                  growth: "Mutual growth" },
+                { id: "alanna", name: "Alanna Niznik", group: 4, role: "Community",
+                  qualities: ["Connection", "Presence", "Growth"],
+                  growth: "Shared support" },
+                { id: "choly", name: "Choly Farhad", group: 4, role: "Community",
+                  qualities: ["Wisdom", "Insight", "Connection"],
+                  growth: "Collective learning" },
+                { id: "chris", name: "Chris Schillermore", group: 4, role: "Community",
+                  qualities: ["Support", "Understanding", "Growth"],
+                  growth: "Community building" },
+                { id: "alberta", name: "Albera Roman", group: 4, role: "Community",
+                  qualities: ["Joy", "Connection", "Trust"],
+                  growth: "Mutual support" },
+                { id: "anouk", name: "Anouk Malaika Flambert", group: 4, role: "Community",
+                  qualities: ["Presence", "Wisdom", "Growth"],
+                  growth: "Shared wisdom" },
+                { id: "irene", name: "ZM Irene Gardea", group: 4, role: "Zone Manager",
+                  qualities: ["Leadership", "Support", "Connection"],
+                  growth: "Community coordination" },
+                { id: "franz", name: "Franz Adotevi", group: 4, role: "Community",
+                  qualities: ["Insight", "Understanding", "Growth"],
+                  growth: "Collective support" },
+                { id: "john", name: "John Gilbert", group: 4, role: "Community",
+                  qualities: ["Perspective", "Trust", "Connection"],
+                  growth: "Mutual learning" },
+                { id: "lynette", name: "Lynette Di Mello", group: 4, role: "Community",
+                  qualities: ["Support", "Presence", "Growth"],
+                  growth: "Community connection" },
+                { id: "shawne", name: "Shawne Gray", group: 4, role: "Community",
+                  qualities: ["Understanding", "Joy", "Trust"],
+                  growth: "Shared growth" },
+                { id: "jennifer", name: "Jennifer Galvao", group: 4, role: "Community",
+                  qualities: ["Connection", "Wisdom", "Support"],
+                  growth: "Collective wisdom" }
+            ],
+            links: [
+                { source: "self", target: "partner", strength: 3 },
+                { source: "self", target: "therapist", strength: 2 },
+                { source: "self", target: "pierre", strength: 2 },
+                { source: "self", target: "michael", strength: 2 },
+                { source: "self", target: "zied", strength: 2 },
+                { source: "self", target: "michael_l", strength: 2 },
+                { source: "self", target: "abdelhafid", strength: 2 },
+                { source: "self", target: "keena", strength: 2 },
+                { source: "self", target: "johanne", strength: 2 },
+                { source: "self", target: "natasha", strength: 2 },
+                { source: "self", target: "marjolaine", strength: 2 },
+                { source: "self", target: "pvt_team", strength: 3 },
+                { source: "self", target: "jas", strength: 2 },
+                { source: "self", target: "mentor", strength: 1 },
+                { source: "self", target: "nattacha", strength: 2 },
+                { source: "self", target: "mehdi", strength: 2 },
+                { source: "self", target: "michel_b", strength: 2 },
+                { source: "self", target: "jeannick", strength: 2 },
+                { source: "self", target: "richard", strength: 2 },
+                { source: "self", target: "julien", strength: 2 },
+                // Family connections
+                { source: "self", target: "manon", strength: 2 },
+                { source: "self", target: "dennis", strength: 2 },
+                { source: "self", target: "darc", strength: 2 },
+                { source: "self", target: "skye", strength: 2 },
+                { source: "self", target: "jennifer_w", strength: 2 },
+                { source: "self", target: "dennys", strength: 2 },
+                { source: "self", target: "rene", strength: 2 },
+                { source: "self", target: "michel", strength: 2 },
+                { source: "self", target: "jeanlouis", strength: 2 },
+                { source: "self", target: "marcel", strength: 2 },
+                { source: "self", target: "john_g", strength: 2 },
+                { source: "self", target: "andre", strength: 2 },
+                { source: "self", target: "loretta", strength: 2 },
+                { source: "self", target: "camille", strength: 2 },
+                { source: "self", target: "michael_g", strength: 2 },
+                { source: "self", target: "david_f", strength: 2 },
+                { source: "self", target: "vanessa", strength: 2 },
+                { source: "self", target: "eric", strength: 1 },
+                { source: "self", target: "pauline", strength: 1 },
+                { source: "self", target: "jeannine", strength: 2 },
+                { source: "self", target: "beatrice", strength: 1 },
+                // Past Relationship connections
+                { source: "self", target: "manuel", strength: 1 },
+                { source: "self", target: "gael", strength: 1 },
+                { source: "self", target: "willy", strength: 1 },
+                { source: "self", target: "miguel", strength: 1 },
+                { source: "self", target: "rodolfo", strength: 1 },
+                // Institution connections
+                { source: "self", target: "money", strength: 1 },
+                { source: "self", target: "banks", strength: 1 },
+                { source: "self", target: "justice", strength: 1 },
+                { source: "self", target: "government", strength: 1 },
+                { source: "self", target: "authority", strength: 1 },
+                // Additional Professional connections
+                { source: "self", target: "pierre_s", strength: 2 },
+                { source: "self", target: "salvatore", strength: 2 },
+                { source: "self", target: "alfred", strength: 2 },
+                // Community connections
+                { source: "self", target: "janique", strength: 1 },
+                { source: "self", target: "carrie", strength: 1 },
+                { source: "self", target: "kathy", strength: 1 },
+                { source: "self", target: "doug", strength: 1 },
+                { source: "self", target: "jessica", strength: 1 },
+                { source: "self", target: "babs", strength: 1 },
+                { source: "self", target: "ronel", strength: 1 },
+                { source: "self", target: "greg", strength: 1 },
+                { source: "self", target: "allysha", strength: 1 },
+                { source: "self", target: "adrienne", strength: 1 },
+                { source: "self", target: "niki", strength: 1 },
+                { source: "self", target: "brian", strength: 1 },
+                { source: "self", target: "peter", strength: 1 },
+                { source: "self", target: "krishna", strength: 1 },
+                { source: "self", target: "kim", strength: 1 },
+                { source: "self", target: "karen", strength: 1 },
+                { source: "self", target: "della", strength: 1 },
+                { source: "self", target: "rosemary", strength: 1 },
+                { source: "self", target: "sandy", strength: 1 },
+                { source: "self", target: "kyle", strength: 1 },
+                { source: "self", target: "alanna", strength: 1 },
+                { source: "self", target: "choly", strength: 1 },
+                { source: "self", target: "chris", strength: 1 },
+                { source: "self", target: "alberta", strength: 1 },
+                { source: "self", target: "anouk", strength: 1 },
+                { source: "self", target: "irene", strength: 1 },
+                { source: "self", target: "franz", strength: 1 },
+                { source: "self", target: "john", strength: 1 },
+                { source: "self", target: "lynette", strength: 1 },
+                { source: "self", target: "shawne", strength: 1 },
+                { source: "self", target: "jennifer", strength: 1 }
+            ]
+        };
+
+        // Create D3 visualization
+        const width = 800;
+        const height = 600;
+
+        const svg = d3.select("#relationship-viz")
+            .append("svg")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet");
+
+        // Color scale for groups (0=Self, 1=Inner Circle, 2=Support, 3=Professional, 4=Community, 5=Family, 6=Past Relationships, 7=Institutions)
+        const color = d3.scaleOrdinal()
+            .domain([0, 1, 2, 3, 4, 5, 6, 7])
+            .range(["#9333ea", "#ec4899", "#3b82f6", "#10b981", "#f59e0b", "#dc2626", "#6b7280", "#14b8a6"]);
+
+        // Create force simulation
+        const simulation = d3.forceSimulation(relationshipData.nodes)
+            .force("link", d3.forceLink(relationshipData.links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(40));
+
+        // Create links
+        const link = svg.append("g")
+            .selectAll("line")
+            .data(relationshipData.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .style("stroke-width", d => Math.sqrt(d.strength) * 2);
+
+        // Create nodes
+        const node = svg.append("g")
+            .selectAll("g")
+            .data(relationshipData.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Add circles to nodes
+        node.append("circle")
+            .attr("r", d => d.id === "self" ? 25 : 20)
+            .style("fill", d => color(d.group))
+            .style("stroke", "#fff")
+            .style("stroke-width", 2)
+            .on("click", showDetail);
+
+        // Add labels to nodes
+        node.append("text")
+            .attr("class", "node-text")
+            .attr("dx", 0)
+            .attr("dy", 35)
+            .style("text-anchor", "middle")
+            .style("fill", "#666")
+            .text(d => d.name);
+
+        // Update positions on tick
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            if (d.id !== "self") {
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+        // Show relationship detail
+        function showDetail(event, d) {
+            if (d.id === "self") return;
+            
+            const detail = document.getElementById("relationship-detail");
+            document.getElementById("detail-name").textContent = d.name;
+            document.getElementById("detail-role").textContent = d.role;
+            
+            const qualitiesHtml = d.qualities.map(q => 
+                `<span class="inline-block px-2 py-1 bg-purple-100 dark:bg-purple-900 rounded text-sm">${q}</span>`
+            ).join(" ");
+            document.getElementById("detail-qualities").innerHTML = qualitiesHtml;
+            
+            document.getElementById("detail-growth").innerHTML = 
+                `<strong>Growth Edge:</strong> ${d.growth}`;
+            
+            detail.style.display = "block";
+            detail.style.left = event.pageX + 10 + "px";
+            detail.style.top = event.pageY + 10 + "px";
+            
+            setTimeout(() => {
+                detail.style.display = "none";
+            }, 5000);
+        }
+
+        // Populate category lists
+        function populateCategories() {
+            const categories = {
+                1: "inner-circle",
+                2: "support-network",
+                3: "professional-circle",
+                4: "community"
+            };
+            
+            relationshipData.nodes.forEach(node => {
+                if (node.id === "self") return;
+                
+                const container = document.getElementById(categories[node.group]);
+                if (container) {
+                    const item = document.createElement("div");
+                    item.className = "flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg";
+                    item.innerHTML = `
+                        <div>
+                            <strong>${node.name}</strong>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">${node.role}</p>
+                        </div>
+                        <div class="w-3 h-3 rounded-full" style="background: ${color(node.group)}"></div>
+                    `;
+                    container.appendChild(item);
+                }
+            });
+        }
+
+        // Initialize
+        populateCategories();
+    </script>
+</body>
+</html>

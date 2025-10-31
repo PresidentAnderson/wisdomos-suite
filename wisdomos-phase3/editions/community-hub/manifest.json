@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "community-hub",
+  "name": "WisdomOS — Community Hub",
+  "tier": "community-hub",
+  "branding": {
+    "primaryColor": "#06B6D4",
+    "secondaryColor": "#0891B2",
+    "logoPath": "./assets/logo-community.svg",
+    "tagline": "Connect and grow together"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": true,
+    "aiAnalysis": true,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": true,
+    "communityForums": true,
+    "classManagement": false,
+    "studentReports": false,
+    "customFields": false,
+    "advancedCharts": true,
+    "apiAccess": false,
+    "prioritySupport": false
+  },
+  "limits": {
+    "maxEntries": "unlimited",
+    "maxAreas": "unlimited",
+    "maxClients": 0,
+    "maxUsers": 1,
+    "storageGB": 25
+  },
+  "platforms": ["web", "mobile"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 14.99,
+    "annualPrice": 149.99,
+    "custom": false
+  }
+}

@@ -1,0 +1,159 @@
+# GitLab CI/CD Pipeline for WisdomOS Next.js Platform
+stages:
+  - build
+  - test
+  - build-docker
+  - deploy
+
+variables:
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  DOCKER_LATEST: $CI_REGISTRY_IMAGE:latest
+  NODE_VERSION: "20"
+
+# Cache node_modules
+cache:
+  paths:
+    - node_modules/
+    - .next/cache/
+
+before_script:
+  - echo "🚀 Starting WisdomOS pipeline..."
+
+# Build and test Node.js application
+build:
+  stage: build
+  image: node:20-alpine
+  script:
+    - echo "📦 Installing dependencies..."
+    - npm ci --cache .npm --prefer-offline
+    - echo "🏗️ Building Next.js application..."
+    - npm run build
+  artifacts:
+    paths:
+      - .next/
+      - node_modules/
+    expire_in: 1 hour
+  only:
+    - main
+    - develop
+
+# Run tests and linting
+test:
+  stage: test
+  image: node:20-alpine
+  script:
+    - echo "🧪 Running tests..."
+    - npm ci --cache .npm --prefer-offline
+    - npm run lint
+    - npm run test:ci
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+  only:
+    - main
+    - develop
+
+# Build Docker image
+build-docker:
+  stage: build-docker
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - echo "🐳 Setting up Docker..."
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo "🏗️ Building Docker image..."
+    - docker build -t $DOCKER_IMAGE -t $DOCKER_LATEST .
+    - echo "📤 Pushing Docker image to registry..."
+    - docker push $DOCKER_IMAGE
+    - docker push $DOCKER_LATEST
+    - echo "✅ Docker image built and pushed successfully!"
+  only:
+    - main
+
+# Deploy to staging
+deploy-staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "🚀 Deploying to staging environment..."
+    - echo "Docker image available at: $DOCKER_LATEST"
+    - echo "📊 Deployment metrics:"
+    - echo "  - Commit: $CI_COMMIT_SHA"
+    - echo "  - Branch: $CI_COMMIT_REF_NAME"
+    - echo "  - Pipeline: $CI_PIPELINE_ID"
+    # Add your staging deployment commands here
+    # Example: kubectl apply -f k8s/staging/
+  environment:
+    name: staging
+    url: https://wisdomos-staging.example.com
+  only:
+    - main
+  when: manual
+
+# Deploy to production
+deploy-production:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "🚀 Deploying to production environment..."
+    - echo "Docker image: $DOCKER_LATEST"
+    - echo "🎯 Production deployment started..."
+    # Add your production deployment commands here
+    # Example: kubectl apply -f k8s/production/
+    - echo "✅ Production deployment completed!"
+  environment:
+    name: production
+    url: https://wisdomos.example.com
+  only:
+    - main
+  when: manual
+
+# Security scanning (optional)
+security-scan:
+  stage: test
+  image: docker:stable
+  services:
+    - docker:stable-dind
+  script:
+    - echo "🔒 Running security scans..."
+    # Add security scanning tools here
+    # Example: docker run --rm -v $(pwd):/app securecodewarrior/scanner
+  allow_failure: true
+  only:
+    - main
+
+# Performance testing (optional)
+performance-test:
+  stage: test
+  image: node:20-alpine
+  script:
+    - echo "⚡ Running performance tests..."
+    - npm ci --cache .npm --prefer-offline
+    - npm run build
+    # Add Lighthouse CI or other performance testing
+  allow_failure: true
+  only:
+    - main
+  when: manual
+
+# Cleanup old images
+cleanup:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "🧹 Cleaning up old Docker images..."
+    # Add cleanup scripts here
+  only:
+    - main
+  when: manual

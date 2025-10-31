@@ -1,0 +1,508 @@
+{
+  "version": "1.1.0",
+  "updated": "2025-10-31",
+  "system_name": "WisdomOS Phoenix Badge & XP System",
+  "motto": "Rise into Fulfillment",
+  "dimensions": [
+    {
+      "id": "emotional_growth",
+      "name": "Emotional Growth",
+      "description": "The evolution from reaction to awareness to mastery — the Inner Fire.",
+      "symbol": "🔥",
+      "color": "#FF7F32",
+      "multiplier": 1.2,
+      "life_areas": ["Self-Awareness", "Relationships", "Health & Vitality", "Spiritual Connection", "Creativity"],
+      "badges": [
+        {
+          "id": "ember_aware",
+          "name": "Ember Aware",
+          "tier": "Common",
+          "life_area": "Self-Awareness",
+          "description": "Write 3 honest reflections about your emotions in your journal. Recognize a recurring pattern.",
+          "requirements": "3 reflective entries labeled 'emotion'.",
+          "icon": "🔥",
+          "color": "#FF7F32",
+          "xp_value": 50,
+          "criteria": {
+            "type": "journal_count",
+            "category": "emotion",
+            "threshold": 3,
+            "quality_checks": {
+              "min_word_count": 50,
+              "require_emotion_tag": true
+            }
+          },
+          "unlock_message": "🔥 Ember Aware unlocked — you've started recognizing your feelings instead of avoiding them. This is the first spark."
+        },
+        {
+          "id": "flame_tender",
+          "name": "Flame Tender",
+          "tier": "Rare",
+          "life_area": "Resilience",
+          "description": "Stay emotionally grounded through 3 separate challenging weeks (detected via positive recovery in sentiment analysis).",
+          "requirements": "3 emotional recovery periods detected + 10 emotion-tagged entries.",
+          "icon": "🔥",
+          "color": "#FF7F32",
+          "xp_value": 150,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "sentiment_recovery",
+                "recovery_count": 3,
+                "min_recovery_score": 0.6
+              },
+              {
+                "type": "journal_count",
+                "category": "emotion",
+                "threshold": 10
+              }
+            ]
+          },
+          "unlock_message": "🔥 Flame Tender unlocked — you stayed open when life asked for courage. That's true emotional maturity."
+        },
+        {
+          "id": "heart_alchemist",
+          "name": "Heart Alchemist",
+          "tier": "Epic",
+          "life_area": "Healing / Inner Work",
+          "description": "Journal through a personal pain point, then document a strength or insight gained from it. Track a measured increase in fulfillment over 14 days.",
+          "requirements": "1 pain-point reflection + 1 strength-from-pain insight + 14-day fulfillment increase.",
+          "icon": "💎",
+          "color": "#FF7F32",
+          "xp_value": 400,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "journal_tag",
+                "tag": "pain_point",
+                "threshold": 1
+              },
+              {
+                "type": "journal_tag",
+                "tag": "strength_gained",
+                "threshold": 1
+              },
+              {
+                "type": "fulfillment_increase",
+                "duration_days": 14,
+                "min_increase": 10
+              }
+            ]
+          },
+          "unlock_message": "💎 Heart Alchemist unlocked — you turned pain into wisdom. That's the alchemy of transformation."
+        },
+        {
+          "id": "soul_phoenix",
+          "name": "Soul Phoenix",
+          "tier": "Legendary",
+          "life_area": "Self-Mastery",
+          "description": "Maintain emotional balance (no negative streaks) for 90 days while journaling with full honesty.",
+          "requirements": "90 days of emotional balance + consistent journaling.",
+          "icon": "👑",
+          "color": "#FFD700",
+          "xp_value": 1000,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "emotional_balance",
+                "duration_days": 90,
+                "max_negative_streaks": 0
+              },
+              {
+                "type": "journal_streak",
+                "threshold": 90,
+                "min_word_count": 50
+              },
+              {
+                "type": "dimension_score",
+                "dimension": "emotional_growth",
+                "threshold": 0.95
+              }
+            ]
+          },
+          "unlock_message": "👑 Soul Phoenix unlocked — you've mastered the art of feeling with wisdom. This is rare air."
+        }
+      ]
+    },
+    {
+      "id": "leadership",
+      "name": "Leadership",
+      "description": "Guiding self and others through integrity — the Outer Light.",
+      "symbol": "🕯️",
+      "color": "#4682B4",
+      "multiplier": 1.1,
+      "life_areas": ["Vision & Purpose", "Mentorship", "Community", "Career", "Service"],
+      "badges": [
+        {
+          "id": "pathfinder",
+          "name": "Pathfinder",
+          "tier": "Common",
+          "life_area": "Vision & Purpose",
+          "description": "Define and record your personal mission or life goal. Mark at least one concrete next step.",
+          "requirements": "Create 1 personal fulfillment goal with clear next step.",
+          "icon": "🧭",
+          "color": "#4682B4",
+          "xp_value": 50,
+          "criteria": {
+            "type": "goal_created",
+            "threshold": 1,
+            "require_next_step": true
+          },
+          "unlock_message": "🧭 Pathfinder unlocked — you've begun charting your own course. Trust your first steps."
+        },
+        {
+          "id": "torchbearer",
+          "name": "Torchbearer",
+          "tier": "Rare",
+          "life_area": "Mentorship / Support",
+          "description": "Encourage, mentor, or guide another user or peer through at least one growth challenge.",
+          "requirements": "Document 1 mentorship or support experience with 'support' tag.",
+          "icon": "🌟",
+          "color": "#4682B4",
+          "xp_value": 150,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "journal_tag",
+                "tag": "support",
+                "threshold": 1,
+                "min_word_count": 100
+              },
+              {
+                "type": "goals_completed",
+                "threshold": 3
+              }
+            ]
+          },
+          "unlock_message": "🌟 Torchbearer unlocked — your light now guides others. That's leadership in action."
+        },
+        {
+          "id": "guardian_of_circles",
+          "name": "Guardian of Circles",
+          "tier": "Epic",
+          "life_area": "Community & Group Work",
+          "description": "Host or facilitate 3+ group reflections or accountability sessions. Track feedback or engagement data.",
+          "requirements": "Facilitate 3 group sessions with documented engagement.",
+          "icon": "🏔️",
+          "color": "#4682B4",
+          "xp_value": 400,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "group_sessions_hosted",
+                "threshold": 3,
+                "min_participants": 2
+              },
+              {
+                "type": "journal_tag",
+                "tag": "group_facilitation",
+                "threshold": 3
+              }
+            ]
+          },
+          "unlock_message": "🏔️ Guardian of Circles unlocked — you've created sacred space for others' growth. That's true service."
+        },
+        {
+          "id": "wisdom_architect",
+          "name": "Wisdom Architect",
+          "tier": "Legendary",
+          "life_area": "Cultural Impact / Service",
+          "description": "Sustain leadership impact for 6 months (mentorship, project, or initiative). Must show measurable positive influence.",
+          "requirements": "6 months of sustained leadership + measurable impact on others.",
+          "icon": "👑",
+          "color": "#FFD700",
+          "xp_value": 1000,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "sustained_leadership",
+                "duration_days": 180,
+                "min_activities": 24
+              },
+              {
+                "type": "measurable_impact",
+                "influenced_users": 5,
+                "min_fulfillment_increase": 15
+              },
+              {
+                "type": "dimension_score",
+                "dimension": "leadership",
+                "threshold": 0.95
+              }
+            ]
+          },
+          "unlock_message": "👑 Wisdom Architect unlocked — your influence ripples through others' lives. You've built something lasting."
+        }
+      ]
+    },
+    {
+      "id": "consistency",
+      "name": "Consistency",
+      "description": "Sustained devotion to growth — the Sacred Rhythm.",
+      "symbol": "♾️",
+      "color": "#50C878",
+      "multiplier": 1.0,
+      "life_areas": ["Routine", "Discipline", "Health & Vitality", "Spiritual Connection"],
+      "badges": [
+        {
+          "id": "daily_spark",
+          "name": "Daily Spark",
+          "tier": "Common",
+          "life_area": "Routine / Daily Discipline",
+          "description": "Journal or check in for 5 consecutive days.",
+          "requirements": "5-day journal streak.",
+          "icon": "✨",
+          "color": "#50C878",
+          "xp_value": 50,
+          "criteria": {
+            "type": "streak",
+            "activity": "journal",
+            "threshold": 5
+          },
+          "unlock_message": "✨ Daily Spark unlocked — you showed up five days in a row. Consistency is building."
+        },
+        {
+          "id": "weekly_warrior",
+          "name": "Weekly Warrior",
+          "tier": "Rare",
+          "life_area": "Momentum & Routine Building",
+          "description": "Maintain journaling or self-work streak for 7 days with minimal emotional regression.",
+          "requirements": "7-day streak with positive sentiment trend.",
+          "icon": "⚡",
+          "color": "#50C878",
+          "xp_value": 150,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "streak",
+                "activity": "journal",
+                "threshold": 7
+              },
+              {
+                "type": "sentiment_trend",
+                "direction": "positive_or_stable",
+                "min_score": 0.5
+              }
+            ]
+          },
+          "unlock_message": "⚡ Weekly Warrior unlocked — seven days of devotion. You've built the habit."
+        },
+        {
+          "id": "momentum_master",
+          "name": "Momentum Master",
+          "tier": "Epic",
+          "life_area": "Sustained Practice",
+          "description": "Engage with the system (journal, reflection, habit logs) 30 out of 35 days in a row.",
+          "requirements": "30/35 days active with quality engagement.",
+          "icon": "🌙",
+          "color": "#50C878",
+          "xp_value": 400,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "activity_frequency",
+                "window_days": 35,
+                "min_active_days": 30
+              },
+              {
+                "type": "average_entry_quality",
+                "min_word_count": 75,
+                "min_depth_score": 0.6
+              }
+            ]
+          },
+          "unlock_message": "🌙 Momentum Master unlocked — 30 days of presence. Your practice is becoming devotion."
+        },
+        {
+          "id": "eternal_flame",
+          "name": "Eternal Flame",
+          "tier": "Legendary",
+          "life_area": "Enduring Devotion",
+          "description": "90 consecutive days of reflection, tracking, or progress entries without dropping below 80% consistency.",
+          "requirements": "90-day streak with 80%+ quality maintenance.",
+          "icon": "🔥",
+          "color": "#FFD700",
+          "xp_value": 1000,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "streak",
+                "activity": "journal",
+                "threshold": 90
+              },
+              {
+                "type": "consistency_score",
+                "min_percentage": 80,
+                "over_days": 90
+              },
+              {
+                "type": "dimension_score",
+                "dimension": "consistency",
+                "threshold": 0.95
+              }
+            ]
+          },
+          "unlock_message": "🔥 Eternal Flame unlocked — 90 days unbroken. Your practice is unshakable."
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "name": "Integration",
+      "description": "The balance of all dimensions into embodied wisdom — The Ascent.",
+      "symbol": "🜂",
+      "color": "#40E0D0",
+      "multiplier": 1.5,
+      "life_areas": ["Balanced Living", "Full Embodiment", "Fulfillment"],
+      "badges": [
+        {
+          "id": "harmony_weaver",
+          "name": "Harmony Weaver",
+          "tier": "Epic",
+          "life_area": "Balanced Living",
+          "description": "Keep Emotional Growth, Leadership, and Consistency dimensions all above 70% for 21 continuous days.",
+          "requirements": "All core dimensions >70% for 21 days.",
+          "icon": "🦅",
+          "color": "#40E0D0",
+          "xp_value": 400,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "all_dimensions",
+                "threshold": 0.7,
+                "duration_days": 21,
+                "dimensions": ["emotional_growth", "leadership", "consistency"]
+              }
+            ]
+          },
+          "unlock_message": "🦅 Harmony Weaver unlocked — all dimensions above 70% for three weeks. Balance achieved."
+        },
+        {
+          "id": "phoenix_ascendant",
+          "name": "Phoenix Ascendant",
+          "tier": "Legendary",
+          "life_area": "Full Embodiment / Fulfillment",
+          "description": "Reach 100% completion in all three dimensions and maintain it for 14 consecutive days. Reflect on the journey in your journal.",
+          "requirements": "All dimensions at 100% for 14 days + transformation reflection.",
+          "icon": "🕊️",
+          "color": "#FFD700",
+          "xp_value": 1000,
+          "criteria": {
+            "type": "combined",
+            "conditions": [
+              {
+                "type": "all_dimensions",
+                "threshold": 1.0,
+                "duration_days": 14,
+                "dimensions": ["emotional_growth", "leadership", "consistency"]
+              },
+              {
+                "type": "journal_tag",
+                "tag": "transformation_reflection",
+                "threshold": 1,
+                "min_word_count": 200
+              },
+              {
+                "type": "total_xp",
+                "threshold": 15000
+              }
+            ]
+          },
+          "unlock_message": "🕊️ Phoenix Ascendant unlocked — complete embodiment achieved. You are the cycle itself."
+        }
+      ]
+    }
+  ],
+  "life_areas": [
+    {
+      "id": "self_awareness",
+      "name": "Self-Awareness",
+      "dimensions": ["emotional_growth", "consistency"],
+      "description": "Journaling, emotional labeling, self-assessment logs."
+    },
+    {
+      "id": "relationships",
+      "name": "Relationships",
+      "dimensions": ["emotional_growth", "leadership"],
+      "description": "Forgiveness, empathy practice, resolving conflict respectfully."
+    },
+    {
+      "id": "purpose_career",
+      "name": "Purpose / Career",
+      "dimensions": ["leadership", "consistency"],
+      "description": "Completing goals, mentoring, creating meaningful output."
+    },
+    {
+      "id": "health_vitality",
+      "name": "Health & Vitality",
+      "dimensions": ["consistency", "emotional_growth"],
+      "description": "Maintaining routine, stress reflection, physical resilience."
+    },
+    {
+      "id": "spiritual_connection",
+      "name": "Spiritual Connection",
+      "dimensions": ["emotional_growth", "integration"],
+      "description": "Deep journaling, gratitude cycles, meditation streaks."
+    },
+    {
+      "id": "community",
+      "name": "Community",
+      "dimensions": ["leadership", "integration"],
+      "description": "Group sessions, mentorship, culture building."
+    },
+    {
+      "id": "creativity",
+      "name": "Creativity",
+      "dimensions": ["emotional_growth", "leadership"],
+      "description": "Creating from emotion, sharing insights publicly."
+    },
+    {
+      "id": "learning_growth",
+      "name": "Learning & Growth",
+      "dimensions": ["consistency", "emotional_growth"],
+      "description": "Completing reflections, tracking lessons learned."
+    }
+  ],
+  "integration_hooks": [
+    {
+      "event": "on_journal_entry",
+      "trigger": "New reflection logged",
+      "outcome": "Update Emotional Growth progress"
+    },
+    {
+      "event": "on_sentiment_recovery",
+      "trigger": "Emotional recovery detected",
+      "outcome": "+progress for Flame Tender"
+    },
+    {
+      "event": "on_streak_update",
+      "trigger": "Streak milestone hit",
+      "outcome": "+progress for Consistency dimension"
+    },
+    {
+      "event": "on_group_event",
+      "trigger": "Group reflection hosted",
+      "outcome": "+progress for Leadership dimension"
+    },
+    {
+      "event": "on_balance_check",
+      "trigger": "All dimensions ≥ 70%",
+      "outcome": "Trigger Harmony Weaver badge"
+    },
+    {
+      "event": "on_full_completion",
+      "trigger": "All dimensions = 100%",
+      "outcome": "Trigger Phoenix Ascendant badge"
+    }
+  ]
+}

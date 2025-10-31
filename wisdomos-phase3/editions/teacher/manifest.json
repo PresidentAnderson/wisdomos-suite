@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "teacher",
+  "name": "WisdomOS — Teacher",
+  "tier": "teacher",
+  "branding": {
+    "primaryColor": "#EF4444",
+    "secondaryColor": "#DC2626",
+    "logoPath": "./assets/logo-teacher.svg",
+    "tagline": "Wisdom education platform"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": true,
+    "aiAnalysis": true,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": true,
+    "communityForums": false,
+    "classManagement": true,
+    "studentReports": true,
+    "customFields": true,
+    "advancedCharts": true,
+    "apiAccess": false,
+    "prioritySupport": true
+  },
+  "limits": {
+    "maxEntries": "unlimited",
+    "maxAreas": "unlimited",
+    "maxClients": 100,
+    "maxUsers": 1,
+    "storageGB": 100
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 29.99,
+    "annualPrice": 299.99,
+    "custom": false
+  }
+}

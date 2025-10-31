@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm, community-focused color palette */
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    /* Orange/Amber primary instead of blue */
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 60 9.1% 97.8%;
+    /* Warm secondary colors */
+    --secondary: 33 100% 96.5%;
+    --secondary-foreground: 20 14.3% 4.1%;
+    --muted: 43 100% 96.1%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 38 100% 96.1%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    /* Amber borders for warmth */
+    --border: 43 100% 91.4%;
+    --input: 43 100% 91.4%;
+    --ring: 24.6 95% 53.1%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    /* Amber/Orange for dark mode primary */
+    --primary: 32 95% 44%;
+    --primary-foreground: 24 9.8% 10%;
+    --secondary: 24 10% 15%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 24 10% 15%;
+    --muted-foreground: 43 5% 60%;
+    --accent: 24 10% 20%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 24 10% 20%;
+    --input: 24 10% 20%;
+    --ring: 32 95% 44%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom community-focused styles */
+@layer components {
+  .community-gradient {
+    @apply bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600;
+  }
+
+  .community-card {
+    @apply bg-white rounded-xl shadow-md hover:shadow-xl transition-all border border-amber-100 hover:border-amber-300;
+  }
+
+  .community-button {
+    @apply bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-semibold transition-all shadow-lg hover:shadow-xl;
+  }
+}

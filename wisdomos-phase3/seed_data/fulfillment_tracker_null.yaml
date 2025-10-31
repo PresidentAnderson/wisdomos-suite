@@ -1,0 +1,444 @@
+# WisdomOS Fulfillment Tracker - New Tenant Template
+# Blank slate for new user workspaces
+# All areas initialized with null values
+# Generated: 2025-10-30
+
+tenant:
+  id: null
+  name: null
+  created_at: null
+  last_updated: null
+
+overall_fulfillment:
+  score: null
+  status: null
+  trend: null
+  emoji: null
+
+domains:
+  # ========================================
+  # FOUNDATIONAL DOMAIN (Systems & Structure)
+  # ========================================
+  - id: 1
+    slug: "health-wellness"
+    name: "Health & Wellness"
+    phoenix_name: "Phoenix of Vitality"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 2
+    slug: "financial-abundance"
+    name: "Financial Abundance"
+    phoenix_name: "Phoenix of Prosperity"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 3
+    slug: "work-purpose"
+    name: "Work & Purpose"
+    phoenix_name: "Phoenix of Mastery"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 4
+    slug: "home-environment"
+    name: "Home & Environment"
+    phoenix_name: "Phoenix of Sanctuary"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 5
+    slug: "time-energy"
+    name: "Time & Energy Management"
+    phoenix_name: "Phoenix of Flow"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 6
+    slug: "learning-growth"
+    name: "Learning & Growth"
+    phoenix_name: "Phoenix of Wisdom"
+    category: "FOUNDATIONAL"
+    cluster: "SYSTEMIC_STRUCTURAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  # ========================================
+  # RELATIONAL DOMAIN (Connection & Love)
+  # ========================================
+  - id: 7
+    slug: "intimacy-love"
+    name: "Intimacy & Love"
+    phoenix_name: "Phoenix of Sacred Union"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 8
+    slug: "family"
+    name: "Family"
+    phoenix_name: "Phoenix of Lineage"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 9
+    slug: "friendship"
+    name: "Friendship"
+    phoenix_name: "Phoenix of Brotherhood/Sisterhood"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 10
+    slug: "community-belonging"
+    name: "Community & Belonging"
+    phoenix_name: "Phoenix of Tribe"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 11
+    slug: "communication-boundaries"
+    name: "Communication & Boundaries"
+    phoenix_name: "Phoenix of Clear Voice"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 12
+    slug: "collaboration-teamwork"
+    name: "Collaboration & Teamwork"
+    phoenix_name: "Phoenix of Synergy"
+    category: "RELATIONAL"
+    cluster: "RELATIONAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  # ========================================
+  # CREATIVE DOMAIN (Expression & Innovation)
+  # ========================================
+  - id: 13
+    slug: "art-creativity"
+    name: "Art & Creativity"
+    phoenix_name: "Phoenix of Imagination"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 14
+    slug: "music-sound"
+    name: "Music & Sound"
+    phoenix_name: "Phoenix of Harmony"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 15
+    slug: "writing-storytelling"
+    name: "Writing & Storytelling"
+    phoenix_name: "Phoenix of the Scribe"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 16
+    slug: "innovation-problem-solving"
+    name: "Innovation & Problem-Solving"
+    phoenix_name: "Phoenix of Breakthroughs"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 17
+    slug: "design-aesthetics"
+    name: "Design & Aesthetics"
+    phoenix_name: "Phoenix of Beauty"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 18
+    slug: "play-experimentation"
+    name: "Play & Experimentation"
+    phoenix_name: "Phoenix of Wonder"
+    category: "CREATIVE"
+    cluster: "CREATIVE_EXPRESSIVE"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  # ========================================
+  # EXPERIENTIAL DOMAIN (Adventure & Sensation)
+  # ========================================
+  - id: 19
+    slug: "adventure-exploration"
+    name: "Adventure & Exploration"
+    phoenix_name: "Phoenix of the Pathfinder"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 20
+    slug: "movement-dance"
+    name: "Movement & Dance"
+    phoenix_name: "Phoenix of Embodiment"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 21
+    slug: "nature-wilderness"
+    name: "Nature & Wilderness"
+    phoenix_name: "Phoenix of the Wild"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 22
+    slug: "pleasure-sensuality"
+    name: "Pleasure & Sensuality"
+    phoenix_name: "Phoenix of Eros"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 23
+    slug: "rest-recovery"
+    name: "Rest & Recovery"
+    phoenix_name: "Phoenix of Restoration"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 24
+    slug: "celebration-joy"
+    name: "Celebration & Joy"
+    phoenix_name: "Phoenix of Radiance"
+    category: "EXPERIENTIAL"
+    cluster: "EXPERIENTIAL"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  # ========================================
+  # LEGACY DOMAIN (Impact & Contribution)
+  # ========================================
+  - id: 25
+    slug: "purpose-calling"
+    name: "Purpose & Calling"
+    phoenix_name: "Phoenix of Destiny"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 26
+    slug: "service-contribution"
+    name: "Service & Contribution"
+    phoenix_name: "Phoenix of the Servant Leader"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 27
+    slug: "legacy-heritage"
+    name: "Legacy & Heritage"
+    phoenix_name: "Phoenix of Ancestry"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 28
+    slug: "teaching-mentorship"
+    name: "Teaching & Mentorship"
+    phoenix_name: "Phoenix of the Elder"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 29
+    slug: "leadership-influence"
+    name: "Leadership & Influence"
+    phoenix_name: "Phoenix of the Visionary"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+  - id: 30
+    slug: "wealth-generosity"
+    name: "Wealth & Generosity"
+    phoenix_name: "Phoenix of Abundance"
+    category: "LEGACY"
+    cluster: "LEGACY_IMPACT"
+    score: null
+    status: null
+    emoji: null
+    last_event: null
+    last_event_date: null
+    recent_insights: []
+
+# Aggregate Statistics
+statistics:
+  total_areas: 30
+  thriving: 0
+  needs_attention: 0
+  breakdown: 0
+  average_score: null
+  highest_scoring: []
+  lowest_scoring: []
+  trend: null
+  insights: []
+
+# Next Actions
+next_actions: []
+
+# Notes
+notes:
+  - "This is a blank template for new tenant initialization"
+  - "Scores will be calculated after first events are logged"
+  - "Status indicators will auto-populate based on score thresholds"
+  - "Recommendations will generate after pattern detection runs"

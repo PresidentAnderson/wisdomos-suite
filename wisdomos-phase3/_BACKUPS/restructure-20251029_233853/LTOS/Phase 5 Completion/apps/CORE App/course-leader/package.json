@@ -1,0 +1,27 @@
+{
+  "name": "@wisdom/course-leader",
+  "version": "1.0.0",
+  "description": "WisdomOS Course Leader - A comprehensive wisdom course covering philosophy, critical thinking, ethics, and personal development",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "build": "echo 'No build required for static site'",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "wisdom",
+    "philosophy",
+    "self-knowledge",
+    "critical-thinking",
+    "ethics",
+    "mindfulness",
+    "personal-development"
+  ],
+  "author": "President Anderson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axaiinovation/wisdom-course.git"
+  },
+  "homepage": "https://wisdom-course.vercel.app"
+}

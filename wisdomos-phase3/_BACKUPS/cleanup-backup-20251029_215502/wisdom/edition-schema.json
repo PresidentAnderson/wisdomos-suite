@@ -1,0 +1,229 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://wisdomos.com/schemas/edition-manifest.json",
+  "title": "WisdomOS Edition Manifest",
+  "description": "Configuration manifest for WisdomOS edition tiers",
+  "type": "object",
+  "required": ["id", "name", "tier", "features", "platforms"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this edition",
+      "enum": [
+        "free",
+        "student",
+        "standard",
+        "advanced",
+        "premium",
+        "teacher",
+        "institutional",
+        "community-hub",
+        "personal",
+        "experimental"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name for this edition",
+      "minLength": 1
+    },
+    "tier": {
+      "type": "string",
+      "description": "Pricing tier category",
+      "enum": [
+        "free",
+        "student",
+        "standard",
+        "advanced",
+        "premium",
+        "teacher",
+        "institutional",
+        "community-hub",
+        "personal",
+        "experimental"
+      ]
+    },
+    "branding": {
+      "type": "object",
+      "description": "Branding configuration for this edition",
+      "properties": {
+        "primaryColor": {
+          "type": "string",
+          "description": "Primary brand color (hex format)",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "secondaryColor": {
+          "type": "string",
+          "description": "Secondary brand color (hex format)",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "logoPath": {
+          "type": "string",
+          "description": "Relative path to edition logo"
+        },
+        "tagline": {
+          "type": "string",
+          "description": "Marketing tagline for this edition"
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature flags for this edition",
+      "properties": {
+        "autobiography": {
+          "type": "boolean",
+          "description": "Enable autobiography feature"
+        },
+        "journal": {
+          "type": "boolean",
+          "description": "Enable journal feature"
+        },
+        "dailyPrompts": {
+          "type": "boolean",
+          "description": "Enable daily prompts feature"
+        },
+        "fulfillmentDisplay": {
+          "type": "boolean",
+          "description": "Enable fulfillment display dashboard"
+        },
+        "relationshipAssessment": {
+          "type": "boolean",
+          "description": "Enable relationship assessment tools"
+        },
+        "difficultConversations": {
+          "type": "boolean",
+          "description": "Enable difficult conversations toolkit"
+        },
+        "exportPDF": {
+          "type": "boolean",
+          "description": "Enable PDF export functionality"
+        },
+        "aiAnalysis": {
+          "type": "boolean",
+          "description": "Enable AI-powered analysis and insights"
+        },
+        "coachTools": {
+          "type": "boolean",
+          "description": "Enable coaching tools and client management"
+        },
+        "clientDashboard": {
+          "type": "boolean",
+          "description": "Enable client dashboard for coaches"
+        },
+        "orgAdmin": {
+          "type": "boolean",
+          "description": "Enable organizational admin panel"
+        },
+        "sso": {
+          "type": "boolean",
+          "description": "Enable Single Sign-On (SSO)"
+        },
+        "multiUser": {
+          "type": "boolean",
+          "description": "Enable multi-user management"
+        },
+        "publicSharing": {
+          "type": "boolean",
+          "description": "Enable public sharing of content"
+        },
+        "communityForums": {
+          "type": "boolean",
+          "description": "Enable community forums"
+        },
+        "classManagement": {
+          "type": "boolean",
+          "description": "Enable class/classroom management"
+        },
+        "studentReports": {
+          "type": "boolean",
+          "description": "Enable student progress reports"
+        },
+        "customFields": {
+          "type": "boolean",
+          "description": "Enable custom fields and data models"
+        },
+        "advancedCharts": {
+          "type": "boolean",
+          "description": "Enable advanced charting and visualization"
+        },
+        "apiAccess": {
+          "type": "boolean",
+          "description": "Enable API access for integrations"
+        },
+        "prioritySupport": {
+          "type": "boolean",
+          "description": "Enable priority customer support"
+        }
+      },
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object",
+      "description": "Usage limits for this edition",
+      "properties": {
+        "maxEntries": {
+          "type": ["number", "string"],
+          "description": "Maximum number of journal entries (use 'unlimited' for no limit)",
+          "minimum": 0
+        },
+        "maxAreas": {
+          "type": ["number", "string"],
+          "description": "Maximum number of life areas (use 'unlimited' for no limit)",
+          "minimum": 0
+        },
+        "maxClients": {
+          "type": ["number", "string"],
+          "description": "Maximum number of clients (for coaches)",
+          "minimum": 0
+        },
+        "maxUsers": {
+          "type": ["number", "string"],
+          "description": "Maximum number of users (for organizations)",
+          "minimum": 0
+        },
+        "storageGB": {
+          "type": ["number", "string"],
+          "description": "Storage limit in GB (use 'unlimited' for no limit)",
+          "minimum": 0
+        }
+      }
+    },
+    "platforms": {
+      "type": "array",
+      "description": "Supported platforms for this edition",
+      "items": {
+        "type": "string",
+        "enum": ["web", "mobile", "desktop"]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "pricing": {
+      "type": "object",
+      "description": "Pricing information for this edition",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "Currency code (ISO 4217)",
+          "default": "USD"
+        },
+        "monthlyPrice": {
+          "type": "number",
+          "description": "Monthly subscription price",
+          "minimum": 0
+        },
+        "annualPrice": {
+          "type": "number",
+          "description": "Annual subscription price",
+          "minimum": 0
+        },
+        "custom": {
+          "type": "boolean",
+          "description": "Whether pricing is custom/enterprise",
+          "default": false
+        }
+      }
+    }
+  }
+}

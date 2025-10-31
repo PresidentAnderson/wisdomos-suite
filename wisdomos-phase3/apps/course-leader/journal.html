@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisdom Journal - Daily Reflection & Growth</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .journal-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .journal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .date-selector {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .date-nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .date-nav button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .date-nav button:hover {
+            background: #2980b9;
+        }
+        
+        .current-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .journal-entry {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .entry-section {
+            margin-bottom: 2rem;
+        }
+        
+        .entry-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .entry-section textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+        
+        .entry-section textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .mood-selector {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .mood-option {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .mood-option:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .mood-option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .gratitude-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .gratitude-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .gratitude-item input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .wisdom-prompt {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .wisdom-prompt h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .save-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .save-button:hover {
+            background: #229954;
+        }
+        
+        .journal-stats {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .past-entries {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .entry-preview {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .entry-preview:hover {
+            background: #f8f9fa;
+        }
+        
+        .entry-date {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .entry-snippet {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab.active {
+            color: #3498db;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Wisdom Course</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#modules">Modules</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="#" class="active">Journal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="journal-container">
+        <section class="journal-header">
+            <h1>Your Wisdom Journal</h1>
+            <p>Daily reflections for personal growth and self-discovery</p>
+        </section>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('today')">Today's Entry</button>
+            <button class="tab" onclick="showTab('insights')">Insights</button>
+            <button class="tab" onclick="showTab('history')">Past Entries</button>
+        </div>
+
+        <div id="today-tab" class="tab-content">
+            <section class="date-selector">
+                <div class="date-nav">
+                    <button onclick="changeDate(-1)">← Previous</button>
+                    <span class="current-date" id="current-date">Today</span>
+                    <button onclick="changeDate(1)">Next →</button>
+                </div>
+                <button onclick="setToday()" style="background: #667eea; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Today</button>
+            </section>
+
+            <section class="journal-entry">
+                <div class="wisdom-prompt">
+                    <h4>Today's Wisdom Prompt</h4>
+                    <p id="daily-prompt">What challenge did you face today, and what wisdom did it offer you?</p>
+                </div>
+
+                <div class="entry-section">
+                    <h3>🌅 Morning Intention</h3>
+                    <textarea id="morning-intention" placeholder="What is your intention for today? What quality or virtue will you practice?"></textarea>
+                </div>
+
+                <div class="entry-section">
+                    <h3>😊 Current Mood</h3>
+                    <div class="mood-selector">
+                        <button class="mood-option" data-mood="peaceful">😌 Peaceful</button>
+                        <button class="mood-option" data-mood="energized">⚡ Energized</button>
+                        <button class="mood-option" data-mood="grateful">🙏 Grateful</button>
+                        <button class="mood-option" data-mood="focused">🎯 Focused</button>
+                        <button class="mood-option" data-mood="anxious">😰 Anxious</button>
+                        <button class="mood-option" data-mood="tired">😴 Tired</button>
+                        <button class="mood-option" data-mood="frustrated">😤 Frustrated</button>
+                        <button class="mood-option" data-mood="content">😊 Content</button>
+                    </div>
+                </div>
+
+                <div class="entry-section">
+                    <h3>🙏 Gratitude Practice</h3>
+                    <p style="color: #666; margin-bottom: 1rem;">List three things you're grateful for today:</p>
+                    <ul class="gratitude-list">
+                        <li class="gratitude-item">
+                            <span>1.</span>
+                            <input type="text" id="gratitude1" placeholder="I am grateful for...">
+                        </li>
+                        <li class="gratitude-item">
+                            <span>2.</span>
+                            <input type="text" id="gratitude2" placeholder="I am grateful for...">
+                        </li>
+                        <li class="gratitude-item">
+                            <span>3.</span>
+                            <input type="text" id="gratitude3" placeholder="I am grateful for...">
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="entry-section">
+                    <h3>📝 Daily Reflection</h3>
+                    <textarea id="daily-reflection" placeholder="Reflect on your day. What did you learn? What insights emerged? How did you grow?" rows="6"></textarea>
+                </div>
+
+                <div class="entry-section">
+                    <h3>💡 Wisdom Gained</h3>
+                    <textarea id="wisdom-gained" placeholder="What wisdom or insight did you gain today? What will you carry forward?" rows="4"></textarea>
+                </div>
+
+                <div class="entry-section">
+                    <h3>🌙 Evening Review</h3>
+                    <textarea id="evening-review" placeholder="How did today go? What went well? What could have been better?" rows="4"></textarea>
+                </div>
+
+                <button class="save-button" onclick="saveJournalEntry()">Save Today's Entry</button>
+            </section>
+        </div>
+
+        <div id="insights-tab" class="tab-content" style="display: none;">
+            <section class="journal-stats">
+                <h2>Your Wisdom Journey</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-entries">0</div>
+                        <div class="stat-label">Journal Entries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="streak-days">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="gratitude-count">0</div>
+                        <div class="stat-label">Gratitudes Recorded</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="wisdom-insights">0</div>
+                        <div class="stat-label">Wisdom Insights</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="journal-entry">
+                <h2>Recent Insights</h2>
+                <div id="recent-insights">
+                    <!-- Insights will be dynamically loaded here -->
+                </div>
+            </section>
+
+            <section class="journal-entry">
+                <h2>Mood Patterns</h2>
+                <canvas id="mood-chart" width="400" height="200"></canvas>
+            </section>
+        </div>
+
+        <div id="history-tab" class="tab-content" style="display: none;">
+            <section class="past-entries">
+                <h2>Past Journal Entries</h2>
+                <div id="entries-list">
+                    <!-- Past entries will be dynamically loaded here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Wisdom Course. The unexamined life is not worth living.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize current date
+        let currentDate = new Date();
+        
+        // Daily wisdom prompts
+        const wisdomPrompts = [
+            "What challenge did you face today, and what wisdom did it offer you?",
+            "How did you practice presence and mindfulness today?",
+            "What did you learn about yourself today?",
+            "How did you contribute to others' well-being today?",
+            "What pattern or habit did you notice in yourself today?",
+            "How did you respond to difficulty with wisdom today?",
+            "What are you becoming more aware of in your life?",
+            "How did you practice compassion today?",
+            "What truth became clearer to you today?",
+            "How did you align with your values today?"
+        ];
+        
+        // Update date display
+        function updateDateDisplay() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = currentDate.toLocaleDateString('en-US', options);
+            document.getElementById('current-date').textContent = dateStr;
+            
+            // Update daily prompt
+            const promptIndex = currentDate.getDate() % wisdomPrompts.length;
+            document.getElementById('daily-prompt').textContent = wisdomPrompts[promptIndex];
+            
+            // Load existing entry for this date
+            loadEntryForDate(currentDate);
+        }
+        
+        // Change date
+        function changeDate(direction) {
+            currentDate.setDate(currentDate.getDate() + direction);
+            updateDateDisplay();
+        }
+        
+        // Set to today
+        function setToday() {
+            currentDate = new Date();
+            updateDateDisplay();
+        }
+        
+        // Initialize mood selection
+        document.querySelectorAll('.mood-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.mood-option').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Save journal entry
+        function saveJournalEntry() {
+            const dateKey = currentDate.toISOString().split('T')[0];
+            const selectedMood = document.querySelector('.mood-option.selected');
+            
+            const entry = {
+                date: dateKey,
+                timestamp: new Date().toISOString(),
+                morningIntention: document.getElementById('morning-intention').value,
+                mood: selectedMood ? selectedMood.dataset.mood : null,
+                gratitude: [
+                    document.getElementById('gratitude1').value,
+                    document.getElementById('gratitude2').value,
+                    document.getElementById('gratitude3').value
+                ].filter(g => g.trim()),
+                dailyReflection: document.getElementById('daily-reflection').value,
+                wisdomGained: document.getElementById('wisdom-gained').value,
+                eveningReview: document.getElementById('evening-review').value
+            };
+            
+            // Save to localStorage
+            const entries = JSON.parse(localStorage.getItem('wisdomJournalEntries') || '{}');
+            entries[dateKey] = entry;
+            localStorage.setItem('wisdomJournalEntries', JSON.stringify(entries));
+            
+            // Update stats
+            updateStats();
+            
+            // Show success message
+            showMessage('Journal entry saved successfully! 📝');
+        }
+        
+        // Load entry for specific date
+        function loadEntryForDate(date) {
+            const dateKey = date.toISOString().split('T')[0];
+            const entries = JSON.parse(localStorage.getItem('wisdomJournalEntries') || '{}');
+            
+            if (entries[dateKey]) {
+                const entry = entries[dateKey];
+                document.getElementById('morning-intention').value = entry.morningIntention || '';
+                document.getElementById('gratitude1').value = entry.gratitude[0] || '';
+                document.getElementById('gratitude2').value = entry.gratitude[1] || '';
+                document.getElementById('gratitude3').value = entry.gratitude[2] || '';
+                document.getElementById('daily-reflection').value = entry.dailyReflection || '';
+                document.getElementById('wisdom-gained').value = entry.wisdomGained || '';
+                document.getElementById('evening-review').value = entry.eveningReview || '';
+                
+                // Set mood
+                document.querySelectorAll('.mood-option').forEach(b => b.classList.remove('selected'));
+                if (entry.mood) {
+                    const moodButton = document.querySelector(`.mood-option[data-mood="${entry.mood}"]`);
+                    if (moodButton) moodButton.classList.add('selected');
+                }
+            } else {
+                // Clear form for new entry
+                document.getElementById('morning-intention').value = '';
+                document.getElementById('gratitude1').value = '';
+                document.getElementById('gratitude2').value = '';
+                document.getElementById('gratitude3').value = '';
+                document.getElementById('daily-reflection').value = '';
+                document.getElementById('wisdom-gained').value = '';
+                document.getElementById('evening-review').value = '';
+                document.querySelectorAll('.mood-option').forEach(b => b.classList.remove('selected'));
+            }
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const entries = JSON.parse(localStorage.getItem('wisdomJournalEntries') || '{}');
+            const entryDates = Object.keys(entries).sort();
+            
+            // Total entries
+            document.getElementById('total-entries').textContent = entryDates.length;
+            
+            // Calculate streak
+            let streak = 0;
+            const today = new Date().toISOString().split('T')[0];
+            let checkDate = new Date();
+            
+            while (true) {
+                const dateKey = checkDate.toISOString().split('T')[0];
+                if (entries[dateKey]) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            document.getElementById('streak-days').textContent = streak;
+            
+            // Count gratitudes
+            let gratitudeCount = 0;
+            Object.values(entries).forEach(entry => {
+                gratitudeCount += (entry.gratitude || []).length;
+            });
+            document.getElementById('gratitude-count').textContent = gratitudeCount;
+            
+            // Count wisdom insights
+            let wisdomCount = 0;
+            Object.values(entries).forEach(entry => {
+                if (entry.wisdomGained && entry.wisdomGained.trim()) {
+                    wisdomCount++;
+                }
+            });
+            document.getElementById('wisdom-insights').textContent = wisdomCount;
+            
+            // Load recent insights
+            loadRecentInsights();
+            
+            // Load past entries
+            loadPastEntries();
+        }
+        
+        // Load recent insights
+        function loadRecentInsights() {
+            const entries = JSON.parse(localStorage.getItem('wisdomJournalEntries') || '{}');
+            const recentEntries = Object.values(entries)
+                .filter(e => e.wisdomGained && e.wisdomGained.trim())
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            const insightsHtml = recentEntries.map(entry => `
+                <div class="wisdom-prompt" style="margin-bottom: 1rem;">
+                    <h4>${new Date(entry.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</h4>
+                    <p>${entry.wisdomGained}</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('recent-insights').innerHTML = insightsHtml || '<p style="color: #666;">No insights recorded yet. Start journaling to see your wisdom grow!</p>';
+        }
+        
+        // Load past entries
+        function loadPastEntries() {
+            const entries = JSON.parse(localStorage.getItem('wisdomJournalEntries') || '{}');
+            const sortedEntries = Object.values(entries)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 10);
+            
+            const entriesHtml = sortedEntries.map(entry => `
+                <div class="entry-preview" onclick="viewEntry('${entry.date}')">
+                    <div class="entry-date">${new Date(entry.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                    <div class="entry-snippet">${entry.dailyReflection ? entry.dailyReflection.substring(0, 150) + '...' : 'No reflection recorded'}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('entries-list').innerHTML = entriesHtml || '<p style="color: #666; text-align: center; padding: 2rem;">No entries yet. Start your wisdom journal today!</p>';
+        }
+        
+        // View specific entry
+        function viewEntry(dateStr) {
+            currentDate = new Date(dateStr);
+            showTab('today');
+            updateDateDisplay();
+        }
+        
+        // Show message
+        function showMessage(text) {
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: #27ae60;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease;
+                z-index: 1000;
+            `;
+            message.textContent = text;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => message.remove(), 300);
+            }, 3000);
+        }
+        
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Update stats if showing insights
+            if (tabName === 'insights') {
+                updateStats();
+            }
+        }
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDateDisplay();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

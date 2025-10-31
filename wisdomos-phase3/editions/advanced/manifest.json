@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "advanced",
+  "name": "WisdomOS — Advanced",
+  "tier": "advanced",
+  "branding": {
+    "primaryColor": "#8B5CF6",
+    "secondaryColor": "#7C3AED",
+    "logoPath": "./assets/logo-advanced.svg",
+    "tagline": "Advanced wisdom analytics"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": true,
+    "aiAnalysis": true,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": false,
+    "communityForums": false,
+    "classManagement": false,
+    "studentReports": false,
+    "customFields": true,
+    "advancedCharts": true,
+    "apiAccess": false,
+    "prioritySupport": false
+  },
+  "limits": {
+    "maxEntries": "unlimited",
+    "maxAreas": "unlimited",
+    "maxClients": 0,
+    "maxUsers": 1,
+    "storageGB": 50
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 19.99,
+    "annualPrice": 199.99,
+    "custom": false
+  }
+}

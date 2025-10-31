@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autobiography - Jonathan Anderson</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-purple-600 dark:text-purple-400">Wisdom Course</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="wisdom-evolution.html" class="nav-link">Wisdom Evolution</a>
+                    <a href="autobiography.html" class="nav-link text-purple-600">Autobiography</a>
+                    <a href="tracker.html" class="nav-link">Tracker</a>
+                    <a href="relationships.html" class="nav-link">Relationships</a>
+                    
+                    <!-- Language Switcher -->
+                    <select id="language-switcher" class="px-3 py-1 border rounded-md dark:bg-gray-700 dark:border-gray-600">
+                        <option value="en">EN</option>
+                        <option value="fr">FR</option>
+                        <option value="ar">AR</option>
+                    </select>
+                    
+                    <!-- Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        🌓
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">Life Autobiography</h1>
+            <p class="text-xl opacity-90">A journey through transformation and wisdom</p>
+            <div class="mt-6 flex justify-center space-x-4">
+                <button onclick="showView('timeline')" id="timeline-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">Timeline View</button>
+                <button onclick="showView('themes')" id="themes-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">Life Themes</button>
+                <button onclick="showView('milestones')" id="milestones-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">Milestones</button>
+                <button onclick="showView('add-entry')" id="add-btn" class="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600 transition-colors">Add Entry</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Timeline View -->
+    <section id="timeline-view" class="py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 dark:text-white">Life Timeline</h2>
+            
+            <!-- Timeline Container -->
+            <div class="timeline" id="life-timeline">
+                <!-- Timeline items will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Life Themes View -->
+    <section id="themes-view" class="py-12 px-4 hidden">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 dark:text-white">Life Themes & Patterns</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Relationships Theme -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Relationships</h3>
+                    <div class="space-y-3">
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Early Pattern:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Learned to be the caretaker and mediator</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Transformation:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Learning to receive love and set boundaries</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Current Focus:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Authentic intimacy and vulnerability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Journey -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Professional Evolution</h3>
+                    <div class="space-y-3">
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Early Drive:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Achievement and external validation</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Shift:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Purpose-driven work and contribution</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Current Expression:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Building systems that serve humanity</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spiritual Growth -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Spiritual Development</h3>
+                    <div class="space-y-3">
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Foundation:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Traditional religious upbringing</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Exploration:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Eastern philosophy and personal development</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Integration:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Practical wisdom and daily practice</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health & Wellness -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Health Journey</h3>
+                    <div class="space-y-3">
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Challenge:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Ignoring body signals and needs</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Awakening:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Understanding mind-body connection</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Practice:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Holistic wellness and energy management</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Evolution -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Financial Consciousness</h3>
+                    <div class="space-y-3">
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Scarcity:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Fear-based money decisions</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Learning:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Money as energy and tool</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Abundance:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Generous giving and wise investing</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Creativity & Expression -->
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Creative Expression</h3>
+                    <div class="space-y-3">
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Suppression:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Hiding creative gifts for practicality</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Emergence:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Finding voice through technology</p>
+                        </div>
+                        <div class="theme-insight">
+                            <h4 class="font-semibold text-purple-600 dark:text-purple-400">Flow:</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Creating systems that inspire others</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Milestones View -->
+    <section id="milestones-view" class="py-12 px-4 hidden">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 dark:text-white">Key Milestones</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="milestones-grid">
+                <!-- Milestones will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Entry View -->
+    <section id="add-entry-view" class="py-12 px-4 hidden">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 dark:text-white">Add Life Entry</h2>
+            
+            <div class="card">
+                <form id="autobiography-form" class="space-y-6">
+                    <div>
+                        <label for="entry-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date</label>
+                        <input type="date" id="entry-date" required class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500">
+                    </div>
+                    
+                    <div>
+                        <label for="entry-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
+                        <select id="entry-type" required class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500">
+                            <option value="">Select type...</option>
+                            <option value="milestone">Major Milestone</option>
+                            <option value="relationship">Relationship Event</option>
+                            <option value="professional">Professional Development</option>
+                            <option value="spiritual">Spiritual Insight</option>
+                            <option value="health">Health Journey</option>
+                            <option value="financial">Financial Learning</option>
+                            <option value="creative">Creative Expression</option>
+                            <option value="wisdom">Wisdom Moment</option>
+                            <option value="challenge">Challenge/Growth</option>
+                            <option value="celebration">Celebration</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="entry-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                        <input type="text" id="entry-title" required class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" placeholder="Brief title for this entry">
+                    </div>
+                    
+                    <div>
+                        <label for="entry-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                        <textarea id="entry-description" rows="6" required class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" placeholder="Describe what happened and what you learned..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="entry-wisdom" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key Wisdom/Learning</label>
+                        <textarea id="entry-wisdom" rows="3" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500" placeholder="What did this experience teach you?"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="entry-impact" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Impact Rating</label>
+                        <select id="entry-impact" class="w-full p-3 border rounded-lg dark:bg-gray-600 dark:border-gray-500">
+                            <option value="low">Low Impact</option>
+                            <option value="medium">Medium Impact</option>
+                            <option value="high">High Impact</option>
+                            <option value="transformational">Transformational</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">Save Entry</button>
+                        <button type="button" onclick="clearForm()" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contribution Display Section -->
+    <section id="contribution-display" class="py-12 bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 dark:text-white">My Contributions to the World</h2>
+            
+            <div class="contribution-grid" id="contributions-grid">
+                <!-- Sample contribution items -->
+                <div class="contribution-item">
+                    <img src="https://via.placeholder.com/300x200/9333ea/ffffff?text=PVT+Hostel" alt="PVT Hostel System" class="contribution-image">
+                    <div class="contribution-content">
+                        <h3 class="contribution-title">PVT Hostel Management System</h3>
+                        <p class="contribution-description">Comprehensive hospitality management platform serving hostels across multiple locations, streamlining operations and enhancing guest experiences.</p>
+                        <div class="contribution-tags">
+                            <span class="contribution-tag">Technology</span>
+                            <span class="contribution-tag">Hospitality</span>
+                            <span class="contribution-tag">System Design</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contribution-item">
+                    <img src="https://via.placeholder.com/300x200/10b981/ffffff?text=Wisdom+Course" alt="Wisdom Course Platform" class="contribution-image">
+                    <div class="contribution-content">
+                        <h3 class="contribution-title">Personal Wisdom Integration Platform</h3>
+                        <p class="contribution-description">Interactive platform for personal development, combining Landmark Education methodology with practical life application and progress tracking.</p>
+                        <div class="contribution-tags">
+                            <span class="contribution-tag">Personal Development</span>
+                            <span class="contribution-tag">Education</span>
+                            <span class="contribution-tag">Transformation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contribution-item">
+                    <img src="https://via.placeholder.com/300x200/f59e0b/ffffff?text=Legal+AI" alt="Legal AI System" class="contribution-image">
+                    <div class="contribution-content">
+                        <h3 class="contribution-title">Legal Infrastructure AI</h3>
+                        <p class="contribution-description">AI-powered legal document analysis and case management system, making legal services more accessible and efficient.</p>
+                        <div class="contribution-tags">
+                            <span class="contribution-tag">AI/ML</span>
+                            <span class="contribution-tag">Legal Tech</span>
+                            <span class="contribution-tag">Justice</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Contribution Button -->
+                <div class="contribution-item border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:border-purple-500 dark:hover:border-purple-400 transition-colors" onclick="showAddContribution()">
+                    <div class="text-center">
+                        <div class="text-4xl text-purple-400 mb-2">+</div>
+                        <p class="text-purple-600 dark:text-purple-400 font-medium">Add New Contribution</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Contribution Modal -->
+    <div id="contribution-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4 dark:text-white">Add New Contribution</h3>
+            <form id="contribution-form" class="space-y-4">
+                <div>
+                    <label for="contrib-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+                    <input type="text" id="contrib-title" required class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                </div>
+                <div>
+                    <label for="contrib-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea id="contrib-description" rows="3" required class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
+                </div>
+                <div>
+                    <label for="contrib-image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL</label>
+                    <input type="url" id="contrib-image" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" placeholder="https://...">
+                </div>
+                <div>
+                    <label for="contrib-tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags (comma-separated)</label>
+                    <input type="text" id="contrib-tags" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" placeholder="Technology, Innovation, Impact">
+                </div>
+                <div class="flex space-x-3">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Add</button>
+                    <button type="button" onclick="hideAddContribution()" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/scripts.js"></script>
+    <script src="assets/autobiography.js"></script>
+</body>
+</html>

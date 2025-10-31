@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "personal",
+  "name": "WisdomOS — Personal Edition",
+  "tier": "personal",
+  "branding": {
+    "primaryColor": "#EC4899",
+    "secondaryColor": "#DB2777",
+    "logoPath": "./assets/logo-personal.svg",
+    "tagline": "Complete personal transformation"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": true,
+    "aiAnalysis": true,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": true,
+    "communityForums": false,
+    "classManagement": false,
+    "studentReports": false,
+    "customFields": true,
+    "advancedCharts": true,
+    "apiAccess": false,
+    "prioritySupport": true
+  },
+  "limits": {
+    "maxEntries": "unlimited",
+    "maxAreas": "unlimited",
+    "maxClients": 0,
+    "maxUsers": 1,
+    "storageGB": 50
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 24.99,
+    "annualPrice": 249.99,
+    "custom": false
+  }
+}

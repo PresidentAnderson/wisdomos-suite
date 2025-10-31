@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "standard",
+  "name": "WisdomOS — Standard",
+  "tier": "standard",
+  "branding": {
+    "primaryColor": "#3B82F6",
+    "secondaryColor": "#2563EB",
+    "logoPath": "./assets/logo-standard.svg",
+    "tagline": "Complete wisdom toolkit"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": true,
+    "aiAnalysis": true,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": false,
+    "communityForums": false,
+    "classManagement": false,
+    "studentReports": false,
+    "customFields": false,
+    "advancedCharts": false,
+    "apiAccess": false,
+    "prioritySupport": false
+  },
+  "limits": {
+    "maxEntries": "unlimited",
+    "maxAreas": "unlimited",
+    "maxClients": 0,
+    "maxUsers": 1,
+    "storageGB": 20
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 9.99,
+    "annualPrice": 99.99,
+    "custom": false
+  }
+}

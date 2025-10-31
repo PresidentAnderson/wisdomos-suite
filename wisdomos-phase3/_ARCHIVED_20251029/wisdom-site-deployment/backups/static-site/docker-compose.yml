@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  wisdom-site:
+    build: .
+    image: wisdom-site:latest
+    container_name: wisdom-site-container
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./data:/usr/share/nginx/html/data:ro
+    networks:
+      - wisdom-network
+    labels:
+      - "com.wisdom.app=wisdom-site"
+      - "com.wisdom.version=1.0.0"
+      - "com.wisdom.description=WisdomOS Personal Development Platform"
+
+networks:
+  wisdom-network:
+    driver: bridge
+
+volumes:
+  wisdom-data:
+    driver: local

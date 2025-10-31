@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jonathan Anderson — Interactive Fulfillment Display (Legal Expanded)</title>
+<style>
+  :root{
+    --bg:#0f1217;
+    --panel:#161b22;
+    --ink:#e6edf3;
+    --muted:#9aa5b1;
+    --accent:#7cc7ff;
+    --accent-2:#86efac;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+       background: radial-gradient(1200px 800px at 30% -20%, #152031 0%, #0f1217 35%) fixed, #0f1217; color:#e6edf3;}
+  header{position:sticky; top:0; z-index:10; backdrop-filter: blur(8px);
+         background: linear-gradient( to bottom, rgba(15,18,23,0.9), rgba(15,18,23,0.6) ); border-bottom:1px solid #212938;}
+  .wrap{max-width:1100px; margin:0 auto; padding:18px 20px;}
+  h1{margin:0; font-size:22px}
+  .sub{color:#9aa5b1; font-size:14px}
+  .toolbar{display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;}
+  input[type="search"]{flex:1 1 320px; background:#161b22; border:1px solid #263040; border-radius:12px; padding:10px 12px; color:#e6edf3;}
+  button{background:linear-gradient(180deg, #1f2937, #0f172a); color:#e6edf3; border:1px solid #2a3344; border-radius:12px; padding:10px 12px; cursor:pointer;}
+  .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px; padding:20px;}
+  .card{background: linear-gradient(180deg, #121722 0%, #0f141e 100%); border:1px solid #1e2636; border-radius:16px; box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 1px 0 #2a3548; overflow:hidden;}
+  .areas-title{padding:14px; font-weight:600; font-size:16px; display:flex; align-items:center; gap:8px; background:linear-gradient(120deg, rgba(124,199,255,0.15), rgba(134,239,172,0.10) 50%, transparent 60%); border-bottom:1px solid #223049;}
+  .badge{font-size:12px; color:#9aa5b1; margin-left:8px}
+  details{border-top:1px solid #223049}
+  summary{list-style:none; cursor:pointer; padding:12px 14px; display:flex; align-items:center; gap:8px;}
+  summary::-webkit-details-marker{display:none}
+  .chev{transition: transform .2s ease}
+  details[open] .chev{transform: rotate(90deg)}
+  .content{padding:10px 16px 16px; color:#c7d2de; line-height:1.5}
+  .expr{margin:0; padding-left:18px}
+  .links{padding:0 16px 16px; display:flex; flex-wrap:wrap; gap:8px;}
+  .linkpill{display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:6px 10px; border-radius:999px; background:#122031; border:1px solid #20314b; color:#cfe9ff; text-decoration:none;}
+  .linkpill:hover{border-color:#33507a; background:#0f1b2d}
+  .tag{font-size:10px; opacity:.8; padding:2px 6px; border:1px solid #2b3f5e; border-radius:999px}
+  .muted{color:#9aa5b1}
+  footer{color:#9aa5b1; text-align:center; padding:24px}
+  mark{background:rgba(124,199,255,.15); color:inherit; padding:0 2px; border-radius:4px}
+  .dot{width:10px; height:10px; border-radius:50%; background:#7cc7ff; box-shadow:0 0 12px rgba(124,199,255,.7)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Interactive Fulfillment Display — <span class="muted">Work is separate from Justice & Legal</span></h1>
+    <div class="sub">Justice & Legal is expanded into categories to accommodate 30+ matters. Use the docket CSV to track everything.</div>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search (e.g., 'TAL', 'FOI', 'Immigration', 'Aurora')" />
+      <button id="expand">Expand all</button>
+      <button id="collapse">Collapse all</button>
+      <button id="clear">Clear search</button>
+    </div>
+  </div>
+</header>
+
+<main class="grid wrap" id="grid"></main>
+
+<footer>
+  Updated October 25, 2025 • Legal structure expanded.
+</footer>
+
+<script>
+const GH = (repo) => `https://github.com/PresidentAnderson/${repo}`;
+
+const areas = [
+  {
+    area: "Work & Purpose",
+    commitment: "I am the architect and leader of transformative ventures that merge hospitality, technology, and human potential into systems that elevate people and communities.",
+    expressions: [
+      "PVT Hostel — operational excellence & guest experience",
+      "Hostels United — partnership and industry innovation",
+      "Atlas Inventory — asset tracking & evidence integrity",
+      "Aurora Booking Engine — guest-centric booking & partner ecosystem",
+      "LexChronos — legal intelligence & transparency platform",
+      "WisdomOS — personal systems for fulfillment and responsibility"
+    ],
+    links: [
+      {label:"pvt-hostel", href: GH("pvt-hostel"), tag:"repo"},
+      {label:"hostels-united", href: GH("hostels-united"), tag:"repo"},
+      {label:"atlas-inventory-management-software", href: GH("atlas-inventory-management-software"), tag:"repo"},
+      {label:"aurora-booking-engine", href: GH("aurora-booking-engine"), tag:"repo"},
+      {label:"lexchronos-enterprise", href: GH("lexchronos-enterprise"), tag:"repo"},
+      {label:"wisdomos-core", href: GH("wisdomos-core"), tag:"repo"}
+    ]
+  },
+  {
+    area: "Justice & Legal (Expanded)",
+    commitment: "I am a stand for fairness, clarity, and lawful order — bringing transparency, accountability, and truth wherever there is confusion or misuse of power.",
+    expressions: [
+      "Litigation — Superior Court, Small Claims, Appeals",
+      "Administrative — TAL, CNESST/IVAC, Permits & Inspections",
+      "Immigration & Consular — visas, entries, consulate support",
+      "Corporate & Compliance — registries, filings, tax, licensing",
+      "Municipal — zoning, permits, inspections, by-law disputes",
+      "Access to Information — ATIP/FOI, privacy and records",
+      "Insurance & Claims — filings, adjusters, settlements",
+      "Consumer & Credit — chargebacks, collections, disputes",
+      "Police & Records — reports, disclosures, complaints"
+    ],
+    links: [
+      {label:"Master Docket (CSV)", href: "sandbox:/mnt/data/legal_master_docket.csv", tag:"csv"},
+      {label:"Case File #500-17-135909-250", href: "#", tag:"ref"},
+      {label:"The Other Side of Completion (PDF)", href: "sandbox:/mnt/data/The%20Other%20Side%20of%20Completion.pdf", tag:"pdf"},
+      {label:"The Other Side of Completion (alt)", href: "sandbox:/mnt/data/The%20Other%20Side%20of%20Completion%20(1).pdf", tag:"pdf"},
+      {label:"lexchronos-enterprise", href: GH("lexchronos-enterprise"), tag:"repo"}
+    ],
+    sublists: [
+      { title:"Litigation", items:[
+        "Superior Court — Declaratory Action (500-17-135909-250)",
+        "Small Claims — TBD",
+        "Appeals — TBD"
+      ]},
+      { title:"Administrative", items:[
+        "TAL — Housing/Permits",
+        "CNESST / IVAC — including refunds, income replacement",
+        "Professional orders / licensing where applicable"
+      ]},
+      { title:"Immigration & Consular", items:[
+        "Canada — entry/visitor records corrections",
+        "Brazil — consular coordination",
+        "UK / Australia / Ecuador — consular services & immigration"
+      ]},
+      { title:"Corporate & Compliance", items:[
+        "King Legend Inc. — annual returns, director updates",
+        "Tax accounts (GST/QST, federal/provincial) — filings & status",
+        "Licensing — business, hospitality, fire, health"
+      ]},
+      { title:"Municipal", items:[
+        "Zoning / occupancy certificates",
+        "Permits & inspections",
+        "By‑law tickets / hearings"
+      ]},
+      { title:"Access to Information (ATIP/FOI)", items:[
+        "Municipal FOI — inspection records, emails",
+        "Provincial ATIP — ministry files",
+        "Federal ATIP — CBSA/RCMP where applicable"
+      ]},
+      { title:"Insurance & Claims", items:[
+        "Policy reviews & endorsements",
+        "Open claims & adjuster correspondence",
+        "Settlement tracking"
+      ]},
+      { title:"Consumer & Credit", items:[
+        "Chargebacks / payment disputes",
+        "Collections / creditor communications",
+        "Credit bureau corrections"
+      ]},
+      { title:"Police & Records", items:[
+        "Reports & disclosures",
+        "Complaints / reviews",
+        "Record suspensions / corrections"
+      ]},
+    ]
+  },
+  {
+    area: "Finance",
+    commitment: "I am responsible and creative in the flow of money, generating prosperity and sustainability through integrity, structure, and innovation.",
+    expressions: [
+      "Business growth plans for PVT, Atlas, Aurora",
+      "Revenue diversification & long-term wealth creation",
+      "Investor relations, funding strategy, and financial systems integrity"
+    ],
+    links: [
+      {label:"atlas-inventory-management-software", href: GH("atlas-inventory-management-software"), tag:"repo"},
+      {label:"aurora-booking-engine", href: GH("aurora-booking-engine"), tag:"repo"},
+      {label:"hostels-united", href: GH("hostels-united"), tag:"repo"}
+    ]
+  },
+  {
+    area: "Creativity & Expression",
+    commitment: "I am a creator who brings the unseen into form — through sound, story, and structure that awakens others.",
+    expressions: [
+      "Books: The Weight of Silence; 101 Ways to Die in a Hostel",
+      "Music production projects",
+      "Creative writing, art, and storytelling"
+    ],
+    links: [
+      {label:"the-weight-of-silence", href: GH("the-weight-of-silence"), tag:"repo"},
+      {label:"101-ways-to-die-in-a-hostel", href: GH("101-ways-to-die-in-a-hostel"), tag:"repo"},
+      {label:"music-production", href: GH("music-production"), tag:"repo"}
+    ]
+  },
+  {
+    area: "Friendship & Community",
+    commitment: "I am a source of belonging and contribution — cultivating relationships that empower, inspire, and elevate collective growth.",
+    expressions: [
+      "Wisdom Course community & group calls",
+      "Tribe network and creative collaborations",
+      "Mentorship and hosting"
+    ],
+    links: [
+      {label:"2025 TOR Group Calls (PDF)", href: "sandbox:/mnt/data/2025%20TOR%20Wisdom%20Community%20Group%20Calls%20between%203%20and%204.pdf", tag:"pdf"},
+      {label:"Weekend 2 Community Gathering (PDF)", href: "sandbox:/mnt/data/Weekend%202%20Community%20Gathering-Wisdom%20Unlimited%20Course%20New%20York_Philadelphia%202025-07-12_3_00%20pm_with_QRcode.pdf", tag:"pdf"},
+      {label:"Weekend Three Tools (PDF)", href: "sandbox:/mnt/data/Weekend%20Three%20Tools%20EMAIL.pdf", tag:"pdf"},
+      {label:"Weekend One Tools Email (DOCX)", href: "sandbox:/mnt/data/Weekend%20One%20Tools%20EMAIL%20(002).docx", tag:"doc"}
+    ]
+  },
+  {
+    area: "Legacy & Archives",
+    commitment: "I am the steward of my story, documenting and preserving my journey as a contribution to others and future generations.",
+    expressions: [
+      "Digital archives: LexChronos, Atlas, WisdomOS",
+      "Written works, public teachings, and personal reflections"
+    ],
+    links: [
+      {label:"Fulfillment Display (MD)", href: "sandbox:/mnt/data/fulfillment_display_jonathan_anderson_recovered.md", tag:"md"},
+      {label:"Fulfillment Display (MD v2)", href: "sandbox:/mnt/data/fulfillment_display_jonathan_anderson_recovered2.md", tag:"md"},
+      {label:"Commitments Map (PNG)", href: "sandbox:/mnt/data/full_commitments_relationships_map.png", tag:"img"},
+      {label:"Relationships Flow (PNG)", href: "sandbox:/mnt/data/full_relationship_map_flow.png", tag:"img"},
+      {label:"Commitments–Relationships (PNG)", href: "sandbox:/mnt/data/commitments_relationships_map.png", tag:"img"},
+      {label:"Interactive Relationship Map (HTML)", href: "sandbox:/mnt/data/interactive_relationship_map.html", tag:"html"}
+    ]
+  }
+];
+
+function makeCard(item){
+  const card = document.createElement('section');
+  card.className = 'card';
+  card.setAttribute('data-area', item.area.toLowerCase());
+  card.setAttribute('data-blob', (item.area + ' ' + item.commitment + ' ' + item.expressions.join(' ') + ' ' + (item.links||[]).map(l=>l.label).join(' ')).toLowerCase());
+
+  const head = document.createElement('div');
+  head.className = 'areas-title';
+  head.innerHTML = '<span class="dot"></span><span>'+item.area+'</span><span class="badge">commitments, projects & links</span>';
+
+  const details = document.createElement('details');
+  const sum = document.createElement('summary');
+  sum.innerHTML = '<span class="chev">▶</span> Commitment';
+  const content = document.createElement('div');
+  content.className = 'content';
+  const p = document.createElement('p');
+  p.textContent = item.commitment;
+  content.appendChild(p);
+
+  const d2 = document.createElement('details');
+  const s2 = document.createElement('summary');
+  s2.innerHTML = '<span class="chev">▶</span> Key Projects / Expressions';
+  const c2 = document.createElement('div');
+  c2.className = 'content';
+  const ul = document.createElement('ul');
+  ul.className = 'expr';
+  item.expressions.forEach(e=>{
+    const li = document.createElement('li');
+    li.textContent = e;
+    ul.appendChild(li);
+  });
+  c2.appendChild(ul);
+  d2.appendChild(s2); d2.appendChild(c2);
+
+  let legalBlock = null;
+  if(item.sublists){
+    legalBlock = document.createElement('details');
+    const s3 = document.createElement('summary');
+    s3.innerHTML = '<span class="chev">▶</span> Legal Categories & Matters';
+    const c3 = document.createElement('div');
+    c3.className = 'content';
+    item.sublists.forEach(group=>{
+      const h = document.createElement('div'); h.style.fontWeight='600'; h.style.marginTop='8px'; h.textContent = group.title;
+      const ul2 = document.createElement('ul'); ul2.className='expr';
+      group.items.forEach(x=>{ const li=document.createElement('li'); li.textContent=x; ul2.appendChild(li); });
+      c3.appendChild(h); c3.appendChild(ul2);
+    });
+    legalBlock.appendChild(s3); legalBlock.appendChild(c3);
+  }
+
+  const linksBox = document.createElement('div');
+  linksBox.className = 'links';
+  (item.links||[]).forEach(L=>{
+    const a = document.createElement('a');
+    a.className = 'linkpill';
+    a.href = L.href;
+    a.target = (L.href.startsWith('http') ? '_blank' : '_self');
+    a.rel = (L.href.startsWith('http') ? 'noopener noreferrer' : '');
+    a.innerHTML = `<span>${L.label}</span><span class="tag">${L.tag}</span>`;
+    linksBox.appendChild(a);
+  });
+
+  const box = document.createElement('div');
+  box.style.padding = '0 14px 14px';
+  box.appendChild(details);
+  box.appendChild(d2);
+  if(legalBlock){ box.appendChild(legalBlock); }
+  box.appendChild(linksBox);
+
+  details.appendChild(sum); details.appendChild(content);
+
+  card.appendChild(head);
+  card.appendChild(box);
+  return card;
+}
+
+const grid = document.getElementById('grid');
+areas.forEach(item=>grid.appendChild(makeCard(item)));
+
+const q = document.getElementById('search');
+const clearBtn = document.getElementById('clear');
+const expand = document.getElementById('expand');
+const collapse = document.getElementById('collapse');
+
+function highlight(text, term){
+  if(!term) return text;
+  const rx = new RegExp('('+term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+')','ig');
+  return text.replace(rx, '<mark>$1</mark>');
+}
+
+function filter(){
+  const term = q.value.trim().toLowerCase();
+  const cards = Array.from(document.querySelectorAll('.card'));
+  cards.forEach(card=>{
+    const blob = card.getAttribute('data-blob');
+    const match = !term || blob.includes(term);
+    card.style.display = match ? '' : 'none';
+    const titleEl = card.querySelector('.areas-title span:nth-child(2)');
+    const original = titleEl.textContent;
+    titleEl.innerHTML = highlight(original, term);
+    const contents = card.querySelectorAll('.content, .expr li, .linkpill span:first-child');
+    contents.forEach(el=>{
+      const raw = el.textContent;
+      el.innerHTML = highlight(raw, term);
+    });
+  });
+}
+
+q.addEventListener('input', filter);
+clearBtn.addEventListener('click', ()=>{ q.value=''; filter(); });
+
+expand.addEventListener('click', ()=>{ document.querySelectorAll('details').forEach(d=>d.open=true); });
+collapse.addEventListener('click', ()=>{ document.querySelectorAll('details').forEach(d=>d.open=false); });
+</script>
+</body>
+</html>

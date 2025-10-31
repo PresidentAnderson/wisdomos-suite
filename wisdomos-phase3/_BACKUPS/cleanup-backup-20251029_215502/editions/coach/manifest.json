@@ -1,0 +1,78 @@
+{
+  "id": "coach",
+  "name": "WisdomOS — Coach Edition",
+  "version": "1.0.0",
+  "description": "Professional coaching platform with client management and analytics",
+  "branding": {
+    "primaryColor": "#6366F1",
+    "secondaryColor": "#8B5CF6",
+    "logo": "logo-coach.svg",
+    "favicon": "favicon-coach.ico",
+    "appName": "WisdomOS Coach"
+  },
+  "features": {
+    "core": {
+      "autobiography": true,
+      "fulfillmentDisplay": true,
+      "journaling": true,
+      "wisdomCoach": true,
+      "lifeAreas": true,
+      "commitments": true
+    },
+    "assessments": {
+      "relationshipAssessment": true,
+      "selfReflection": true,
+      "dailyPrompts": true
+    },
+    "social": {
+      "collaboration": true,
+      "sharing": true,
+      "publicProfiles": false
+    },
+    "coaching": {
+      "clientDashboard": true,
+      "coachTools": true,
+      "sessionNotes": true,
+      "clientExports": true,
+      "progressTracking": true,
+      "goalManagement": true,
+      "coachFactory": true,
+      "areaSpecificCoaching": true,
+      "fulfillmentSignals": true,
+      "relationshipAssessmentTriggers": true
+    },
+    "organization": {
+      "multiUser": false,
+      "sso": false,
+      "orgAdmin": false,
+      "teamAnalytics": false,
+      "compliance": false,
+      "billing": true
+    },
+    "integrations": {
+      "calendar": true,
+      "webhooks": true,
+      "api": true,
+      "zapier": true
+    }
+  },
+  "platforms": ["web", "mobile", "desktop"],
+  "copySet": "coach",
+  "theme": {
+    "mode": "light",
+    "customization": true
+  },
+  "limits": {
+    "maxJournalEntries": -1,
+    "maxLifeAreas": 30,
+    "maxCommitments": -1,
+    "maxCoachSessions": -1,
+    "maxClients": 50,
+    "storageGB": 25
+  },
+  "pricing": {
+    "tier": "professional",
+    "model": "subscription",
+    "price": 49
+  }
+}

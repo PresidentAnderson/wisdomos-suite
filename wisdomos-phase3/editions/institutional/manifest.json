@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "institutional",
+  "name": "WisdomOS — Institutional",
+  "tier": "institutional",
+  "branding": {
+    "primaryColor": "#1F2937",
+    "secondaryColor": "#111827",
+    "logoPath": "./assets/logo-institutional.svg",
+    "tagline": "Enterprise wisdom platform"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": true,
+    "difficultConversations": true,
+    "exportPDF": true,
+    "aiAnalysis": true,
+    "coachTools": true,
+    "clientDashboard": true,
+    "orgAdmin": true,
+    "sso": true,
+    "multiUser": true,
+    "publicSharing": true,
+    "communityForums": true,
+    "classManagement": true,
+    "studentReports": true,
+    "customFields": true,
+    "advancedCharts": true,
+    "apiAccess": true,
+    "prioritySupport": true
+  },
+  "limits": {
+    "maxEntries": "unlimited",
+    "maxAreas": "unlimited",
+    "maxClients": "unlimited",
+    "maxUsers": "unlimited",
+    "storageGB": "unlimited"
+  },
+  "platforms": ["web", "desktop"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 0,
+    "annualPrice": 0,
+    "custom": true
+  }
+}

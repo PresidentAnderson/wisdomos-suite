@@ -1,0 +1,480 @@
+// WisdomOS API - Prisma Schema
+// Phoenix Transformation System Database Schema
+// Author: Jonathan Anderson <contact@axaiinnovations.com>
+// License: PROPRIETARY - All rights reserved. Unauthorized copying or distribution is prohibited.
+// Copyright: © 2025 AXAI Innovations. Phoenix Operating System.
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// ========================================
+// User Management
+// ========================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String?   // Optional for OAuth users
+  displayName   String
+  firstName     String?
+  lastName      String?
+  phoneNumber   String?
+  avatarUrl     String?
+  timezone      String    @default("UTC")
+  locale        String    @default("en")
+  
+  // Authentication
+  emailVerified Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  isSuspended   Boolean   @default(false)
+  
+  // Subscription & Plan
+  subscriptionTier String @default("free") // free, premium, enterprise
+  subscriptionExpiry DateTime?
+  
+  // Preferences
+  preferences   Json      @default("{}")
+  settings      Json      @default("{}")
+  metadata      Json      @default("{}")
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastActiveAt  DateTime?
+  lastLoginAt   DateTime?
+  
+  // Relations
+  sessions              UserSession[]
+  phoenixCycles         PhoenixCycle[]
+  transformations       Transformation[]
+  progressEntries       ProgressEntry[]
+  notifications         Notification[]
+  analyticsEvents       AnalyticsEvent[]
+  integrations          UserIntegration[]
+  
+  // Indexes
+  @@map("users")
+  @@index([email])
+  @@index([isActive])
+  @@index([subscriptionTier])
+  @@index([createdAt])
+  @@index([lastActiveAt])
+}
+
+model UserSession {
+  id           String   @id @default(uuid())
+  userId       String
+  sessionToken String   @unique
+  refreshToken String?  @unique
+  deviceInfo   Json?
+  ipAddress    String?
+  userAgent    String?
+  isActive     Boolean  @default(true)
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_sessions")
+  @@index([userId])
+  @@index([sessionToken])
+  @@index([expiresAt])
+}
+
+// ========================================
+// Phoenix Lifecycle Management
+// ========================================
+
+enum PhoenixPhase {
+  ASHES   // Recognition and preparation phase
+  BURNING // Active transformation phase
+  RISING  // Integration and emergence phase
+  SOARING // Mastery and transcendence phase
+}
+
+model PhoenixCycle {
+  id                    String        @id @default(uuid())
+  userId                String
+  currentPhase          PhoenixPhase  @default(ASHES)
+  cycleNumber           Int
+  
+  // Dates
+  startDate             DateTime      @default(now())
+  expectedCompletionDate DateTime?
+  actualCompletionDate   DateTime?
+  
+  // Progress
+  overallProgress       Float         @default(0)
+  isCompleted           Boolean       @default(false)
+  
+  // Phase history and metadata
+  phaseHistory          Json          @default("[]")
+  insights              Json          @default("[]")
+  achievements          Json          @default("[]")
+  challenges            Json          @default("[]")
+  
+  // Timestamps
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  
+  // Relations
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transformations      Transformation[]
+  
+  @@map("phoenix_cycles")
+  @@unique([userId, cycleNumber])
+  @@index([userId])
+  @@index([currentPhase])
+  @@index([isCompleted])
+  @@index([startDate])
+}
+
+// ========================================
+// Transformation Management
+// ========================================
+
+enum TransformationType {
+  MINDSET_SHIFT
+  SKILL_DEVELOPMENT
+  HABIT_FORMATION
+  GOAL_ACHIEVEMENT
+  RELATIONSHIP_BUILDING
+  CAREER_ADVANCEMENT
+  HEALTH_OPTIMIZATION
+  FINANCIAL_GROWTH
+}
+
+enum TransformationStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TransformationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Transformation {
+  id                   String                @id @default(uuid())
+  userId               String
+  phoenixCycleId       String?
+  
+  // Basic information
+  type                 TransformationType
+  status               TransformationStatus   @default(PENDING)
+  priority             TransformationPriority @default(MEDIUM)
+  title                String
+  description          String?
+  
+  // Dates
+  startDate            DateTime              @default(now())
+  targetCompletionDate DateTime
+  actualCompletionDate DateTime?
+  
+  // Progress tracking
+  progress             Float                 @default(0)
+  progressVelocity     Float                 @default(0) // Progress per day
+  
+  // Structure
+  milestones           Json                  @default("[]")
+  tags                 Json                  @default("[]")
+  category             String?
+  
+  // Difficulty and estimation
+  estimatedDuration    Int?                  // Days
+  actualDuration       Int?                  // Days
+  difficultyScore      Float?                // 1-10
+  
+  // Metadata
+  metadata             Json                  @default("{}")
+  
+  // Timestamps
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  
+  // Relations
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phoenixCycle         PhoenixCycle?         @relation(fields: [phoenixCycleId], references: [id])
+  progressEntries      ProgressEntry[]
+  
+  @@map("transformations")
+  @@index([userId])
+  @@index([phoenixCycleId])
+  @@index([type])
+  @@index([status])
+  @@index([priority])
+  @@index([startDate])
+  @@index([targetCompletionDate])
+  @@index([createdAt])
+}
+
+// ========================================
+// Progress Tracking
+// ========================================
+
+model ProgressEntry {
+  id                  String    @id @default(uuid())
+  userId              String
+  transformationId    String
+  
+  // Progress data
+  progressPercentage  Float
+  previousProgress    Float?
+  progressDelta       Float?
+  
+  // Metrics and scores
+  mood                Int?      // 1-10
+  energy              Int?      // 1-10
+  confidence          Int?      // 1-10
+  
+  // Content
+  notes               String?
+  insights            Json      @default("[]")
+  challenges          Json      @default("[]")
+  achievements        Json      @default("[]")
+  
+  // Attachments and media
+  attachments         Json      @default("[]")
+  
+  // Custom metrics
+  customMetrics       Json      @default("[]")
+  
+  // Timestamps
+  timestamp           DateTime  @default(now())
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  
+  // Relations
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transformation      Transformation @relation(fields: [transformationId], references: [id], onDelete: Cascade)
+  
+  @@map("progress_entries")
+  @@index([userId])
+  @@index([transformationId])
+  @@index([timestamp])
+  @@index([progressPercentage])
+  @@index([createdAt])
+}
+
+// ========================================
+// Notifications & Communication
+// ========================================
+
+enum NotificationType {
+  DAILY_REMINDER
+  WEEKLY_PROGRESS
+  MILESTONE_ALERT
+  PHASE_TRANSITION
+  TRANSFORMATION_COMPLETED
+  GOAL_DEADLINE_APPROACHING
+  STREAK_MILESTONE
+  INSIGHT_GENERATED
+  SYSTEM_ANNOUNCEMENT
+  ACHIEVEMENT_UNLOCKED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  READ
+  DISMISSED
+  FAILED
+}
+
+model Notification {
+  id              String             @id @default(uuid())
+  userId          String
+  type            NotificationType
+  status          NotificationStatus @default(PENDING)
+  
+  // Content
+  title           String
+  message         String
+  actionUrl       String?
+  iconUrl         String?
+  
+  // Metadata
+  metadata        Json               @default("{}")
+  
+  // Scheduling
+  scheduledFor    DateTime?
+  sentAt          DateTime?
+  readAt          DateTime?
+  
+  // Timestamps
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  
+  // Relations
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("notifications")
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([scheduledFor])
+  @@index([createdAt])
+}
+
+// ========================================
+// Analytics & Insights
+// ========================================
+
+model AnalyticsEvent {
+  id          String   @id @default(uuid())
+  userId      String?
+  
+  // Event data
+  event       String
+  category    String?
+  label       String?
+  value       Float?
+  
+  // Context
+  properties  Json     @default("{}")
+  sessionId   String?
+  deviceInfo  Json?
+  
+  // Timestamps
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("analytics_events")
+  @@index([userId])
+  @@index([event])
+  @@index([category])
+  @@index([timestamp])
+  @@index([sessionId])
+}
+
+// ========================================
+// External Integrations
+// ========================================
+
+enum IntegrationType {
+  CALENDAR // Google Calendar, Outlook, etc.
+  FITNESS  // Fitbit, Apple Health, etc.
+  PRODUCTIVITY // Todoist, Notion, etc.
+  FINANCE  // Mint, YNAB, etc.
+  SOCIAL   // LinkedIn, Twitter, etc.
+}
+
+model UserIntegration {
+  id                String          @id @default(uuid())
+  userId            String
+  type              IntegrationType
+  
+  // Integration details
+  name              String
+  provider          String          // google, fitbit, todoist, etc.
+  isEnabled         Boolean         @default(true)
+  isConnected       Boolean         @default(false)
+  
+  // Authentication
+  accessToken       String?         // Encrypted
+  refreshToken      String?         // Encrypted
+  tokenExpiresAt    DateTime?
+  
+  // Configuration
+  settings          Json            @default("{}")
+  syncFrequency     String?         // hourly, daily, weekly
+  lastSyncAt        DateTime?
+  
+  // Metadata
+  metadata          Json            @default("{}")
+  
+  // Timestamps
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  // Relations
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_integrations")
+  @@unique([userId, type, provider])
+  @@index([userId])
+  @@index([type])
+  @@index([isEnabled])
+  @@index([lastSyncAt])
+}
+
+// ========================================
+// System Configuration
+// ========================================
+
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("system_config")
+  @@index([key])
+  @@index([isActive])
+}
+
+// ========================================
+// Audit Logs
+// ========================================
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+  IMPORT
+  ADMIN_ACCESS
+}
+
+model AuditLog {
+  id          String      @id @default(uuid())
+  userId      String?
+  action      AuditAction
+  entityType  String?     // users, transformations, etc.
+  entityId    String?
+  
+  // Change details
+  oldValues   Json?
+  newValues   Json?
+  changes     Json?
+  
+  // Context
+  ipAddress   String?
+  userAgent   String?
+  sessionId   String?
+  
+  // Metadata
+  metadata    Json        @default("{}")
+  
+  // Timestamps
+  timestamp   DateTime    @default(now())
+  
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([action])
+  @@index([entityType])
+  @@index([timestamp])
+}

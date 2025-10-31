@@ -1,0 +1,405 @@
+/* Custom Styles */
+:root {
+    --primary-color: #9333ea;
+    --secondary-color: #ec4899;
+}
+
+/* Navigation Links */
+.nav-link {
+    @apply text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors;
+}
+
+/* Cards */
+.card {
+    @apply bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow;
+}
+
+.card h3 {
+    @apply text-purple-600 dark:text-purple-400;
+}
+
+.card p {
+    @apply text-gray-600 dark:text-gray-300;
+}
+
+/* Buttons */
+.btn-primary {
+    @apply px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors;
+}
+
+.btn-secondary {
+    @apply px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors;
+}
+
+/* Status Indicators */
+.status-green {
+    @apply w-3 h-3 bg-green-500 rounded-full inline-block;
+}
+
+.status-yellow {
+    @apply w-3 h-3 bg-yellow-500 rounded-full inline-block;
+}
+
+.status-red {
+    @apply w-3 h-3 bg-red-500 rounded-full inline-block;
+}
+
+/* Module Cards */
+.module-card {
+    @apply bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer border-2 border-transparent;
+}
+
+.module-card:hover {
+    @apply border-purple-300 dark:border-purple-600 transform scale-105;
+}
+
+.module-card.completed {
+    @apply border-green-500 bg-green-50 dark:bg-green-900;
+}
+
+.module-card.in-progress {
+    @apply border-yellow-500 bg-yellow-50 dark:bg-yellow-900;
+}
+
+.module-icon {
+    @apply text-4xl mb-4 text-center;
+}
+
+.module-card h3 {
+    @apply text-lg font-bold text-purple-600 dark:text-purple-400 mb-1;
+}
+
+.module-card h4 {
+    @apply text-base font-semibold text-gray-800 dark:text-gray-200 mb-2;
+}
+
+.module-card p {
+    @apply text-sm text-gray-600 dark:text-gray-300 mb-3;
+}
+
+.module-status {
+    @apply text-xs px-2 py-1 rounded-full font-medium;
+}
+
+.module-status.completed {
+    @apply bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100;
+}
+
+.module-status.in-progress {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100;
+}
+
+.module-status.not-started {
+    @apply bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200;
+}
+
+/* Practice Items */
+.practice-item {
+    @apply flex items-start space-x-2 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-600;
+}
+
+.practice-item label {
+    @apply text-sm text-gray-700 dark:text-gray-300 cursor-pointer;
+}
+
+.practice-item input[type="checkbox"] {
+    @apply mt-1;
+}
+
+/* Contribution Display Table */
+.contribution-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.contribution-item {
+    @apply bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow;
+}
+
+.contribution-image {
+    @apply w-full h-48 object-cover;
+}
+
+.contribution-content {
+    @apply p-4;
+}
+
+.contribution-title {
+    @apply text-lg font-bold text-purple-600 dark:text-purple-400 mb-2;
+}
+
+.contribution-description {
+    @apply text-gray-600 dark:text-gray-300 text-sm mb-3;
+}
+
+.contribution-tags {
+    @apply flex flex-wrap gap-2;
+}
+
+.contribution-tag {
+    @apply px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-200 text-xs rounded-full;
+}
+
+/* Achievement Badges */
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.badge.bronze {
+    @apply bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-100;
+}
+
+.badge.silver {
+    @apply bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200;
+}
+
+.badge.gold {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100;
+}
+
+/* Timeline Styles */
+.timeline {
+    @apply relative;
+}
+
+.timeline::before {
+    content: '';
+    @apply absolute left-4 top-0 bottom-0 w-0.5 bg-purple-300 dark:bg-purple-600;
+}
+
+.timeline-item {
+    @apply relative pl-12 pb-8;
+}
+
+.timeline-dot {
+    @apply absolute left-0 top-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold;
+}
+
+.timeline-content {
+    @apply bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg;
+}
+
+.timeline-date {
+    @apply text-sm text-purple-600 dark:text-purple-400 font-medium mb-1;
+}
+
+.timeline-title {
+    @apply text-lg font-bold text-gray-800 dark:text-gray-200 mb-2;
+}
+
+.timeline-description {
+    @apply text-gray-600 dark:text-gray-300 text-sm;
+}
+
+/* Enhanced Navigation Styles */
+.nav-link-main {
+    @apply px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 font-medium;
+}
+
+/* Dropdown Styles */
+.dropdown-container {
+    @apply relative;
+}
+
+.dropdown-menu {
+    @apply absolute top-full left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 py-2 opacity-0 invisible transform translate-y-2 transition-all duration-200 ease-out z-50;
+}
+
+.dropdown-container:hover .dropdown-menu,
+.dropdown-container .dropdown-menu:hover {
+    @apply opacity-100 visible translate-y-0;
+}
+
+.dropdown-container:hover .dropdown-trigger svg,
+.dropdown-container .dropdown-menu:hover ~ .dropdown-trigger svg {
+    @apply rotate-180;
+}
+
+.dropdown-item {
+    @apply block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-150 border-b border-gray-100 dark:border-gray-700 last:border-b-0;
+}
+
+.dropdown-item:hover .text-gray-500 {
+    @apply text-purple-500;
+}
+
+/* Mobile Navigation Styles */
+.mobile-menu-button {
+    @apply relative;
+}
+
+.hamburger {
+    @apply w-6 h-5 flex flex-col justify-between cursor-pointer;
+}
+
+.hamburger-line {
+    @apply w-full h-0.5 bg-gray-600 dark:bg-gray-300 rounded-full transition-all duration-300 ease-in-out origin-center;
+}
+
+.mobile-menu-button.active .hamburger-line:nth-child(1) {
+    @apply rotate-45 translate-y-2;
+}
+
+.mobile-menu-button.active .hamburger-line:nth-child(2) {
+    @apply opacity-0;
+}
+
+.mobile-menu-button.active .hamburger-line:nth-child(3) {
+    @apply -rotate-45 -translate-y-2;
+}
+
+.mobile-menu {
+    @apply max-h-0 overflow-hidden transition-all duration-300 ease-in-out;
+}
+
+.mobile-menu.active {
+    @apply max-h-screen;
+}
+
+.mobile-nav-item {
+    @apply block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg mx-2 transition-all duration-150 font-medium;
+}
+
+.mobile-section {
+    @apply py-2;
+}
+
+.mobile-section-title {
+    @apply px-4 py-2 text-sm font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider border-b border-gray-200 dark:border-gray-600 mb-2;
+}
+
+.mobile-nav-subitem {
+    @apply block px-6 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg mx-2 transition-all duration-150;
+}
+
+/* Enhanced Animations */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.animate-slide-in-down {
+    animation: slideInDown 0.3s ease-out;
+}
+
+.animate-slide-in-up {
+    animation: slideInUp 0.3s ease-out;
+}
+
+.animate-fade-in-scale {
+    animation: fadeInScale 0.2s ease-out;
+}
+
+.animate-pulse-soft {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Navigation Backdrop Blur Effect */
+nav {
+    backdrop-filter: blur(10px) saturate(180%);
+}
+
+/* Enhanced Card Hover Effects */
+.card {
+    @apply bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105;
+}
+
+.card:hover {
+    @apply ring-2 ring-purple-200 dark:ring-purple-600;
+}
+
+/* Smooth Page Transitions */
+.page-transition {
+    @apply opacity-0 transform translate-y-4 transition-all duration-500 ease-out;
+}
+
+.page-transition.loaded {
+    @apply opacity-100 translate-y-0;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    @apply inline-block w-6 h-6 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin;
+}
+
+/* Interactive Elements */
+.interactive {
+    @apply transition-all duration-200 transform hover:scale-105 active:scale-95;
+}
+
+/* Glassmorphism Effect */
+.glass {
+    @apply backdrop-blur-md bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl shadow-xl;
+}
+
+.glass-dark {
+    @apply backdrop-blur-md bg-gray-900 bg-opacity-10 border border-gray-600 border-opacity-20 rounded-xl shadow-xl;
+}
+
+/* Focus States for Accessibility */
+.focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-purple-300 dark:bg-purple-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-purple-400 dark:bg-purple-500;
+}
+
+/* Dark Mode Transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Integration - Wisdom Course Application</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .integration-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .integration-header {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            padding: 4rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .tool-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-top: 4px solid #8b5cf6;
+        }
+        
+        .tool-card h3 {
+            color: #8b5cf6;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .life-sphere {
+            background: linear-gradient(135deg, #f3f4f6, #ffffff);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #10b981;
+        }
+        
+        .life-sphere h4 {
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+        
+        .commitment-item {
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-green { background: #10b981; }
+        .status-yellow { background: #f59e0b; }
+        .status-red { background: #ef4444; }
+        
+        .relationship-map {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .relationship-node {
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #ddd6fe, #fce7f3);
+            border-radius: 25px;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .relationship-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .autobiography-timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin: 2rem 0;
+        }
+        
+        .autobiography-timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #8b5cf6, #ec4899);
+        }
+        
+        .timeline-event {
+            position: relative;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            border: 3px solid white;
+        }
+        
+        .boundary-audit {
+            background: #fef3c7;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px dashed #f59e0b;
+            margin: 2rem 0;
+        }
+        
+        .boundary-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .reset-button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .reset-button:hover {
+            background: #7c3aed;
+        }
+        
+        .contribution-display {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, #fce7f3, #ddd6fe);
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+        
+        .contribution-item {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border-radius: 20px;
+            margin: 0.5rem;
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+        
+        .insight-box {
+            background: #eff6ff;
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+            margin: 2rem 0;
+        }
+        
+        .insight-box h4 {
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tab-button {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tab-button.active {
+            color: #8b5cf6;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #8b5cf6;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-container">
+            <div class="logo">
+                <h1>Wisdom Course</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="journal.html">Journal</a></li>
+                <li><a href="#" class="active">Personal Integration</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="integration-container">
+        <div class="integration-header">
+            <h1>🌟 Personal Wisdom Integration</h1>
+            <p>Transforming insights into lived experience through the Wisdom Course tools</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
+                "Fulfillment is authored through clarity, conversation, and commitment."
+            </p>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="showTab('tools')">Core Tools</button>
+            <button class="tab-button" onclick="showTab('spheres')">Life Spheres</button>
+            <button class="tab-button" onclick="showTab('relationships')">Relationships</button>
+            <button class="tab-button" onclick="showTab('autobiography')">Autobiography</button>
+            <button class="tab-button" onclick="showTab('boundaries')">Boundaries</button>
+        </div>
+
+        <!-- Core Tools Tab -->
+        <div id="tools-tab" class="tab-content active">
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <h3>📊 Contribution Display</h3>
+                    <p>A visual map of the contribution I already and naturally am in the world.</p>
+                    <ul style="margin-top: 1rem; list-style: none; padding: 0;">
+                        <li>✓ What others acknowledge me for</li>
+                        <li>✓ What I always contribute</li>
+                        <li>✓ What others develop around me</li>
+                    </ul>
+                    <div class="contribution-display" style="margin-top: 1.5rem;">
+                        <div class="contribution-item">Systems Thinker</div>
+                        <div class="contribution-item">Bridge Builder</div>
+                        <div class="contribution-item">Possibility Creator</div>
+                        <div class="contribution-item">Truth Teller</div>
+                        <div class="contribution-item">Pattern Recognizer</div>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3>🗺️ Fulfillment Display</h3>
+                    <p>Dynamic map of life areas demanding attention, with commitments and key people.</p>
+                    <ul style="margin-top: 1rem; list-style: none; padding: 0;">
+                        <li>✓ 13 life spheres tracked</li>
+                        <li>✓ Monthly boundary audits</li>
+                        <li>✓ Color-coded integrity monitor</li>
+                    </ul>
+                    <button class="reset-button" style="margin-top: 1rem; width: 100%;" onclick="showTab('spheres')">
+                        View Life Spheres →
+                    </button>
+                </div>
+
+                <div class="tool-card">
+                    <h3>📖 Autobiography</h3>
+                    <p>Year-by-year record transforming memory into empowerment.</p>
+                    <ul style="margin-top: 1rem; list-style: none; padding: 0;">
+                        <li>✓ Complete repetitive patterns</li>
+                        <li>✓ Reframe with today's capacities</li>
+                        <li>✓ Include past and future chapters</li>
+                    </ul>
+                    <button class="reset-button" style="margin-top: 1rem; width: 100%;" onclick="showTab('autobiography')">
+                        View Timeline →
+                    </button>
+                </div>
+
+                <div class="tool-card">
+                    <h3>🔄 Boundary Audit & Reset</h3>
+                    <p>Monthly review and reset ritual for maintaining integrity.</p>
+                    <ul style="margin-top: 1rem; list-style: none; padding: 0;">
+                        <li>✓ Track without shame</li>
+                        <li>✓ Adjust with love</li>
+                        <li>✓ Reset ritual: Pause, Identify, Forgive, Recommit</li>
+                    </ul>
+                    <button class="reset-button" style="margin-top: 1rem; width: 100%;" onclick="showTab('boundaries')">
+                        Current Audit →
+                    </button>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <h4>💡 Key Insight: Listening as Creation</h4>
+                <p>
+                    "When you are listened to without interpretation, filtering, or judgment, 
+                    aspects of yourself that were hidden or suppressed become available. 
+                    Listening is the lever that restores creation when you drift into 'business as usual.'"
+                </p>
+            </div>
+        </div>
+
+        <!-- Life Spheres Tab -->
+        <div id="spheres-tab" class="tab-content">
+            <h2>13 Life Spheres of Fulfillment</h2>
+            
+            <div class="life-sphere">
+                <h4>1. Work & Purpose</h4>
+                <p><strong>Commitment:</strong> Build institutions that liberate and endure beyond me.</p>
+                <div class="commitment-item">
+                    <span>PVT Hostel - Hospitality Innovation</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Meta-Agent Framework - AI Systems</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Justice Sans Frontières - Social Impact</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>2. Health</h4>
+                <p><strong>Commitment:</strong> Pain-free vitality with nourishing routines.</p>
+                <div class="commitment-item">
+                    <span>Proactive recovery protocols</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Structured meal and rest cycles</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>3. Finance</h4>
+                <p><strong>Commitment:</strong> Transparent, diversified, aligned income streams.</p>
+                <div class="commitment-item">
+                    <span>Clean financial records</span>
+                    <span class="status-indicator status-red"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Multiple revenue sources</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>4. Intimacy & Love</h4>
+                <p><strong>Commitment:</strong> Co-create freedom, presence, and shared vision with partner.</p>
+                <div class="commitment-item">
+                    <span>Daily presence practices</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Honest communication rituals</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>5. Time & Energy</h4>
+                <p><strong>Commitment:</strong> Protect focus blocks and create real rest.</p>
+                <div class="commitment-item">
+                    <span>Protected deep work blocks</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Scheduled renewal periods</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>6. Spiritual Alignment</h4>
+                <p><strong>Commitment:</strong> Stay connected to divine orchestration.</p>
+                <div class="commitment-item">
+                    <span>Daily reflection and silence</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>7. Creativity & Expression</h4>
+                <p><strong>Commitment:</strong> Express freely, without productivity pressure.</p>
+                <div class="commitment-item">
+                    <span>StudioNYNE creative projects</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+                <div class="commitment-item">
+                    <span>Writing and documentation</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>8. Friendship & Community</h4>
+                <p><strong>Commitment:</strong> Receive love without proving worth.</p>
+                <div class="commitment-item">
+                    <span>Non-transactional connections</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>9. Learning & Growth</h4>
+                <p><strong>Commitment:</strong> Stay teachable, curious, and innovative.</p>
+                <div class="commitment-item">
+                    <span>Continuous education</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>10. Home & Environment</h4>
+                <p><strong>Commitment:</strong> Design inspiring and regulating spaces.</p>
+                <div class="commitment-item">
+                    <span>Sanctuary creation</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>11. Sexuality</h4>
+                <p><strong>Commitment:</strong> Embody erotic self without shame.</p>
+                <div class="commitment-item">
+                    <span>Authentic expression</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>12. Emotional Regulation</h4>
+                <p><strong>Commitment:</strong> Reparent inner child, honor needs.</p>
+                <div class="commitment-item">
+                    <span>Inner child healing work</span>
+                    <span class="status-indicator status-yellow"></span>
+                </div>
+            </div>
+
+            <div class="life-sphere">
+                <h4>13. Legacy & Archives</h4>
+                <p><strong>Commitment:</strong> Preserve teachings and systems for future generations.</p>
+                <div class="commitment-item">
+                    <span>Documentation systems</span>
+                    <span class="status-indicator status-green"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relationships Tab -->
+        <div id="relationships-tab" class="tab-content">
+            <h2>Relationship Mapping</h2>
+            
+            <div class="relationship-map">
+                <h3>Key Relationships</h3>
+                <div style="text-align: center; margin: 2rem 0;">
+                    <div class="relationship-node" onclick="showRelationshipDetail('partner')">
+                        💑 Partner - Mirror & Anchor
+                    </div>
+                    <div class="relationship-node" onclick="showRelationshipDetail('support')">
+                        🤝 Support Team
+                    </div>
+                    <div class="relationship-node" onclick="showRelationshipDetail('community')">
+                        🌍 Community
+                    </div>
+                    <div class="relationship-node" onclick="showRelationshipDetail('professional')">
+                        💼 Professional Network
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <h4>Relationship Insight: "When Others First Didn't Matter"</h4>
+                <p><strong>Before the split:</strong> Relationships were fluid and story-free. People just were, without filters of who mattered.</p>
+                <p><strong>After the split:</strong> A story entered - "me versus them" - creating separation and protection.</p>
+                <p><strong>What can be re-included now:</strong></p>
+                <ul>
+                    <li>Curiosity before judgment</li>
+                    <li>Mutual mattering - making space for others to count</li>
+                    <li>Present-time presence - meeting people as they are now</li>
+                    <li>Balanced listening and speaking</li>
+                </ul>
+            </div>
+
+            <div id="relationship-detail" style="display: none;" class="tool-card">
+                <!-- Relationship details will be shown here -->
+            </div>
+        </div>
+
+        <!-- Autobiography Tab -->
+        <div id="autobiography-tab" class="tab-content">
+            <h2>Autobiography Timeline</h2>
+            
+            <div class="autobiography-timeline">
+                <div class="timeline-event">
+                    <h4>Early Childhood - The Time Before</h4>
+                    <p>Before "others didn't matter" - natural inclusion, no mental filters, relationships just were.</p>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">
+                        <em>Key learning: This natural state of inclusion can be reclaimed.</em>
+                    </p>
+                </div>
+
+                <div class="timeline-event">
+                    <h4>The Split - When Others Stopped Mattering</h4>
+                    <p>First sibling/neighbor incident creating "me vs them" - the birth of protection and separation.</p>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">
+                        <em>Intelligent strategy then: Protection from hurt through disconnection.</em>
+                    </p>
+                </div>
+
+                <div class="timeline-event">
+                    <h4>Pattern Formation</h4>
+                    <p>Repeated experiences reinforcing the story that "others don't matter" to avoid disappointment.</p>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">
+                        <em>Cost: Limited intimacy, empathy, and inclusion.</em>
+                    </p>
+                </div>
+
+                <div class="timeline-event">
+                    <h4>Present - Integration & Healing</h4>
+                    <p>Wisdom Course work: Distinguishing outdated strategies and creating new ways of being.</p>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">
+                        <em>New possibility: "If it's there for me, it's there for them" - empathy and inclusion.</em>
+                    </p>
+                </div>
+
+                <div class="timeline-event">
+                    <h4>Future Vision</h4>
+                    <p>Living as author of life, not victim of circumstances. Full expression across all spheres.</p>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">
+                        <em>Legacy: Systems and teachings that endure and liberate.</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boundaries Tab -->
+        <div id="boundaries-tab" class="tab-content">
+            <h2>Monthly Boundary Audit</h2>
+            
+            <div class="boundary-audit">
+                <h3>Current Month Review</h3>
+                <p style="margin-bottom: 1.5rem;">Track without shame. Adjust with love.</p>
+                
+                <div class="boundary-item">
+                    <span class="status-indicator status-red"></span>
+                    <div style="flex: 1;">
+                        <strong>Finance:</strong> Delayed reconciliation and transparency
+                    </div>
+                    <button class="reset-button" onclick="resetBoundary('finance')">Reset</button>
+                </div>
+
+                <div class="boundary-item">
+                    <span class="status-indicator status-yellow"></span>
+                    <div style="flex: 1;">
+                        <strong>Time:</strong> Overbooking and interrupted focus blocks
+                    </div>
+                    <button class="reset-button" onclick="resetBoundary('time')">Reset</button>
+                </div>
+
+                <div class="boundary-item">
+                    <span class="status-indicator status-green"></span>
+                    <div style="flex: 1;">
+                        <strong>Intimacy:</strong> Maintaining presence and communication
+                    </div>
+                    <button class="reset-button" onclick="resetBoundary('intimacy')">Maintain</button>
+                </div>
+
+                <div class="boundary-item">
+                    <span class="status-indicator status-yellow"></span>
+                    <div style="flex: 1;">
+                        <strong>Health:</strong> Inconsistent recovery protocols
+                    </div>
+                    <button class="reset-button" onclick="resetBoundary('health')">Reset</button>
+                </div>
+            </div>
+
+            <div class="tool-card" style="margin-top: 2rem;">
+                <h3>🔄 Boundary Reset Ritual</h3>
+                <ol style="margin-top: 1rem;">
+                    <li><strong>Pause:</strong> Stop and acknowledge the drift</li>
+                    <li><strong>Identify:</strong> Name the specific boundary violation</li>
+                    <li><strong>Forgive:</strong> Release judgment and shame</li>
+                    <li><strong>Recommit:</strong> Declare renewed commitment</li>
+                    <li><strong>Recalibrate:</strong> Adjust systems to support the boundary</li>
+                </ol>
+                <p style="margin-top: 1rem; font-style: italic; color: #6b7280;">
+                    "I can reset without shame. Awareness, not punishment, reclaims my power."
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Wisdom Course. Living as author of life, not victim of circumstances.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Relationship detail display
+        function showRelationshipDetail(type) {
+            const detailDiv = document.getElementById('relationship-detail');
+            let content = '';
+            
+            switch(type) {
+                case 'partner':
+                    content = `
+                        <h3>Partner Relationship - Co-Creation</h3>
+                        <p><strong>Focus:</strong> Freedom, presence, and shared vision</p>
+                        <p><strong>Practices:</strong></p>
+                        <ul>
+                            <li>Daily check-ins without judgment</li>
+                            <li>Honoring both autonomy and connection</li>
+                            <li>Creating from possibility, not from past</li>
+                        </ul>
+                        <p><strong>Growth Edge:</strong> Staying present when triggered</p>
+                    `;
+                    break;
+                case 'support':
+                    content = `
+                        <h3>Support Team - Operational Excellence</h3>
+                        <p><strong>Key Members:</strong> Task support, design, technical advisors</p>
+                        <p><strong>Focus:</strong> Clear communication, defined boundaries, mutual respect</p>
+                        <p><strong>Growth Edge:</strong> Receiving support without over-explaining</p>
+                    `;
+                    break;
+                case 'community':
+                    content = `
+                        <h3>Community - Non-Transactional Connection</h3>
+                        <p><strong>Focus:</strong> Giving and receiving without keeping score</p>
+                        <p><strong>Practice:</strong> Show up authentically, not performatively</p>
+                        <p><strong>Growth Edge:</strong> Trusting I'm worthy of love as I am</p>
+                    `;
+                    break;
+                case 'professional':
+                    content = `
+                        <h3>Professional Network - Value Creation</h3>
+                        <p><strong>Focus:</strong> Mutual benefit and growth</p>
+                        <p><strong>Practice:</strong> Clear agreements and expectations</p>
+                        <p><strong>Growth Edge:</strong> Asking for what I need directly</p>
+                    `;
+                    break;
+            }
+            
+            detailDiv.innerHTML = content;
+            detailDiv.style.display = 'block';
+            detailDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Boundary reset function
+        function resetBoundary(area) {
+            const ritual = [
+                `Pausing to acknowledge the ${area} boundary drift...`,
+                `Identifying the specific violation...`,
+                `Forgiving myself with compassion...`,
+                `Recommitting to my ${area} boundaries...`,
+                `Recalibrating systems to support this boundary...`
+            ];
+            
+            let step = 0;
+            const showStep = () => {
+                if (step < ritual.length) {
+                    alert(ritual[step]);
+                    step++;
+                    if (step < ritual.length) {
+                        setTimeout(showStep, 1500);
+                    } else {
+                        alert(`✓ ${area.charAt(0).toUpperCase() + area.slice(1)} boundary reset complete!`);
+                        location.reload();
+                    }
+                }
+            };
+            
+            showStep();
+        }
+
+        // Save integration data to localStorage
+        function saveIntegrationData() {
+            const integrationData = {
+                spheres: {},
+                boundaries: {},
+                relationships: {},
+                lastUpdated: new Date().toISOString()
+            };
+            
+            // Collect status indicators
+            document.querySelectorAll('.commitment-item').forEach(item => {
+                const text = item.querySelector('span').textContent;
+                const status = item.querySelector('.status-indicator').className.split(' ')[1];
+                integrationData.spheres[text] = status;
+            });
+            
+            localStorage.setItem('wisdomIntegration', JSON.stringify(integrationData));
+        }
+
+        // Load integration data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('wisdomIntegration');
+            if (saved) {
+                const data = JSON.parse(saved);
+                console.log('Loaded integration data from', data.lastUpdated);
+            }
+            
+            // Auto-save every 5 minutes
+            setInterval(saveIntegrationData, 300000);
+        });
+    </script>
+</body>
+</html>

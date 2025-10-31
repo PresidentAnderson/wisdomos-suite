@@ -1,0 +1,59 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'wisdomos-production'
+    environment: 'production'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['grafana:3000']
+
+rule_files:
+  - 'alert-rules.yaml'
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter (system metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # PostgreSQL Exporter
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # WisdomOS Web Application
+  - job_name: 'wisdomos-web'
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets: ['wisdomos-web:3000']  # Adjust to your Next.js app
+    scrape_interval: 30s
+
+  # WisdomOS API
+  - job_name: 'wisdomos-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['wisdomos-api:8080']  # Adjust to your API server
+    scrape_interval: 30s
+
+  # Supabase Edge Functions (if exposing metrics)
+  - job_name: 'supabase-functions'
+    metrics_path: '/_metrics'
+    static_configs:
+      - targets: ['yvssmqyphqgvpkwudeoa.supabase.co']
+    scheme: https
+    scrape_interval: 60s
+
+  # Agent Orchestrator
+  - job_name: 'agent-orchestrator'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:9091']  # If running agents locally
+    scrape_interval: 30s

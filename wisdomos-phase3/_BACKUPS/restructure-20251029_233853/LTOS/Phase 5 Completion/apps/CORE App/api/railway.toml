@@ -1,0 +1,68 @@
+# WisdomOS API - Railway Deployment Configuration
+# Phoenix Transformation System - Backend API
+# Author: Jonathan Anderson <contact@axaiinnovations.com>
+# License: PROPRIETARY - All rights reserved.
+# Copyright: © 2025 AXAI Innovations.
+
+[build]
+builder = "nixpacks"
+buildCommand = "npm ci && npm run build && npx prisma generate"
+
+[deploy]
+startCommand = "npx prisma migrate deploy && node dist/main.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# Environment variables for Railway
+[deploy.env]
+NODE_ENV = "production"
+PORT = { default = 4000 }
+
+# Database configuration
+DATABASE_URL = "${{ DATABASE_URL }}"
+DIRECT_DATABASE_URL = "${{ DATABASE_URL }}"
+
+# JWT configuration
+JWT_SECRET = "${{ JWT_SECRET }}"
+JWT_EXPIRES_IN = "7d"
+JWT_REFRESH_EXPIRES_IN = "30d"
+
+# Redis configuration
+REDIS_URL = "${{ REDIS_URL }}"
+
+# CORS configuration
+CORS_ORIGIN = "${{ FRONTEND_URL }}"
+
+# External services
+OPENAI_API_KEY = "${{ OPENAI_API_KEY }}"
+SENDGRID_API_KEY = "${{ SENDGRID_API_KEY }}"
+STRIPE_SECRET_KEY = "${{ STRIPE_SECRET_KEY }}"
+
+# Monitoring
+SENTRY_DSN = "${{ SENTRY_DSN }}"
+
+# Feature flags
+FEATURE_AI_INSIGHTS = "true"
+FEATURE_NOTIFICATIONS = "true"
+FEATURE_INTEGRATIONS = "true"
+
+[deploy.volumes]
+# Persistent storage for logs and uploads
+logs = "/app/logs"
+
+[deploy.networking]
+# Public networking configuration
+allowPublicNetworking = true
+
+[deploy.services.database]
+# PostgreSQL database service
+image = "postgres:15"
+env = { POSTGRES_DB = "wisdomos", POSTGRES_USER = "wisdomos" }
+volumes = ["postgres_data:/var/lib/postgresql/data"]
+
+[deploy.services.redis]
+# Redis cache service
+image = "redis:7-alpine"
+volumes = ["redis_data:/data"]

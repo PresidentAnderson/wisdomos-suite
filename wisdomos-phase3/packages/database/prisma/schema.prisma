@@ -1,0 +1,957 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String?  @unique
+  firstName String?
+  lastName  String?
+  avatar    String?
+  
+  // Authentication
+  passwordHash String?
+  emailVerified DateTime?
+  
+  // Phoenix profile
+  phoenixName String? // Their chosen phoenix identity
+  currentStage PhoenixStage @default(ASHES)
+  cycleCount  Int @default(0)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  journalEntries JournalEntry[]
+  lifeAreas     LifeArea[]
+  phoenixCycles PhoenixCycle[]
+  achievements  Achievement[]
+  contributions Contribution[]
+  fulfillmentEntries FulfillmentEntry[]
+  auditLogs     AuditLog[]
+  mirrorRules   MirrorRule[]
+  autobiographyEntries AutobiographyEntry[]
+
+  // Marketplace relations
+  providerProfile ProviderProfile?
+  bookings        Booking[] @relation("BuyerBookings")
+  reviews         Review[]  @relation("UserReviews")
+  transactions    Transaction[] @relation("BuyerTransactions")
+  wishlist        Wishlist?
+  notifications   Notification[] @relation("UserNotifications")
+
+  // Reflective feedback
+  reflectiveFeedback ReflectiveFeedback[] @relation("UserReflectiveFeedback")
+
+  // Coach sessions
+  coachSessions CoachSession[] @relation("UserCoachSessions")
+
+  // Knowledge graph
+  tagClusters TagCluster[] @relation("UserTagClusters")
+
+  @@map("users")
+}
+
+// Phoenix cycle stages
+enum PhoenixStage {
+  ASHES      // Reflection phase
+  FIRE       // Breakthrough phase  
+  REBIRTH    // Fulfillment phase
+  FLIGHT     // Legacy phase
+}
+
+// Phoenix cycle tracking
+model PhoenixCycle {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Cycle metadata
+  cycleNumber Int
+  stage       PhoenixStage
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  // Cycle data
+  ashesReflection   String? // What they're leaving behind
+  fireBreakthrough  String? // Their breakthrough moment
+  rebirthVision     String? // Their new vision
+  flightLegacy      String? // Their contribution
+  
+  // Progress tracking
+  completionScore   Float @default(0)
+  stageProgress     Json? // Detailed stage progress
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("phoenix_cycles")
+}
+
+// Life areas tracking
+model LifeArea {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Area details
+  name        String // e.g., "Health", "Relationships", "Career"
+  phoenixName String // e.g., "Phoenix of Vitality", "Phoenix of Connection"
+  description String?
+  icon        String? // Icon identifier
+  color       String? // Color theme
+  
+  // Status tracking
+  status      LifeAreaStatus @default(BREAKDOWN)
+  score       Float @default(0) // 0-100 score
+  lastReview  DateTime?
+  
+  // Goal tracking
+  currentGoal     String?
+  goalProgress    Float @default(0)
+  goalDeadline    DateTime?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  journalEntries JournalEntry[]
+  
+  @@map("life_areas")
+}
+
+enum LifeAreaStatus {
+  BREAKDOWN  // Red - needs attention
+  ATTENTION  // Yellow - progressing but needs work
+  THRIVING   // Green - doing well
+}
+
+// Journal entries
+model JournalEntry {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Entry content
+  title       String?
+  content     String
+  mood        Int? // 1-10 mood scale
+  energy      Int? // 1-10 energy scale
+  
+  // Phoenix categorization
+  stage       PhoenixStage?
+  lifeAreaId  String?
+  lifeArea    LifeArea? @relation(fields: [lifeAreaId], references: [id], onDelete: SetNull)
+  
+  // Entry metadata
+  type        EntryType @default(REFLECTION)
+  tags        String[] // Array of tags
+  isPrivate   Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("journal_entries")
+}
+
+enum EntryType {
+  REFLECTION    // General reflection
+  GRATITUDE     // Gratitude entry
+  BREAKTHROUGH  // Breakthrough moment
+  GOAL_SETTING  // Goal planning
+  PROGRESS      // Progress update
+  CHALLENGE     // Challenge or struggle
+}
+
+// Achievement system
+model Achievement {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Achievement details
+  type        AchievementType
+  title       String
+  description String
+  icon        String
+  points      Int @default(0)
+  
+  // Unlock conditions
+  unlockedAt DateTime @default(now())
+  condition  String? // Description of how it was earned
+  
+  @@map("achievements")
+}
+
+enum AchievementType {
+  FIRST_JOURNAL     // First journal entry
+  CYCLE_COMPLETE    // Complete a full phoenix cycle
+  STREAK_7_DAYS     // 7-day journaling streak
+  STREAK_30_DAYS    // 30-day journaling streak
+  LIFE_AREA_MASTER  // Max out a life area
+  PHOENIX_RISEN     // Complete 10 cycles
+  BREAKTHROUGH      // Major breakthrough moment
+  GRATITUDE_MASTER  // 100 gratitude entries
+  GOAL_ACHIEVER     // Complete 5 goals
+  REFLECTION_SAGE   // 1000 reflections
+}
+
+// ============================================================================
+// Contribution to Fulfillment Mirror Feature
+// ============================================================================
+
+// Life Areas with canonical slugs (enhanced version)
+model LifeAreaCanonical {
+  id          String   @id @default(uuid())
+  slug        String   @unique // e.g., 'work-purpose', 'creativity-expression'
+  name        String
+  description String?
+  icon        String?
+  color       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  fulfillmentEntries FulfillmentEntry[]
+  
+  @@map("life_areas_canonical")
+}
+
+// Contribution entries (Contribution Display)
+model Contribution {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  category      String   // 'Doing', 'Being', 'Having'
+  title         String   // 'Software Design'
+  description   String?
+  contributions Json     // array of contribution strings
+  impact        String?
+  commitment    String?
+  tags          String[]
+  visibility    String   @default("private") // 'private', 'shared', 'public'
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  fulfillmentEntries FulfillmentEntry[]
+  
+  @@map("contributions")
+}
+
+// Fulfillment Display entries (per Life Area)
+model FulfillmentEntry {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lifeAreaId   String
+  lifeArea     LifeAreaCanonical @relation(fields: [lifeAreaId], references: [id], onDelete: Cascade)
+  
+  sourceType   String   // 'contribution' | 'manual' | 'journal' | 'assessment'
+  sourceId     String?  // link back to contributions.id or other source
+  contribution Contribution? @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  
+  title        String
+  description  String?
+  meta         Json     @default("{}") // alignment rules, tags, relationships, etc.
+  status       String   @default("active") // 'active', 'paused', 'completed', 'archived'
+  priority     Int      @default(3) // 1-5 scale
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@unique([userId, lifeAreaId, sourceType, sourceId])
+  @@map("fulfillment_entries")
+}
+
+// Audit log for tracking changes
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  eventType  String
+  entityType String
+  entityId   String?
+  payload    Json
+  
+  createdAt  DateTime @default(now())
+  
+  @@map("audit_log")
+}
+
+// Mirror rules per user (for future customization)
+model MirrorRule {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  sourceType  String
+  targetAreas String[] // array of life_area slugs
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, sourceType])
+  @@map("mirror_rules")
+}
+
+// Autobiography feature models
+model AutobiographyEntry {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter     String
+  promptId    String
+  promptText  String   @db.Text
+  response    String   @db.Text
+  audioUrl    String?
+  wordCount   Int      @default(0)
+  sentiment   String?
+  aiInsights  Json?
+  tags        String[] @default([])
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, chapter])
+  @@map("autobiography_entries")
+}
+
+model AutobiographyChapterProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  chapter         String
+  completedPrompts Int     @default(0)
+  totalPrompts    Int
+  lastAccessedAt  DateTime @default(now())
+
+  @@unique([userId, chapter])
+  @@map("autobiography_chapter_progress")
+}
+
+// ============================================================================
+// WISEPLAY MARKETPLACE SCHEMA
+// ============================================================================
+
+enum ServiceType {
+  CONSULTATION
+  COACHING
+  COURSE
+  DIGITAL_PRODUCT
+  WORKSHOP
+  MEMBERSHIP
+}
+
+enum ServiceStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum TransactionType {
+  SERVICE_PAYMENT
+  PLATFORM_FEE
+  PAYOUT
+  REFUND
+}
+
+// Provider Profiles
+model ProviderProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  businessName      String?
+  displayName       String
+  bio               String?  @db.Text
+  tagline           String?
+  website           String?
+
+  isVerified        Boolean  @default(false)
+  verifiedAt        DateTime?
+
+  stripeAccountId   String?  @unique
+  stripeOnboarded   Boolean  @default(false)
+  stripeOnboardedAt DateTime?
+  payoutsEnabled    Boolean  @default(false)
+  chargesEnabled    Boolean  @default(false)
+
+  avatarUrl         String?
+  coverImageUrl     String?
+
+  totalSales        Int      @default(0)
+  totalRevenue      Float    @default(0)
+  averageRating     Float?
+  totalReviews      Int      @default(0)
+
+  acceptsBookings   Boolean  @default(true)
+  autoConfirm       Boolean  @default(false)
+
+  services          Service[]
+  bookingsReceived  Booking[]
+  reviews           Review[]  @relation("ProviderReviews")
+  transactions      Transaction[] @relation("ProviderTransactions")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
+  @@index([stripeAccountId])
+  @@index([isVerified])
+  @@map("provider_profiles")
+}
+
+// Services
+model Service {
+  id                String        @id @default(cuid())
+  providerId        String
+  provider          ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  title             String
+  slug              String        @unique
+  description       String        @db.Text
+  shortDescription  String?
+
+  type              ServiceType
+  categoryId        String
+  category          ServiceCategory @relation(fields: [categoryId], references: [id])
+  tags              ServiceTag[]
+
+  price             Float
+  currency          String        @default("usd")
+  isFree            Boolean       @default(false)
+  compareAtPrice    Float?
+
+  status            ServiceStatus @default(DRAFT)
+  availableSlots    Int?
+  duration          Int?
+  maxParticipants   Int?
+
+  imageUrl          String?
+  images            Json?
+  videoUrl          String?
+
+  requiresScheduling Boolean      @default(false)
+  availability      Json?
+  timeZone          String?
+
+  deliveryMethod    String?
+  deliveryDetails   String?       @db.Text
+
+  requirements      Json?
+  includes          Json?
+
+  metaTitle         String?
+  metaDescription   String?
+  featured          Boolean       @default(false)
+
+  viewCount         Int           @default(0)
+  bookingCount      Int           @default(0)
+  averageRating     Float?
+  reviewCount       Int           @default(0)
+
+  bookings          Booking[]
+  reviews           Review[]
+  wishlists         WishlistItem[]
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  publishedAt       DateTime?
+
+  @@index([providerId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([type])
+  @@index([featured])
+  @@index([createdAt])
+  @@map("services")
+}
+
+// Service Categories
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  parentId    String?
+  parent      ServiceCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    ServiceCategory[] @relation("CategoryHierarchy")
+
+  services    Service[]
+
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("service_categories")
+}
+
+// Service Tags
+model ServiceTag {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+
+  services    Service[]
+
+  createdAt   DateTime  @default(now())
+
+  @@index([slug])
+  @@map("service_tags")
+}
+
+// Bookings
+model Booking {
+  id                String        @id @default(cuid())
+  bookingNumber     String        @unique @default(cuid())
+
+  serviceId         String
+  service           Service       @relation(fields: [serviceId], references: [id])
+  providerId        String
+  provider          ProviderProfile @relation(fields: [providerId], references: [id])
+  buyerId           String
+  buyer             User          @relation("BuyerBookings", fields: [buyerId], references: [id])
+
+  status            BookingStatus @default(PENDING)
+  scheduledAt       DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  cancellationReason String?      @db.Text
+
+  participantCount  Int           @default(1)
+  participantDetails Json?
+
+  servicePriceAtBooking Float
+  platformFee       Float
+  totalAmount       Float
+  currency          String        @default("usd")
+
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentIntentId   String?       @unique
+  paymentMethodId   String?
+
+  buyerNotes        String?       @db.Text
+  providerNotes     String?       @db.Text
+
+  meetingUrl        String?
+  accessDetails     Json?
+
+  transaction       Transaction?
+  review            Review?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([serviceId])
+  @@index([providerId])
+  @@index([buyerId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([createdAt])
+  @@map("bookings")
+}
+
+// Transactions
+model Transaction {
+  id                String          @id @default(cuid())
+  transactionNumber String          @unique @default(cuid())
+
+  bookingId         String?         @unique
+  booking           Booking?        @relation(fields: [bookingId], references: [id])
+
+  type              TransactionType
+  status            PaymentStatus   @default(PENDING)
+
+  amount            Float
+  platformFee       Float
+  providerAmount    Float
+  currency          String          @default("usd")
+
+  stripePaymentIntentId String?     @unique
+  stripeTransferId      String?     @unique
+  stripeRefundId        String?     @unique
+
+  buyerId           String?
+  buyer             User?           @relation("BuyerTransactions", fields: [buyerId], references: [id])
+  providerId        String?
+  provider          ProviderProfile? @relation("ProviderTransactions", fields: [providerId], references: [id])
+
+  metadata          Json?
+  failureReason     String?
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  processedAt       DateTime?
+
+  @@index([bookingId])
+  @@index([buyerId])
+  @@index([providerId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// Reviews
+model Review {
+  id          String   @id @default(cuid())
+
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id])
+  providerId  String
+  provider    ProviderProfile @relation("ProviderReviews", fields: [providerId], references: [id])
+  reviewerId  String
+  reviewer    User     @relation("UserReviews", fields: [reviewerId], references: [id])
+
+  rating      Int
+
+  title       String?
+  comment     String   @db.Text
+
+  communicationRating Int?
+  qualityRating       Int?
+  valueRating         Int?
+
+  response    String?  @db.Text
+  respondedAt DateTime?
+
+  isPublished Boolean  @default(true)
+  isFlagged   Boolean  @default(false)
+  flagReason  String?
+
+  helpfulCount Int     @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([serviceId])
+  @@index([providerId])
+  @@index([reviewerId])
+  @@index([rating])
+  @@index([createdAt])
+  @@map("reviews")
+}
+
+// Wishlist
+model Wishlist {
+  id          String         @id @default(cuid())
+  userId      String         @unique
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items       WishlistItem[]
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([userId])
+  @@map("wishlists")
+}
+
+model WishlistItem {
+  id          String    @id @default(cuid())
+
+  wishlistId  String
+  wishlist    Wishlist  @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  serviceId   String
+  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  addedAt     DateTime  @default(now())
+
+  @@unique([wishlistId, serviceId])
+  @@index([wishlistId])
+  @@index([serviceId])
+  @@map("wishlist_items")
+}
+
+// Notifications
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  type        String
+  title       String
+  message     String   @db.Text
+
+  relatedId   String?
+  relatedType String?
+
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+
+  actionUrl   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// Reflective Feedback
+model ReflectiveFeedback {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation("UserReflectiveFeedback", fields: [userId], references: [id], onDelete: Cascade)
+
+  dimensionName   String   // e.g., "Being", "Thinking", "Feeling", "Doing", "Relating", etc.
+  dimensionCategory String // e.g., "Creative", "Emotional", "Physical", "Social", "Performance", "Strategic"
+
+  feedbackText    String   @db.Text
+  vote            String?  // "yes", "no", "maybe"
+  noFeedbackReason String? @db.Text
+
+  metadata        Json?    // Additional context like practices, reflection prompts, etc.
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, dimensionName])
+  @@index([userId, createdAt])
+  @@index([dimensionName])
+  @@map("reflective_feedback")
+}
+
+// Phoenix Wisdom Coach Sessions
+model CoachSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserCoachSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  transcript  String   @db.Text
+  tags        String[] @default([])
+  audioUrl    String?  // URL to audio file in storage
+  duration    Int?     // Duration in seconds
+
+  sentiment   Json?    // AI-analyzed emotional tone
+  insights    String?  @db.Text // GPT-generated insights
+  embedding   String?  @db.Text // Store as JSON string of vector for semantic search
+
+  sessionType String   @default("reflection") // reflection, breakthrough, integration, etc.
+  mood        String?  // User's self-reported mood
+  energy      Int?     // 1-10 energy level
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([userId, sessionType])
+  @@index([createdAt])
+  @@map("coach_sessions")
+}
+
+// ============================================================================
+// KNOWLEDGE GRAPH SYSTEM
+// ============================================================================
+
+// Tag clustering for knowledge graph
+model TagCluster {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserTagClusters", fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String   // Human-readable cluster name
+  summary     String   @db.Text // AI-generated theme summary
+  color       String   // Hex color for visualization
+  tags        String[] // Array of tags in this cluster
+
+  sourceType  String   // "autobiography" or "coach"
+  confidence  Float    @default(0) // AI confidence score 0-1
+
+  // Temporal tracking
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  eventCount  Int      @default(0) // Number of events with these tags
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, sourceType])
+  @@index([userId, lastSeenAt])
+  @@map("tag_clusters")
+}
+
+// Relationships between tags in the graph
+model TagRelationship {
+  id              String   @id @default(cuid())
+  userId          String
+
+  sourceTag       String   // Tag name
+  targetTag       String   // Related tag name
+  strength        Float    // Relationship strength 0-1
+  relationshipType String  // "similar", "hierarchical", "temporal", "causal"
+
+  sourceType      String   // "autobiography" or "coach"
+  cooccurrenceCount Int    @default(0) // How often these tags appear together
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, sourceTag])
+  @@index([userId, targetTag])
+  @@index([sourceType])
+  @@map("tag_relationships")
+}
+
+// Group meeting transcripts
+model MeetingTranscript {
+  id            String   @id @default(cuid())
+  userId        String   // Session owner
+
+  title         String
+  participants  String[] // Array of participant names/IDs
+  audioUrl      String?  // URL to full recording
+  transcript    String   @db.Text
+  summary       String   @db.Text // AI-generated summary
+
+  tags          String[] @default([])
+  duration      Int?     // Duration in seconds
+  clustersGenerated Json? // Cluster IDs generated from this transcript
+
+  // Audio highlights (10-second clips)
+  highlights    Json?    // Array of {timestamp, audioUrl, description}
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@map("meeting_transcripts")
+}
+
+// Collaborative annotations on graph nodes
+model GraphAnnotation {
+  id          String   @id @default(cuid())
+  userId      String
+
+  nodeId      String   // ID of the tag/cluster/event node
+  nodeType    String   // "tag", "cluster", "event"
+  graphType   String   // "autobiography" or "coach"
+
+  content     String   @db.Text // Markdown content
+  position    Json?    // {x, y, z} 3D coordinates
+
+  // Media attachments
+  attachments Json?    // Array of {type, url, caption}
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, graphType])
+  @@index([nodeId])
+  @@map("graph_annotations")
+}
+
+// Active collaboration sessions
+model CollaborationSession {
+  id            String   @id @default(cuid())
+  graphType     String   // "autobiography" or "coach"
+  sessionToken  String   @unique
+
+  participants  Json     // Array of {userId, username, color, cursorPosition}
+
+  // Session metadata
+  ownerUserId   String
+  isActive      Boolean  @default(true)
+
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime // Auto-cleanup after expiry
+
+  @@index([sessionToken])
+  @@index([ownerUserId])
+  @@map("collaboration_sessions")
+}
+
+// Share tokens for public/private graph sharing
+model ShareToken {
+  id          String   @id @default(cuid())
+  userId      String
+
+  graphType   String   // "autobiography" or "coach"
+  token       String   @unique
+
+  accessLevel String   // "view" or "edit"
+
+  // Optional restrictions
+  allowedEmails String[] @default([])
+  maxUses       Int?     // Null = unlimited
+  currentUses   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+
+  @@index([token])
+  @@index([userId])
+  @@map("share_tokens")
+}
+
+// Session replay keyframes
+model ReplayKeyframe {
+  id          String   @id @default(cuid())
+  userId      String
+
+  replayId    String   // Groups keyframes into replay sessions
+  graphType   String   // "autobiography" or "coach"
+
+  timestamp   Float    // Seconds from start
+  cameraPosition Json  // {x, y, z}
+  cameraTarget Json    // {x, y, z}
+
+  // Audio sync
+  audioUrl    String?
+  audioStart  Float?   // Seconds into audio file
+
+  // Visual state
+  visibleNodes Json?   // Array of node IDs to highlight
+  clusterState Json?   // Cluster sizes/colors at this point
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, replayId])
+  @@index([replayId, timestamp])
+  @@map("replay_keyframes")
+}

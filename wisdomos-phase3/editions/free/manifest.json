@@ -1,0 +1,49 @@
+{
+  "$schema": "../../edition-schema.json",
+  "id": "free",
+  "name": "WisdomOS — Free",
+  "tier": "free",
+  "branding": {
+    "primaryColor": "#5B8CFF",
+    "secondaryColor": "#3D6FCC",
+    "logoPath": "./assets/logo-free.svg",
+    "tagline": "Start your wisdom journey"
+  },
+  "features": {
+    "autobiography": true,
+    "journal": true,
+    "dailyPrompts": true,
+    "fulfillmentDisplay": true,
+    "relationshipAssessment": false,
+    "difficultConversations": false,
+    "exportPDF": false,
+    "aiAnalysis": false,
+    "coachTools": false,
+    "clientDashboard": false,
+    "orgAdmin": false,
+    "sso": false,
+    "multiUser": false,
+    "publicSharing": false,
+    "communityForums": false,
+    "classManagement": false,
+    "studentReports": false,
+    "customFields": false,
+    "advancedCharts": false,
+    "apiAccess": false,
+    "prioritySupport": false
+  },
+  "limits": {
+    "maxEntries": 100,
+    "maxAreas": 5,
+    "maxClients": 0,
+    "maxUsers": 1,
+    "storageGB": 1
+  },
+  "platforms": ["web"],
+  "pricing": {
+    "currency": "USD",
+    "monthlyPrice": 0,
+    "annualPrice": 0,
+    "custom": false
+  }
+}
